@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { createListing, type ListingResult } from "@/app/actions/listings";
 import SubmitButton from "@/components/SubmitButton";
 
 const initialState: ListingResult = { error: null };
+const MAX_PHOTOS = 5;
 
 export default function SellForm({
   categories,
@@ -12,6 +13,37 @@ export default function SellForm({
   categories: { id: string; name: string }[];
 }) {
   const [state, formAction] = useActionState(createListing, initialState);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [trimmedCount, setTrimmedCount] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const urls = selectedFiles.map((file) => URL.createObjectURL(file));
+    setPreviewUrls(urls);
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, [selectedFiles]);
+
+  function syncInputFiles(files: File[]) {
+    const dataTransfer = new DataTransfer();
+    files.forEach((file) => dataTransfer.items.add(file));
+    if (fileInputRef.current) fileInputRef.current.files = dataTransfer.files;
+  }
+
+  function handleFilesChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const chosen = Array.from(e.target.files ?? []);
+    const trimmed = chosen.slice(0, MAX_PHOTOS);
+    setTrimmedCount(chosen.length - trimmed.length);
+    setSelectedFiles(trimmed);
+    syncInputFiles(trimmed);
+  }
+
+  function removePhoto(index: number) {
+    const next = selectedFiles.filter((_, i) => i !== index);
+    setTrimmedCount(0);
+    setSelectedFiles(next);
+    syncInputFiles(next);
+  }
 
   return (
     <form action={formAction} className="mt-6 space-y-4">
@@ -108,17 +140,50 @@ export default function SellForm({
       </div>
 
       <div>
-        <label htmlFor="images" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-          Photos (up to 5)
-        </label>
+        <div className="flex items-baseline justify-between">
+          <label htmlFor="images" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+            Photos (up to {MAX_PHOTOS})
+          </label>
+          {selectedFiles.length > 0 && (
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              {selectedFiles.length} of {MAX_PHOTOS} selected
+            </span>
+          )}
+        </div>
         <input
+          ref={fileInputRef}
           id="images"
           name="images"
           type="file"
           accept="image/*"
           multiple
+          onChange={handleFilesChange}
           className="mt-1 w-full text-sm text-slate-600 dark:text-slate-400 file:mr-3 file:rounded-md file:border-0 file:bg-brand-light file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-dark"
         />
+        {trimmedCount > 0 && (
+          <p className="mt-1.5 text-xs text-amber-600 dark:text-amber-400">
+            Only the first {MAX_PHOTOS} photos were kept — {trimmedCount} more{" "}
+            {trimmedCount === 1 ? "was" : "were"} not added.
+          </p>
+        )}
+        {previewUrls.length > 0 && (
+          <div className="mt-3 grid grid-cols-5 gap-2">
+            {previewUrls.map((url, i) => (
+              <div key={url} className="group relative aspect-square overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt={`Selected photo ${i + 1}`} className="h-full w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removePhoto(i)}
+                  aria-label={`Remove photo ${i + 1}`}
+                  className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-xs font-bold text-white opacity-0 transition group-hover:opacity-100 focus:opacity-100"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {state?.error && (

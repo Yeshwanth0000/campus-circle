@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
 import ProfileEditForm from "./ProfileEditForm";
 import UnblockButton from "@/components/UnblockButton";
+import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -95,6 +96,8 @@ export default async function ProfilePage() {
           </ul>
         </div>
       )}
+
+      <DeleteAccountSection />
     </div>
   );
 }

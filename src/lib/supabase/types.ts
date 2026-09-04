@@ -378,6 +378,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_own_account: { Args: never; Returns: undefined }
       increment_listing_view: {
         Args: { p_listing_id: string }
         Returns: undefined

@@ -110,6 +110,11 @@ export default async function ListingDetailPage({
               Sold
             </span>
           )}
+          {listing.status === "expired" && (
+            <span className="mb-2 inline-block rounded-full bg-slate-500 px-3 py-1 text-xs font-semibold text-white dark:bg-slate-600">
+              Expired — no longer shown in Browse
+            </span>
+          )}
           <div className="flex items-start justify-between gap-3">
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{listing.title}</h1>
             {!isOwner && (
@@ -188,7 +193,7 @@ export default async function ListingDetailPage({
           <div className="mt-6 space-y-2">
             {isOwner ? (
               <>
-                {listing.status !== "sold" && (
+                {listing.status === "available" && (
                   <>
                     <Link
                       href={`/listings/${id}/edit`}
@@ -206,7 +211,9 @@ export default async function ListingDetailPage({
                     </form>
                   </>
                 )}
-                {listing.status === "sold" && <RelistButton listingId={id} />}
+                {(listing.status === "sold" || listing.status === "expired") && (
+                  <RelistButton listingId={id} />
+                )}
                 <form action={handleDelete}>
                   <button
                     type="submit"
@@ -217,7 +224,7 @@ export default async function ListingDetailPage({
                 </form>
               </>
             ) : (
-              listing.status !== "sold" && (
+              listing.status === "available" && (
                 <form action={messageSeller}>
                   <button
                     type="submit"

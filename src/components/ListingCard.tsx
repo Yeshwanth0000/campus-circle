@@ -56,7 +56,12 @@ export default function ListingCard({
               Sold
             </span>
           )}
-          {isNew && status !== "sold" && (
+          {status === "expired" && (
+            <span className="rounded-full bg-slate-500/85 px-2 py-1 text-xs font-semibold text-white">
+              Expired
+            </span>
+          )}
+          {isNew && status !== "sold" && status !== "expired" && (
             <span className="rounded-full bg-accent px-2 py-1 text-xs font-semibold text-white">
               New
             </span>

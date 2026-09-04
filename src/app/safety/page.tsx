@@ -1,0 +1,58 @@
+import Link from "next/link";
+
+export const metadata = { title: "Safety & Community Guidelines — CampusCircle" };
+
+export default function SafetyPage() {
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-10">
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+        Safety Tips &amp; Community Guidelines
+      </h1>
+      <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        CampusCircle keeps trades within your own verified college community,
+        but no platform can guarantee safety on its own. A few ground rules:
+      </p>
+
+      <div className="mt-6 space-y-6 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+        <section>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Meeting up</h2>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>Meet in busy, public campus spots — libraries, mess halls, main gates — not isolated areas or dorm rooms of people you don&rsquo;t know.</li>
+            <li>Bring a friend if you can, especially for higher-value items.</li>
+            <li>Inspect the item in person before paying anything.</li>
+            <li>Trust your gut — if something feels off, it&rsquo;s fine to walk away.</li>
+          </ul>
+        </section>
+        <section>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Payments</h2>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>Cash or UPI in person is safest. Never send money before seeing the item.</li>
+            <li>CampusCircle never asks for payment through the app — anyone claiming to be &ldquo;CampusCircle support&rdquo; asking for money is a scam.</li>
+            <li>Never share OTPs, bank passwords, or card details with a buyer or seller.</li>
+          </ul>
+        </section>
+        <section>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Prohibited items</h2>
+          <p className="mt-2">
+            Don&rsquo;t list weapons, drugs, alcohol, counterfeit goods,
+            stolen property, or anything illegal or against your college&rsquo;s
+            code of conduct. Listings like these will be removed and may be
+            reported.
+          </p>
+        </section>
+        <section>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Reporting a problem</h2>
+          <p className="mt-2">
+            Every listing and profile has a report option (the ⋮ menu). Use it
+            for scams, harassment, or prohibited items — reports are reviewed
+            directly. You can also{" "}
+            <Link href="/browse" className="font-semibold text-brand hover:text-brand-dark">
+              block a user
+            </Link>{" "}
+            from your profile page at any time to stop seeing their listings.
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}

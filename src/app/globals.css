@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* Manual dark mode toggle: dark: classes apply when <html> has class="dark",
+   not just when the OS is set to dark. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  --brand: #4f46e5;
+  --brand-dark: #4338ca;
+  --brand-light: #eef2ff;
+  --accent: #10b981;
+  --accent-light: #ecfdf5;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+
+  --brand: #818cf8;
+  --brand-dark: #a5b4fc;
+  --brand-light: #312e81;
+  --accent: #34d399;
+  --accent-light: #064e3b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(4%, -6%) scale(1.08); }
+  66% { transform: translate(-3%, 4%) scale(0.95); }
+}
+
+.animate-blob {
+  animation: blob-float 16s ease-in-out infinite;
+}
+
+.animate-blob-delayed {
+  animation: blob-float 20s ease-in-out infinite;
+  animation-delay: -7s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob,
+  .animate-blob-delayed {
+    animation: none;
+  }
+}
+
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-toast-in {
+  animation: toast-in 0.2s ease-out;
+}

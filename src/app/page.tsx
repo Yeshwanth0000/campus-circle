@@ -1,0 +1,206 @@
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import Reveal from "@/components/Reveal";
+import HeroSearch from "@/components/HeroSearch";
+import HowItWorksStepper from "@/components/HowItWorksStepper";
+import CategoryExplorer from "@/components/CategoryExplorer";
+
+export default async function HomePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+    .order("name")
+    .limit(8);
+
+  const exploreHref = user ? "/browse" : "/signup";
+
+  return (
+    <div>
+      <section className="relative overflow-hidden">
+        <div
+          aria-hidden
+          className="animate-blob pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-brand/20 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="animate-blob-delayed pointer-events-none absolute -right-24 top-1/3 h-96 w-96 rounded-full bg-accent/20 blur-3xl"
+        />
+
+        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
+          <div className="grid items-center gap-10 sm:grid-cols-2">
+            <div>
+              <span className="inline-block rounded-full bg-brand-light px-3 py-1 text-xs font-semibold text-brand-dark">
+                Built for your campus, verified by your college email
+              </span>
+              <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-5xl">
+                Buy and sell,
+                <br />
+                <span className="text-brand">campus to campus.</span>
+              </h1>
+              <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
+                CampusCircle connects you with students on your own campus —
+                textbooks, gadgets, cycles, and hostel essentials, traded
+                directly with people you can actually trust. Every community is
+                its own private circle, unlocked by your college email.
+              </p>
+
+              {!user && <HeroSearch />}
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                {user ? (
+                  <Link
+                    href="/browse"
+                    className="rounded-md bg-brand px-6 py-3 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md"
+                  >
+                    Go to your marketplace
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/signup"
+                      className="rounded-md bg-brand px-6 py-3 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md"
+                    >
+                      Join with your college email
+                    </Link>
+                    <Link
+                      href="/login"
+                      className="rounded-md border border-slate-300 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+                    >
+                      Log in
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <Reveal delay={150}>
+              <HowItWorksStepper />
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {categories && categories.length > 0 && (
+        <section className="border-t border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+          <div className="mx-auto max-w-6xl px-4 py-14">
+            <Reveal>
+              <h2 className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100">
+                What people trade on CampusCircle
+              </h2>
+              <p className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
+                Hover a category — every listing inside it comes from your own campus.
+              </p>
+            </Reveal>
+            <Reveal delay={100} className="mt-8">
+              <CategoryExplorer categories={categories} href={exploreHref} />
+            </Reveal>
+          </div>
+        </section>
+      )}
+
+      <section className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <div className="mx-auto max-w-6xl px-4 py-14">
+          <Reveal>
+            <h2 className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Why students trust CampusCircle
+            </h2>
+          </Reveal>
+          <div className="mt-8 grid gap-6 sm:grid-cols-3">
+            <Reveal delay={0}>
+              <div className="h-full rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition hover:-translate-y-1 hover:shadow-md">
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                  Verified college emails only
+                </h3>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                  Every member signs up with their own institution&rsquo;s
+                  email, so you&rsquo;re only ever trading with people from
+                  your campus.
+                </p>
+              </div>
+            </Reveal>
+            <Reveal delay={100}>
+              <div className="h-full rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition hover:-translate-y-1 hover:shadow-md">
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                  Chat before you meet
+                </h3>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                  Message sellers directly in the app to agree on price and a
+                  safe, public meetup spot on campus.
+                </p>
+              </div>
+            </Reveal>
+            <Reveal delay={200}>
+              <div className="h-full rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition hover:-translate-y-1 hover:shadow-md">
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                  No shipping, no scams
+                </h3>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                  Everything is exchanged in person, hand to hand — nothing
+                  ever ships, and no payment ever passes through the app.
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <div className="grid gap-8 sm:grid-cols-3">
+            <div>
+              <span className="text-lg font-bold text-brand">CampusCircle</span>
+              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                Empowering students to buy, sell, and trade within their own
+                verified campus community.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                Quick Links
+              </h3>
+              <ul className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                <li>
+                  <Link href="/browse" className="hover:text-brand">Browse listings</Link>
+                </li>
+                <li>
+                  <Link href="/sell" className="hover:text-brand">Sell an item</Link>
+                </li>
+                <li>
+                  <Link href="/signup" className="hover:text-brand">Join your campus</Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                Support
+              </h3>
+              <ul className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                <li>
+                  <Link href="/safety" className="hover:text-brand">Safety tips &amp; guidelines</Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="hover:text-brand">Terms &amp; conditions</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-10 border-t border-slate-200 pt-6 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+            <p>
+              CampusCircle is an independent student project and is not
+              affiliated with, endorsed by, or operated on behalf of any
+              college or university. Trade safely: meet in public campus
+              locations and never share financial information.
+            </p>
+            <p className="mt-2">© {new Date().getFullYear()} CampusCircle.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

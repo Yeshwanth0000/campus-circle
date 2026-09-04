@@ -5,6 +5,7 @@ import ListingCard from "@/components/ListingCard";
 import ProfileEditForm from "./ProfileEditForm";
 import UnblockButton from "@/components/UnblockButton";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
+import ExportDataButton from "@/components/ExportDataButton";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -96,6 +97,16 @@ export default async function ProfilePage() {
           </ul>
         </div>
       )}
+
+      <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+        <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100">Your data</h2>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          Download a copy of your profile, listings, saved items, and messages.
+        </p>
+        <div className="mt-3">
+          <ExportDataButton />
+        </div>
+      </div>
 
       <DeleteAccountSection />
     </div>

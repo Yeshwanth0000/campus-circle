@@ -33,6 +33,8 @@ export default function ImageGallery({ images, title }: { images: string[]; titl
               key={img}
               type="button"
               onClick={() => setActive(i)}
+              aria-label={`View photo ${i + 1} of ${images.length}`}
+              aria-current={i === active}
               className={`relative aspect-square overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800 ring-2 transition ${
                 i === active ? "ring-brand" : "ring-transparent hover:ring-slate-300"
               }`}

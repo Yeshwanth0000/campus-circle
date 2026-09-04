@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { fileReport } from "@/app/actions/safety";
 
 const REASONS = [
@@ -24,6 +24,16 @@ export default function ReportDialog({
   const [details, setDetails] = useState("");
   const [isPending, startTransition] = useTransition();
   const [done, setDone] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    panelRef.current?.focus();
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,11 +49,22 @@ export default function ReportDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
-      <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl dark:bg-slate-900">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4"
+      onClick={onClose}
+    >
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="report-dialog-title"
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl outline-none dark:bg-slate-900"
+      >
         {done ? (
           <>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Thanks for letting us know</h2>
+            <h2 id="report-dialog-title" className="text-lg font-bold text-slate-900 dark:text-slate-100">Thanks for letting us know</h2>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
               We&rsquo;ve logged your report and will look into it.
             </p>
@@ -56,7 +77,7 @@ export default function ReportDialog({
           </>
         ) : (
           <form onSubmit={handleSubmit}>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Report</h2>
+            <h2 id="report-dialog-title" className="text-lg font-bold text-slate-900 dark:text-slate-100">Report</h2>
             <label className="mt-4 block text-sm font-medium text-slate-700 dark:text-slate-300">Reason</label>
             <select
               value={reason}

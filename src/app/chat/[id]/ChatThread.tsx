@@ -10,6 +10,7 @@ type Message = {
   content: string;
   sender_id: string;
   created_at: string;
+  read_at: string | null;
 };
 
 export default function ChatThread({
@@ -60,6 +61,21 @@ export default function ChatThread({
             );
           }
         )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "messages",
+            filter: `conversation_id=eq.${conversationId}`,
+          },
+          (payload) => {
+            const updated = payload.new as Message;
+            setMessages((prev) =>
+              prev.map((m) => (m.id === updated.id ? { ...m, read_at: updated.read_at } : m))
+            );
+          }
+        )
         .subscribe();
     })();
 
@@ -90,10 +106,11 @@ export default function ChatThread({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 space-y-2 overflow-y-auto py-4">
-        {messages.map((m) => {
+        {messages.map((m, i) => {
           const isMine = m.sender_id === currentUserId;
+          const isLastMine = isMine && !messages.slice(i + 1).some((later) => later.sender_id === currentUserId);
           return (
-            <div key={m.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+            <div key={m.id} className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}>
               <div
                 className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
                   isMine
@@ -103,6 +120,11 @@ export default function ChatThread({
               >
                 {m.content}
               </div>
+              {isLastMine && (
+                <span className="mt-0.5 mr-1 text-[11px] text-slate-400 dark:text-slate-500">
+                  {m.read_at ? "Seen" : "Sent"}
+                </span>
+              )}
             </div>
           );
         })}

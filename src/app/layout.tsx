@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import ThemeInitScript from "@/components/ThemeInitScript";
 import ToastContainer from "@/components/ToastContainer";
+import InactivityLogout from "@/components/InactivityLogout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <Header />
         <main className="flex-1 pb-16 sm:pb-0">{children}</main>
         <ToastContainer />
+        <InactivityLogout />
       </body>
     </html>
   );

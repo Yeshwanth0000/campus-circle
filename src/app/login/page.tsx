@@ -1,10 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { signIn, type AuthResult } from "@/app/actions/auth";
 import SubmitButton from "@/components/SubmitButton";
 import AuthLayout from "@/components/AuthLayout";
+import { toast } from "@/lib/toast";
 
 const initialState: AuthResult = { error: null };
 
@@ -16,6 +18,13 @@ const STEPS = [
 
 export default function LoginPage() {
   const [state, formAction] = useActionState(signIn, initialState);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("reason") === "inactivity") {
+      toast("You were logged out after a period of inactivity.", "info");
+    }
+  }, [searchParams]);
 
   return (
     <AuthLayout steps={STEPS}>

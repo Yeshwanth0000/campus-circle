@@ -117,6 +117,9 @@ export default async function BrowsePage({
   }
 
   const hasExtraFilters = condition || posted;
+  const hasAnyFilter = Boolean(
+    activeCategory || q || price_min || price_max || condition || posted
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
@@ -323,13 +326,24 @@ export default async function BrowsePage({
                 />
               ))}
             </div>
-          ) : (
+          ) : hasAnyFilter ? (
             <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
-              No listings match your filters. Try clearing them, or{" "}
+              No listings match your filters.{" "}
+              <Link href="/browse" className="font-semibold text-brand">
+                Clear all filters
+              </Link>{" "}
+              or{" "}
               <Link href="/sell" className="font-semibold text-brand">
                 sell something
               </Link>
               !
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+              Nothing here yet — be the first to post{activeCategory ? ` in ${activeCategory.name}` : ""}.{" "}
+              <Link href="/sell" className="font-semibold text-brand">
+                Sell something
+              </Link>
             </div>
           )}
         </div>

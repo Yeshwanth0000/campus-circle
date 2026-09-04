@@ -2,12 +2,13 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { startConversation } from "@/app/actions/chat";
-import { markAsSold, deleteListing } from "@/app/actions/listings";
+import { markAsSold, deleteListing, relistListing } from "@/app/actions/listings";
 import ImageGallery from "@/components/ImageGallery";
 import ListingCard from "@/components/ListingCard";
 import SaveButton from "@/components/SaveButton";
 import SafetyMenu from "@/components/SafetyMenu";
 import ViewTracker from "@/components/ViewTracker";
+import RelistButton from "@/components/RelistButton";
 
 export default async function ListingDetailPage({
   params,
@@ -196,6 +197,7 @@ export default async function ListingDetailPage({
                     </form>
                   </>
                 )}
+                {listing.status === "sold" && <RelistButton listingId={id} />}
                 <form action={handleDelete}>
                   <button
                     type="submit"

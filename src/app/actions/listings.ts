@@ -152,6 +152,57 @@ export async function updateListing(
   redirect(`/listings/${listingId}`);
 }
 
+export async function relistListing(listingId: string): Promise<ListingResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "You must be logged in." };
+  }
+
+  const { data: original } = await supabase
+    .from("listings")
+    .select("title, description, price, category_id, condition, meetup_spot, images, seller_id, college_id")
+    .eq("id", listingId)
+    .single();
+
+  if (!original) {
+    return { error: "Original listing not found." };
+  }
+  if (original.seller_id !== user.id) {
+    return { error: "You can only relist your own listings." };
+  }
+
+  const { data: created, error } = await supabase
+    .from("listings")
+    .insert({
+      seller_id: original.seller_id,
+      college_id: original.college_id,
+      title: original.title,
+      description: original.description,
+      price: original.price,
+      category_id: original.category_id,
+      condition: original.condition,
+      meetup_spot: original.meetup_spot,
+      images: original.images,
+    })
+    .select("id")
+    .single();
+
+  if (error || !created) {
+    return {
+      error:
+        error?.message ??
+        "Could not relist right now. If you've posted several listings recently, please wait a bit before trying again.",
+    };
+  }
+
+  revalidatePath("/profile");
+  revalidatePath("/browse");
+  redirect(`/listings/${created.id}`);
+}
+
 export async function markAsSold(listingId: string) {
   const supabase = await createClient();
   const {

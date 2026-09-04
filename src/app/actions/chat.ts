@@ -39,18 +39,31 @@ export async function startConversation(listingId: string, sellerId: string) {
   redirect(`/chat/${created.id}`);
 }
 
-export async function sendMessage(conversationId: string, content: string) {
+export async function sendMessage(
+  conversationId: string,
+  content: string
+): Promise<{ error: string | null }> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user || !content.trim()) return;
+  if (!user) return { error: "You must be logged in." };
+  if (!content.trim()) return { error: null };
 
-  await supabase.from("messages").insert({
+  const { error } = await supabase.from("messages").insert({
     conversation_id: conversationId,
     sender_id: user.id,
     content: content.trim(),
   });
+
+  if (error) {
+    return {
+      error: error.message.includes("too quickly")
+        ? error.message
+        : "Message couldn't be sent. Please try again.",
+    };
+  }
+  return { error: null };
 }
 
 export async function markConversationRead(conversationId: string) {

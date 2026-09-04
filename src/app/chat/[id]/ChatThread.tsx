@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { sendMessage } from "@/app/actions/chat";
+import { toast } from "@/lib/toast";
 
 type Message = {
   id: string;
@@ -78,7 +79,11 @@ export default function ChatThread({
     setSending(true);
     const content = draft;
     setDraft("");
-    await sendMessage(conversationId, content);
+    const result = await sendMessage(conversationId, content);
+    if (result.error) {
+      toast(result.error, "error");
+      setDraft(content);
+    }
     setSending(false);
   }
 

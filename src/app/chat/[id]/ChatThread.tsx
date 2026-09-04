@@ -25,7 +25,11 @@ export default function ChatThread({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const [otherTyping, setOtherTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const channelRef = useRef<ReturnType<ReturnType<typeof createClient>["channel"]> | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastTypingSentRef = useRef(0);
 
   useEffect(() => {
     const supabase = createClient();
@@ -76,18 +80,41 @@ export default function ChatThread({
             );
           }
         )
+        .on("broadcast", { event: "typing" }, ({ payload }) => {
+          if (payload?.userId === currentUserId) return;
+          setOtherTyping(true);
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = setTimeout(() => setOtherTyping(false), 3000);
+        })
         .subscribe();
+
+      channelRef.current = channel;
     })();
 
     return () => {
       cancelled = true;
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       if (channel) supabase.removeChannel(channel);
+      channelRef.current = null;
     };
-  }, [conversationId]);
+  }, [conversationId, currentUserId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  function handleDraftChange(value: string) {
+    setDraft(value);
+    const now = Date.now();
+    if (value.trim() && now - lastTypingSentRef.current > 2000) {
+      lastTypingSentRef.current = now;
+      channelRef.current?.send({
+        type: "broadcast",
+        event: "typing",
+        payload: { userId: currentUserId },
+      });
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -128,6 +155,16 @@ export default function ChatThread({
             </div>
           );
         })}
+        {otherTyping && (
+          <div className="flex items-center gap-1 px-1 text-xs text-slate-400 dark:text-slate-500">
+            <span className="flex gap-0.5">
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-current [animation-delay:-0.3s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-current" />
+            </span>
+            typing…
+          </div>
+        )}
         <div ref={bottomRef} />
       </div>
 
@@ -135,7 +172,7 @@ export default function ChatThread({
         <input
           type="text"
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(e) => handleDraftChange(e.target.value)}
           placeholder="Type a message…"
           className="flex-1 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />

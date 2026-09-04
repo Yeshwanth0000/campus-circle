@@ -25,7 +25,7 @@ export default async function ListingDetailPage({
   const { data: listing } = await supabase
     .from("listings")
     .select(
-      "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, categories(name, slug), profiles(full_name, hostel_or_branch, created_at)"
+      "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, categories(name, slug), profiles(full_name, hostel_or_branch, created_at)"
     )
     .eq("id", id)
     .single();
@@ -128,6 +128,15 @@ export default async function ListingDetailPage({
               ? `₹${Number(listing.price).toLocaleString("en-IN")}`
               : "Free"}
           </p>
+
+          {isOwner && (
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              {listing.view_count === 0
+                ? "No views yet"
+                : `${listing.view_count} view${listing.view_count === 1 ? "" : "s"}`}{" "}
+              · only you can see this
+            </p>
+          )}
 
           <div className="mt-4 flex flex-wrap gap-2 text-xs">
             {listing.categories?.name && (

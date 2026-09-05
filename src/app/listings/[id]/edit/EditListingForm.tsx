@@ -45,6 +45,7 @@ export default function EditListingForm({
           name="title"
           type="text"
           required
+          maxLength={150}
           defaultValue={listing.title}
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />
@@ -58,6 +59,7 @@ export default function EditListingForm({
           id="description"
           name="description"
           rows={4}
+          maxLength={3000}
           defaultValue={listing.description ?? ""}
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />
@@ -125,6 +127,7 @@ export default function EditListingForm({
           id="meetupSpot"
           name="meetupSpot"
           type="text"
+          maxLength={150}
           defaultValue={listing.meetup_spot ?? ""}
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />

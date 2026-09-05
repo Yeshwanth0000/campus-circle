@@ -61,6 +61,7 @@ export default function SellForm({
           name="title"
           type="text"
           required
+          maxLength={150}
           placeholder="e.g. Engineering Mechanics textbook, 2nd edition"
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />
@@ -74,6 +75,7 @@ export default function SellForm({
           id="description"
           name="description"
           rows={4}
+          maxLength={3000}
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />
       </div>
@@ -147,6 +149,7 @@ export default function SellForm({
                 id={`custom_${field.key}`}
                 name={`custom_${field.key}`}
                 type="text"
+                maxLength={200}
                 placeholder={field.placeholder}
                 className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
               />
@@ -163,6 +166,7 @@ export default function SellForm({
           id="meetupSpot"
           name="meetupSpot"
           type="text"
+          maxLength={150}
           placeholder="e.g. Main gate, Library, Hostel block C"
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />

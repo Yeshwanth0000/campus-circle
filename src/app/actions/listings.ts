@@ -5,11 +5,18 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { CATEGORY_CUSTOM_FIELDS } from "@/lib/categoryFields";
 
+const CUSTOM_FIELD_MAX_LENGTH = 200;
+const TITLE_MAX_LENGTH = 150;
+const DESCRIPTION_MAX_LENGTH = 3000;
+const MEETUP_SPOT_MAX_LENGTH = 150;
+
 function extractCustomFields(formData: FormData, categorySlug: string | null | undefined) {
   const defs = categorySlug ? CATEGORY_CUSTOM_FIELDS[categorySlug] ?? [] : [];
   const result: Record<string, string> = {};
   for (const def of defs) {
-    const value = String(formData.get(`custom_${def.key}`) ?? "").trim();
+    const value = String(formData.get(`custom_${def.key}`) ?? "")
+      .trim()
+      .slice(0, CUSTOM_FIELD_MAX_LENGTH);
     if (value) result[def.key] = value;
   }
   return result;
@@ -29,13 +36,13 @@ export async function createListing(
     return { error: "You must be logged in." };
   }
 
-  const title = String(formData.get("title") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim().slice(0, TITLE_MAX_LENGTH);
+  const description = String(formData.get("description") ?? "").trim().slice(0, DESCRIPTION_MAX_LENGTH);
   const priceRaw = String(formData.get("price") ?? "0");
   const price = Number(priceRaw);
   const categoryId = String(formData.get("categoryId") ?? "") || null;
   const condition = String(formData.get("condition") ?? "") || null;
-  const meetupSpot = String(formData.get("meetupSpot") ?? "").trim() || null;
+  const meetupSpot = String(formData.get("meetupSpot") ?? "").trim().slice(0, MEETUP_SPOT_MAX_LENGTH) || null;
   const files = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
 
   if (!title || Number.isNaN(price) || price < 0) {
@@ -117,13 +124,13 @@ export async function updateListing(
   }
 
   const listingId = String(formData.get("listingId") ?? "");
-  const title = String(formData.get("title") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim().slice(0, TITLE_MAX_LENGTH);
+  const description = String(formData.get("description") ?? "").trim().slice(0, DESCRIPTION_MAX_LENGTH);
   const priceRaw = String(formData.get("price") ?? "0");
   const price = Number(priceRaw);
   const categoryId = String(formData.get("categoryId") ?? "") || null;
   const condition = String(formData.get("condition") ?? "") || null;
-  const meetupSpot = String(formData.get("meetupSpot") ?? "").trim() || null;
+  const meetupSpot = String(formData.get("meetupSpot") ?? "").trim().slice(0, MEETUP_SPOT_MAX_LENGTH) || null;
   const keptImages = formData.getAll("keptImages").map(String);
   const newFiles = formData
     .getAll("images")

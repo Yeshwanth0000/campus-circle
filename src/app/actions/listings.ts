@@ -3,6 +3,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { CATEGORY_CUSTOM_FIELDS } from "@/lib/categoryFields";
+
+function extractCustomFields(formData: FormData, categorySlug: string | null | undefined) {
+  const defs = categorySlug ? CATEGORY_CUSTOM_FIELDS[categorySlug] ?? [] : [];
+  const result: Record<string, string> = {};
+  for (const def of defs) {
+    const value = String(formData.get(`custom_${def.key}`) ?? "").trim();
+    if (value) result[def.key] = value;
+  }
+  return result;
+}
 
 export type ListingResult = { error: string } | { error: null };
 
@@ -43,6 +54,17 @@ export async function createListing(
     return { error: "Your profile could not be found." };
   }
 
+  let categorySlug: string | null = null;
+  if (categoryId) {
+    const { data: category } = await supabase
+      .from("categories")
+      .select("slug")
+      .eq("id", categoryId)
+      .maybeSingle();
+    categorySlug = category?.slug ?? null;
+  }
+  const customFields = extractCustomFields(formData, categorySlug);
+
   const imageUrls: string[] = [];
   for (const file of files) {
     const path = `${user.id}/${crypto.randomUUID()}-${file.name}`;
@@ -70,6 +92,7 @@ export async function createListing(
       condition,
       meetup_spot: meetupSpot,
       images: imageUrls,
+      custom_fields: customFields,
     })
     .select("id")
     .single();

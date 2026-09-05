@@ -11,7 +11,7 @@ export default async function SellPage() {
 
   const { data: categories } = await supabase
     .from("categories")
-    .select("id, name")
+    .select("id, name, slug")
     .order("name");
 
   return (

@@ -144,6 +144,7 @@ export type Database = {
           college_id: string
           condition: string | null
           created_at: string
+          custom_fields: Json
           description: string | null
           id: string
           images: string[]
@@ -159,6 +160,7 @@ export type Database = {
           college_id: string
           condition?: string | null
           created_at?: string
+          custom_fields?: Json
           description?: string | null
           id?: string
           images?: string[]
@@ -174,6 +176,7 @@ export type Database = {
           college_id?: string
           condition?: string | null
           created_at?: string
+          custom_fields?: Json
           description?: string | null
           id?: string
           images?: string[]
@@ -379,6 +382,7 @@ export type Database = {
     }
     Functions: {
       delete_own_account: { Args: never; Returns: undefined }
+      expire_stale_listings: { Args: never; Returns: undefined }
       increment_listing_view: {
         Args: { p_listing_id: string }
         Returns: undefined

@@ -9,6 +9,7 @@ import SaveButton from "@/components/SaveButton";
 import SafetyMenu from "@/components/SafetyMenu";
 import ViewTracker from "@/components/ViewTracker";
 import RelistButton from "@/components/RelistButton";
+import { getCategoryFields } from "@/lib/categoryFields";
 
 export default async function ListingDetailPage({
   params,
@@ -25,7 +26,7 @@ export default async function ListingDetailPage({
   const { data: listing } = await supabase
     .from("listings")
     .select(
-      "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, categories(name, slug), profiles(full_name, hostel_or_branch, created_at)"
+      "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, custom_fields, categories(name, slug), profiles(full_name, hostel_or_branch, created_at)"
     )
     .eq("id", id)
     .single();
@@ -161,6 +162,25 @@ export default async function ListingDetailPage({
               {listing.description}
             </p>
           )}
+
+          {(() => {
+            const fieldDefs = getCategoryFields(listing.categories?.slug);
+            const customFields = (listing.custom_fields ?? {}) as Record<string, string>;
+            const entries = fieldDefs
+              .map((def) => ({ label: def.label, value: customFields[def.key] }))
+              .filter((entry) => entry.value);
+            if (entries.length === 0) return null;
+            return (
+              <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-slate-200 p-3 text-sm dark:border-slate-800">
+                {entries.map((entry) => (
+                  <div key={entry.label}>
+                    <dt className="text-xs text-slate-500 dark:text-slate-400">{entry.label}</dt>
+                    <dd className="font-medium text-slate-900 dark:text-slate-100">{entry.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            );
+          })()}
 
           {listing.meetup_spot && (
             <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">

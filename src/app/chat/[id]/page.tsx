@@ -42,7 +42,7 @@ export default async function ChatDetailPage({
   await markConversationRead(id);
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-128px)] max-w-2xl flex-col px-4 py-4 sm:h-[calc(100vh-64px)]">
+    <div className="mx-auto flex h-[calc(100vh-178px)] max-w-2xl flex-col px-4 py-4 sm:h-[calc(100vh-64px)]">
       <div className="flex items-start justify-between border-b border-slate-200 pb-3 dark:border-slate-800">
         <div>
           <Link href="/chat" className="text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">

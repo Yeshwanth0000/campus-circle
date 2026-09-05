@@ -259,6 +259,38 @@ body {
   }
 }
 
+/* Chat message bubbles — each bubble eases in once when it first mounts
+   (either the initial history load, staggered slightly, or a message
+   arriving live), and the typing indicator pulses smoothly instead of
+   Tailwind's default bounce. */
+@keyframes message-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.animate-message-in {
+  animation: message-in 0.3s ease-out both;
+}
+
+@keyframes typing-pulse {
+  0%, 60%, 100% { transform: scale(0.6); opacity: 0.4; }
+  30% { transform: scale(1); opacity: 1; }
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: typing-pulse 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-message-in {
+    animation: none;
+  }
+}
+
 /* Command palette (Cmd/Ctrl+K) entrance — backdrop fades in while the panel
    scales up from a slightly lower, smaller resting point. */
 @keyframes palette-backdrop-in {

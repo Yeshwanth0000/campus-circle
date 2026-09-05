@@ -131,18 +131,22 @@ export default function ChatThread({
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex-1 space-y-2 overflow-y-auto py-4">
+    <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 p-4 shadow-sm backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-900/60">
+      <div className="flex-1 space-y-2 overflow-y-auto">
         {messages.map((m, i) => {
           const isMine = m.sender_id === currentUserId;
           const isLastMine = isMine && !messages.slice(i + 1).some((later) => later.sender_id === currentUserId);
           return (
-            <div key={m.id} className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}>
+            <div
+              key={m.id}
+              className={`flex animate-message-in flex-col motion-reduce:animate-none ${isMine ? "items-end" : "items-start"}`}
+              style={{ animationDelay: `${Math.min(i, 10) * 30}ms` }}
+            >
               <div
-                className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
+                className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
                   isMine
-                    ? "bg-brand text-white"
-                    : "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100"
+                    ? "bg-gradient-to-br from-brand to-brand-dark text-white"
+                    : "bg-white text-slate-900 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:ring-slate-700"
                 }`}
               >
                 {m.content}
@@ -156,31 +160,30 @@ export default function ChatThread({
           );
         })}
         {otherTyping && (
-          <div className="flex items-center gap-1 px-1 text-xs text-slate-400 dark:text-slate-500">
-            <span className="flex gap-0.5">
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-current [animation-delay:-0.3s]" />
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-current" />
-            </span>
-            typing…
+          <div className="flex animate-message-in items-start motion-reduce:animate-none">
+            <div className="flex items-center gap-1 rounded-2xl bg-white px-3.5 py-3 text-slate-400 shadow-sm ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-500 dark:ring-slate-700">
+              <span className="typing-dot motion-reduce:animate-none" />
+              <span className="typing-dot motion-reduce:animate-none [animation-delay:0.15s]" />
+              <span className="typing-dot motion-reduce:animate-none [animation-delay:0.3s]" />
+            </div>
           </div>
         )}
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 border-t border-slate-200 pt-3 dark:border-slate-800">
+      <form onSubmit={handleSubmit} className="mt-3 flex gap-2 border-t border-slate-200/70 pt-3 dark:border-slate-800/70">
         <input
           type="text"
           value={draft}
           onChange={(e) => handleDraftChange(e.target.value)}
           maxLength={2000}
           placeholder="Type a message…"
-          className="flex-1 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          className="flex-1 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 transition-colors focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />
         <button
           type="submit"
           disabled={sending || !draft.trim()}
-          className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
+          className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md disabled:pointer-events-none disabled:opacity-50"
         >
           Send
         </button>

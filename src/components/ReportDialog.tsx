@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { fileReport } from "@/app/actions/safety";
 
 const REASONS = [
@@ -48,7 +49,7 @@ export default function ReportDialog({
     });
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4"
       onClick={onClose}
@@ -119,6 +120,7 @@ export default function ReportDialog({
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

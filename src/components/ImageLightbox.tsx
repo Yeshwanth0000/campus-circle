@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 
 export default function ImageLightbox({
@@ -67,7 +68,7 @@ export default function ImageLightbox({
     }
   }
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -150,6 +151,7 @@ export default function ImageLightbox({
           </button>
         </>
       )}
-    </div>
+    </div>,
+    document.body
   );
 }

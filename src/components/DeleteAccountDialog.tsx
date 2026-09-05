@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { deleteAccount } from "@/app/actions/profile";
 import { toast } from "@/lib/toast";
 
@@ -27,7 +28,7 @@ export default function DeleteAccountDialog({ onClose }: { onClose: () => void }
     });
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4"
       onClick={onClose}
@@ -76,6 +77,7 @@ export default function DeleteAccountDialog({ onClose }: { onClose: () => void }
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -102,17 +102,22 @@ export default function ImageLightbox({
       )}
 
       <div
-        className="relative h-[75vh] w-[90vw] max-w-3xl"
+        className="relative h-[75vh] w-[90vw] max-w-3xl animate-lightbox-image-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <Image
-          src={images[index]}
-          alt={`${title} — photo ${index + 1}`}
-          fill
-          sizes="90vw"
-          className="object-contain"
-          priority
-        />
+        {images.map((img, i) => (
+          <Image
+            key={i}
+            src={img}
+            alt={`${title} — photo ${i + 1}`}
+            fill
+            sizes="90vw"
+            className={`object-contain transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+              i === index ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+            priority={i === index}
+          />
+        ))}
       </div>
 
       {images.length > 1 && (

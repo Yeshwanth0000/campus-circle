@@ -24,14 +24,19 @@ export default function ImageGallery({ images, title }: { images: string[]; titl
         aria-label="View full-size photo"
         className="group relative aspect-square w-full cursor-zoom-in overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800"
       >
-        <Image
-          src={images[active]}
-          alt={title}
-          fill
-          sizes="(min-width: 640px) 50vw, 100vw"
-          className="object-cover transition group-hover:scale-105"
-          priority
-        />
+        {images.map((img, i) => (
+          <Image
+            key={i}
+            src={img}
+            alt={title}
+            fill
+            sizes="(min-width: 640px) 50vw, 100vw"
+            className={`object-cover transition-all duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${
+              i === active ? "opacity-100" : "opacity-0"
+            }`}
+            priority={i === 0}
+          />
+        ))}
         <span className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition group-hover:opacity-100">
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="7" />
@@ -52,13 +57,15 @@ export default function ImageGallery({ images, title }: { images: string[]; titl
         <div className="mt-3 grid grid-cols-5 gap-2">
           {images.map((img, i) => (
             <button
-              key={img}
+              key={i}
               type="button"
               onClick={() => setActive(i)}
               aria-label={`View photo ${i + 1} of ${images.length}`}
               aria-current={i === active}
-              className={`relative aspect-square overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800 ring-2 transition ${
-                i === active ? "ring-brand" : "ring-transparent hover:ring-slate-300"
+              className={`relative aspect-square overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800 ring-2 transition-all duration-300 ease-out motion-reduce:transition-none motion-reduce:scale-100 ${
+                i === active
+                  ? "scale-105 opacity-100 ring-brand shadow-sm"
+                  : "scale-100 opacity-70 ring-transparent hover:opacity-100 hover:ring-slate-300"
               }`}
             >
               <Image src={img} alt="" fill className="object-cover" />

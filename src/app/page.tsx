@@ -5,6 +5,7 @@ import HeroSearch from "@/components/HeroSearch";
 import HowItWorksStepper from "@/components/HowItWorksStepper";
 import CategoryExplorer from "@/components/CategoryExplorer";
 import GradientMesh from "@/components/GradientMesh";
+import StatCounter from "@/components/StatCounter";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -17,6 +18,9 @@ export default async function HomePage() {
     .select("id, name, slug")
     .order("name")
     .limit(8);
+
+  const { data: statsRows } = await supabase.rpc("get_homepage_stats");
+  const stats = statsRows?.[0];
 
   const exploreHref = user ? "/browse" : "/signup";
 
@@ -72,6 +76,13 @@ export default async function HomePage() {
                   </>
                 )}
               </div>
+
+              {stats && (
+                <div className="mt-10 flex gap-8 border-t border-slate-200/70 pt-6 dark:border-slate-800/70">
+                  <StatCounter value={stats.active_listings} label="Active listings" />
+                  <StatCounter value={stats.students_joined} label="Students joined" />
+                </div>
+              )}
             </div>
 
             <Reveal delay={150}>

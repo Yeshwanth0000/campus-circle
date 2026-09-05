@@ -15,7 +15,9 @@ export default function ImageLightbox({
   onClose: () => void;
 }) {
   const [index, setIndex] = useState(initialIndex);
+  const [dragY, setDragY] = useState(0);
   const panelRef = useRef<HTMLDivElement>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     panelRef.current?.focus();
@@ -25,8 +27,45 @@ export default function ImageLightbox({
       if (e.key === "ArrowLeft") setIndex((i) => (i - 1 + images.length) % images.length);
     }
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [images.length, onClose]);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (!touchStart.current) return;
+    const t = e.touches[0];
+    const dy = t.clientY - touchStart.current.y;
+    const dx = t.clientX - touchStart.current.x;
+    if (Math.abs(dy) > Math.abs(dx) && dy > 0) setDragY(dy);
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (!touchStart.current) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStart.current.x;
+    const dy = t.clientY - touchStart.current.y;
+    touchStart.current = null;
+
+    if (dy > 100 && Math.abs(dy) > Math.abs(dx)) {
+      onClose();
+      return;
+    }
+    setDragY(0);
+    const SWIPE_THRESHOLD = 50;
+    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) setIndex((i) => (i + 1) % images.length);
+      else setIndex((i) => (i - 1 + images.length) % images.length);
+    }
+  }
 
   return (
     <div
@@ -36,7 +75,14 @@ export default function ImageLightbox({
       ref={panelRef}
       tabIndex={-1}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 outline-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{
+        opacity: dragY ? Math.max(1 - dragY / 300, 0.4) : 1,
+        transform: dragY ? `translateY(${dragY}px)` : undefined,
+      }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 outline-none animate-lightbox-in touch-pan-y"
     >
       <button
         type="button"

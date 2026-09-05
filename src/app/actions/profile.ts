@@ -18,8 +18,8 @@ export async function updateProfile(
     return { error: "You must be logged in." };
   }
 
-  const fullName = String(formData.get("fullName") ?? "").trim();
-  const hostelOrBranch = String(formData.get("hostelOrBranch") ?? "").trim();
+  const fullName = String(formData.get("fullName") ?? "").trim().slice(0, 100);
+  const hostelOrBranch = String(formData.get("hostelOrBranch") ?? "").trim().slice(0, 100);
 
   if (!fullName) {
     return { error: "Name can't be empty." };

@@ -52,6 +52,7 @@ export default function ProfileEditForm({
           name="fullName"
           type="text"
           required
+          maxLength={100}
           defaultValue={fullName}
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
         />
@@ -64,6 +65,7 @@ export default function ProfileEditForm({
           id="hostelOrBranch"
           name="hostelOrBranch"
           type="text"
+          maxLength={100}
           defaultValue={hostelOrBranch}
           placeholder="e.g. CSE, Hostel 12"
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"

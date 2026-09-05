@@ -97,6 +97,7 @@ export default function ReportDialog({
               value={details}
               onChange={(e) => setDetails(e.target.value)}
               rows={3}
+              maxLength={1000}
               className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
             <div className="mt-4 flex gap-2">

@@ -173,6 +173,7 @@ export default function ChatThread({
           type="text"
           value={draft}
           onChange={(e) => handleDraftChange(e.target.value)}
+          maxLength={2000}
           placeholder="Type a message…"
           className="flex-1 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />

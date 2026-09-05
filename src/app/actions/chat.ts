@@ -39,6 +39,8 @@ export async function startConversation(listingId: string, sellerId: string) {
   redirect(`/chat/${created.id}`);
 }
 
+const MESSAGE_MAX_LENGTH = 2000;
+
 export async function sendMessage(
   conversationId: string,
   content: string
@@ -48,12 +50,13 @@ export async function sendMessage(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "You must be logged in." };
-  if (!content.trim()) return { error: null };
+  const trimmed = content.trim().slice(0, MESSAGE_MAX_LENGTH);
+  if (!trimmed) return { error: null };
 
   const { error } = await supabase.from("messages").insert({
     conversation_id: conversationId,
     sender_id: user.id,
-    content: content.trim(),
+    content: trimmed,
   });
 
   if (error) {

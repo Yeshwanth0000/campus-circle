@@ -5,6 +5,9 @@ import { revalidatePath } from "next/cache";
 
 export type SafetyResult = { error: string | null; success?: boolean };
 
+const REASON_MAX_LENGTH = 100;
+const DETAILS_MAX_LENGTH = 1000;
+
 export async function fileReport(input: {
   reason: string;
   details?: string;
@@ -25,8 +28,8 @@ export async function fileReport(input: {
     reporter_id: user.id,
     reported_user_id: input.reportedUserId ?? null,
     reported_listing_id: input.reportedListingId ?? null,
-    reason: input.reason,
-    details: input.details ?? null,
+    reason: input.reason.trim().slice(0, REASON_MAX_LENGTH),
+    details: input.details?.trim().slice(0, DETAILS_MAX_LENGTH) || null,
   });
 
   if (error) return { error: error.message };

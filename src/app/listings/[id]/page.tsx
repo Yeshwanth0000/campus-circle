@@ -106,66 +106,12 @@ export default async function ListingDetailPage({
         <span className="truncate font-medium text-slate-700 dark:text-slate-300">{listing.title}</span>
       </nav>
 
-      <div className="grid gap-8 sm:grid-cols-2">
-        <ImageGallery images={listing.images} title={listing.title} />
-
-        <div>
-          {listing.status === "sold" && (
-            <span className="mb-2 inline-block rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white dark:bg-slate-700">
-              Sold
-            </span>
-          )}
-          {listing.status === "expired" && (
-            <span className="mb-2 inline-block rounded-full bg-slate-500 px-3 py-1 text-xs font-semibold text-white dark:bg-slate-600">
-              Expired — no longer shown in Browse
-            </span>
-          )}
-          <div className="flex items-start justify-between gap-3">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{listing.title}</h1>
-            {!isOwner && (
-              <div className="flex shrink-0 items-center gap-1">
-                <SaveButton listingId={id} initialSaved={!!savedRow} />
-                <SafetyMenu
-                  userId={listing.seller_id}
-                  listingId={id}
-                  initialBlocked={!!blockedRow}
-                />
-              </div>
-            )}
-          </div>
-          <p className="mt-1 text-2xl font-bold text-brand">
-            {Number(listing.price) > 0
-              ? `₹${Number(listing.price).toLocaleString("en-IN")}`
-              : "Free"}
-          </p>
-
-          {isOwner && (
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {listing.view_count === 0
-                ? "No views yet"
-                : `${listing.view_count} view${listing.view_count === 1 ? "" : "s"}`}
-              {saveCount != null && saveCount > 0 && (
-                <> · {saveCount} save{saveCount === 1 ? "" : "s"}</>
-              )}{" "}
-              · only you can see this
-            </p>
-          )}
-
-          <div className="mt-4 flex flex-wrap gap-2 text-xs">
-            {listing.categories?.name && (
-              <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
-                {listing.categories.name}
-              </span>
-            )}
-            {listing.condition && (
-              <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400 capitalize">
-                {listing.condition.replace("-", " ")}
-              </span>
-            )}
-          </div>
+      <div className="grid gap-8 lg:grid-cols-[3fr_2fr]">
+        <div className="space-y-4">
+          <ImageGallery images={listing.images} title={listing.title} />
 
           {listing.description && (
-            <p className="mt-4 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">
+            <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">
               {listing.description}
             </p>
           )}
@@ -178,7 +124,7 @@ export default async function ListingDetailPage({
               .filter((entry) => entry.value);
             if (entries.length === 0) return null;
             return (
-              <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-slate-200 p-3 text-sm dark:border-slate-800">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-slate-200 p-3 text-sm dark:border-slate-800">
                 {entries.map((entry) => (
                   <div key={entry.label}>
                     <dt className="text-xs text-slate-500 dark:text-slate-400">{entry.label}</dt>
@@ -190,7 +136,7 @@ export default async function ListingDetailPage({
           })()}
 
           {listing.meetup_spot && (
-            <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               <span className="font-semibold">Suggested meetup:</span>{" "}
               {listing.meetup_spot}
             </p>
@@ -198,7 +144,7 @@ export default async function ListingDetailPage({
 
           <Link
             href={`/sellers/${listing.seller_id}`}
-            className="mt-4 flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm transition hover:border-brand hover:bg-brand-light/40 dark:border-slate-800"
+            className="flex h-fit items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm transition hover:border-brand hover:bg-brand-light/40 dark:border-slate-800"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-light text-sm font-bold text-brand-dark">
               {(listing.profiles?.full_name ?? "S").charAt(0).toUpperCase()}
@@ -216,58 +162,118 @@ export default async function ListingDetailPage({
               </p>
             </div>
           </Link>
+        </div>
 
-          <div className="mt-6 space-y-2">
-            {isOwner ? (
-              <>
-                {listing.status === "available" && (
-                  <>
-                    <Link
-                      href={`/listings/${id}/edit`}
-                      className="block w-full rounded-md border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                    >
-                      Edit listing
-                    </Link>
-                    <form action={handleMarkAsSold}>
-                      <button
-                        type="submit"
-                        className="w-full rounded-md bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600"
-                      >
-                        Mark as sold
-                      </button>
-                    </form>
-                  </>
-                )}
-                {(listing.status === "sold" || listing.status === "expired") && (
-                  <RelistButton listingId={id} />
-                )}
-                <form action={handleDelete}>
-                  <button
-                    type="submit"
-                    className="w-full rounded-md border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40"
-                  >
-                    Delete listing
-                  </button>
-                </form>
-              </>
-            ) : (
-              listing.status === "available" && (
-                <form action={messageSeller}>
-                  <button
-                    type="submit"
-                    className="w-full rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-brand-dark"
-                  >
-                    Message seller
-                  </button>
-                </form>
-              )
+        <div>
+          <div className="lg:sticky lg:top-24 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-900/60">
+            {listing.status === "sold" && (
+              <span className="mb-2 inline-block rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white dark:bg-slate-700">
+                Sold
+              </span>
             )}
-            <Link
-              href="/browse"
-              className="block text-center text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-            >
-              ← Back to browsing
-            </Link>
+            {listing.status === "expired" && (
+              <span className="mb-2 inline-block rounded-full bg-slate-500 px-3 py-1 text-xs font-semibold text-white dark:bg-slate-600">
+                Expired — no longer shown in Browse
+              </span>
+            )}
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-balance text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                {listing.title}
+              </h1>
+              {!isOwner && (
+                <div className="flex shrink-0 items-center gap-1">
+                  <SaveButton listingId={id} initialSaved={!!savedRow} />
+                  <SafetyMenu
+                    userId={listing.seller_id}
+                    listingId={id}
+                    initialBlocked={!!blockedRow}
+                  />
+                </div>
+              )}
+            </div>
+            <p className="mt-2 text-3xl font-bold text-brand">
+              {Number(listing.price) > 0
+                ? `₹${Number(listing.price).toLocaleString("en-IN")}`
+                : "Free"}
+            </p>
+
+            {isOwner && (
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                {listing.view_count === 0
+                  ? "No views yet"
+                  : `${listing.view_count} view${listing.view_count === 1 ? "" : "s"}`}
+                {saveCount != null && saveCount > 0 && (
+                  <> · {saveCount} save{saveCount === 1 ? "" : "s"}</>
+                )}{" "}
+                · only you can see this
+              </p>
+            )}
+
+            <div className="mt-4 flex flex-wrap gap-2 text-xs">
+              {listing.categories?.name && (
+                <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                  {listing.categories.name}
+                </span>
+              )}
+              {listing.condition && (
+                <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400 capitalize">
+                  {listing.condition.replace("-", " ")}
+                </span>
+              )}
+            </div>
+
+            <div className="mt-6 space-y-2">
+              {isOwner ? (
+                <>
+                  {listing.status === "available" && (
+                    <>
+                      <Link
+                        href={`/listings/${id}/edit`}
+                        className="block w-full rounded-md border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                      >
+                        Edit listing
+                      </Link>
+                      <form action={handleMarkAsSold}>
+                        <button
+                          type="submit"
+                          className="w-full rounded-md bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600"
+                        >
+                          Mark as sold
+                        </button>
+                      </form>
+                    </>
+                  )}
+                  {(listing.status === "sold" || listing.status === "expired") && (
+                    <RelistButton listingId={id} />
+                  )}
+                  <form action={handleDelete}>
+                    <button
+                      type="submit"
+                      className="w-full rounded-md border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40"
+                    >
+                      Delete listing
+                    </button>
+                  </form>
+                </>
+              ) : (
+                listing.status === "available" && (
+                  <form action={messageSeller}>
+                    <button
+                      type="submit"
+                      className="w-full rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md"
+                    >
+                      Message seller
+                    </button>
+                  </form>
+                )
+              )}
+              <Link
+                href="/browse"
+                className="block text-center text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              >
+                ← Back to browsing
+              </Link>
+            </div>
           </div>
         </div>
       </div>

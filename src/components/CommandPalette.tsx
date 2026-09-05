@@ -138,7 +138,7 @@ export default function CommandPalette({ categories }: { categories: Category[] 
 
       {open && (
         <div
-          className="fixed inset-0 z-[100] flex items-start justify-center bg-slate-950/50 px-4 pt-[12vh] backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-start justify-center bg-slate-950/75 px-4 pt-[12vh] backdrop-blur-sm"
           style={{ animation: "palette-backdrop-in 0.15s ease-out" }}
           onClick={close}
         >
@@ -146,7 +146,7 @@ export default function CommandPalette({ categories }: { categories: Category[] 
             role="dialog"
             aria-modal="true"
             aria-label="Search"
-            className="w-full max-w-xl overflow-hidden rounded-2xl border border-slate-200/70 bg-white/95 shadow-2xl shadow-slate-900/25 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/95"
+            className="w-full max-w-xl overflow-hidden rounded-2xl border border-slate-200/70 bg-white/98 shadow-2xl shadow-slate-900/25 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/98"
             style={{ animation: "palette-panel-in 0.18s var(--ease-premium)" }}
             onClick={(e) => e.stopPropagation()}
           >

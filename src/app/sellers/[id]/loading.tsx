@@ -2,7 +2,7 @@ import Skeleton from "@/components/Skeleton";
 
 export default function SellerProfileLoading() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-6xl animate-skeleton-in px-4 py-8">
       <div className="flex items-center gap-4 rounded-xl border border-slate-200 p-6 dark:border-slate-800">
         <Skeleton className="h-14 w-14 shrink-0 rounded-full" />
         <div className="space-y-2">

@@ -2,7 +2,7 @@ import Skeleton from "@/components/Skeleton";
 
 export default function ChatListLoading() {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
+    <div className="mx-auto max-w-2xl animate-skeleton-in px-4 py-8">
       <Skeleton className="h-8 w-32" />
       <div className="mt-6 divide-y divide-slate-200 rounded-xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
         {Array.from({ length: 4 }).map((_, i) => (

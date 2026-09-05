@@ -73,6 +73,38 @@ button:not(:disabled):active {
   }
 }
 
+/* Skeleton shimmer — a soft highlight sweeps across every loading
+   placeholder instead of Tailwind's flat opacity pulse, and the whole
+   skeleton fades in on mount so it doesn't just pop into place. */
+.skeleton-shimmer {
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 150% 0; }
+  to { background-position: -150% 0; }
+}
+
+.animate-skeleton-in {
+  animation: message-in 0.3s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none;
+  }
+  .animate-skeleton-in {
+    animation: none;
+  }
+}
+
 /* Gradient mesh hero background — flowing, blurred color fields drifting
    slowly behind the hero copy, with a faint grain layer on top so it never
    reads as a flat, banded gradient. */

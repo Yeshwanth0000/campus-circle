@@ -2,7 +2,7 @@ import Skeleton from "@/components/Skeleton";
 
 export default function BrowseLoading() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
+    <div className="mx-auto max-w-6xl animate-skeleton-in px-4 py-6">
       <Skeleton className="mb-4 h-4 w-24" />
 
       <div className="mb-6 flex gap-3 overflow-x-auto pb-2">

@@ -2,7 +2,7 @@ import Skeleton from "@/components/Skeleton";
 
 export default function SavedLoading() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-6xl animate-skeleton-in px-4 py-8">
       <Skeleton className="h-8 w-36" />
       <Skeleton className="mt-2 h-4 w-64" />
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

@@ -52,6 +52,10 @@ export default function CommandPalette({ categories }: { categories: Category[] 
     if (!open) return;
     announceOverlayOpen(OVERLAY_ID);
     setRecent(getRecentSearches());
+    // Focus immediately rather than only via requestAnimationFrame — some
+    // environments never fire that callback, which left the dialog open
+    // but the input unfocused, so typing right after opening did nothing.
+    inputRef.current?.focus();
     const id = requestAnimationFrame(() => inputRef.current?.focus());
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";

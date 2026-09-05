@@ -7,6 +7,7 @@ import ThemeToggle from "./ThemeToggle";
 import BottomNav from "./BottomNav";
 import NotificationBell from "./NotificationBell";
 import FloatingHeaderShell from "./FloatingHeaderShell";
+import type { NotificationLike } from "@/lib/notificationDisplay";
 
 export default async function Header() {
   const supabase = await createClient();
@@ -22,6 +23,7 @@ export default async function Header() {
   let collegeName: string | null = null;
   let hasUnread = false;
   let unreadNotificationCount = 0;
+  let recentNotifications: NotificationLike[] = [];
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -49,6 +51,14 @@ export default async function Header() {
       .eq("recipient_id", user.id)
       .is("read_at", null);
     unreadNotificationCount = notifCount ?? 0;
+
+    const { data: notifRows } = await supabase
+      .from("notifications")
+      .select("id, type, payload, read_at, created_at")
+      .eq("recipient_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(6);
+    recentNotifications = notifRows ?? [];
   }
 
   return (
@@ -71,7 +81,12 @@ export default async function Header() {
           )}
 
           <div className="ml-auto flex items-center gap-1">
-            {user && <NotificationBell unreadCount={unreadNotificationCount} />}
+            {user && (
+              <NotificationBell
+                unreadCount={unreadNotificationCount}
+                recentNotifications={recentNotifications}
+              />
+            )}
             <ThemeToggle />
             <HeaderNav isLoggedIn={!!user} hasUnread={hasUnread} />
           </div>

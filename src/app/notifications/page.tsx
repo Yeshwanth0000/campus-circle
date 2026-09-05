@@ -21,6 +21,11 @@ export default async function NotificationsPage() {
 
   const hasUnread = notifications?.some((n) => !n.read_at) ?? false;
 
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const todayNotifications = notifications?.filter((n) => new Date(n.created_at) >= startOfToday) ?? [];
+  const earlierNotifications = notifications?.filter((n) => new Date(n.created_at) < startOfToday) ?? [];
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <div className="flex items-center justify-between">
@@ -29,11 +34,32 @@ export default async function NotificationsPage() {
       </div>
 
       {notifications && notifications.length > 0 ? (
-        <ul className="mt-6 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white dark:divide-slate-800 dark:border-slate-800 dark:bg-slate-900">
-          {notifications.map((n) => (
-            <NotificationRow key={n.id} notification={n} />
-          ))}
-        </ul>
+        <div className="mt-6 space-y-6">
+          {todayNotifications.length > 0 && (
+            <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 shadow-sm backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-900/60">
+              <p className="border-b border-slate-100/70 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:border-slate-800/70 dark:text-slate-500">
+                Today
+              </p>
+              <ul className="divide-y divide-slate-100/70 dark:divide-slate-800/70">
+                {todayNotifications.map((n, i) => (
+                  <NotificationRow key={n.id} notification={n} index={i} />
+                ))}
+              </ul>
+            </div>
+          )}
+          {earlierNotifications.length > 0 && (
+            <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 shadow-sm backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-900/60">
+              <p className="border-b border-slate-100/70 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:border-slate-800/70 dark:text-slate-500">
+                Earlier
+              </p>
+              <ul className="divide-y divide-slate-100/70 dark:divide-slate-800/70">
+                {earlierNotifications.map((n, i) => (
+                  <NotificationRow key={n.id} notification={n} index={todayNotifications.length + i} />
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       ) : (
         <EmptyState
           icon={

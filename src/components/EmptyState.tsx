@@ -15,7 +15,7 @@ export default function EmptyState({
   actionLabel?: string;
 }) {
   return (
-    <div className="mt-6 flex flex-col items-center rounded-xl border border-dashed border-slate-300 px-6 py-16 text-center dark:border-slate-700">
+    <div className="mt-6 flex animate-message-in flex-col items-center rounded-2xl border border-dashed border-slate-300 bg-white/50 px-6 py-16 text-center backdrop-blur-sm motion-reduce:animate-none dark:border-slate-700 dark:bg-slate-900/40">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-light text-brand-dark dark:bg-slate-800 dark:text-slate-500">
         {icon}
       </div>

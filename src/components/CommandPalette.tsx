@@ -147,7 +147,7 @@ export default function CommandPalette({ categories }: { categories: Category[] 
             aria-modal="true"
             aria-label="Search"
             className="w-full max-w-xl overflow-hidden rounded-2xl border border-slate-200/70 bg-white/95 shadow-2xl shadow-slate-900/25 backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/95"
-            style={{ animation: "palette-panel-in 0.18s cubic-bezier(0.16,1,0.3,1)" }}
+            style={{ animation: "palette-panel-in 0.18s var(--ease-premium)" }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3.5 dark:border-slate-800">

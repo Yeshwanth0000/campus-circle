@@ -45,7 +45,8 @@ export default async function ListingDetailPage({
   const { count: sellerListingsCount } = await supabase
     .from("listings")
     .select("id", { count: "exact", head: true })
-    .eq("seller_id", listing.seller_id);
+    .eq("seller_id", listing.seller_id)
+    .eq("status", "available");
 
   const { data: saveCount } = isOwner
     ? await supabase.rpc("get_listing_save_count", { p_listing_id: id })

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
 import RecentlyViewed from "@/components/RecentlyViewed";
+import SaveSearchButton from "@/components/SaveSearchButton";
 import { categoryIcon } from "@/lib/categoryIcons";
 
 type SearchParams = Promise<{
@@ -307,11 +308,21 @@ export default async function BrowsePage({
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Showing {listings?.length ?? 0} result{listings?.length === 1 ? "" : "s"}
             </p>
-            <div className="flex items-center gap-2 text-sm">
-              <label htmlFor="sort" className="text-slate-500 dark:text-slate-400">
-                Sort by
-              </label>
-              <SortSelect current={sort} buildUrl={buildUrl} />
+            <div className="flex items-center gap-3">
+              {hasAnyFilter && (
+                <SaveSearchButton
+                  query={q}
+                  categoryId={activeCategory?.id}
+                  condition={condition}
+                  posted={posted}
+                />
+              )}
+              <div className="flex items-center gap-2 text-sm">
+                <label htmlFor="sort" className="text-slate-500 dark:text-slate-400">
+                  Sort by
+                </label>
+                <SortSelect current={sort} buildUrl={buildUrl} />
+              </div>
             </div>
           </div>
 

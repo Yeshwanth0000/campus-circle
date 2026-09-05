@@ -145,6 +145,7 @@ export default async function BrowsePage({
       <div className="mb-6 flex gap-3 overflow-x-auto pb-2">
         <Link
           href={buildUrl({ category: undefined })}
+          aria-current={!category ? "true" : undefined}
           className={`flex shrink-0 flex-col items-center gap-1.5 rounded-xl border px-4 py-3 text-center transition ${
             !category
               ? "border-brand bg-brand-light"
@@ -158,6 +159,7 @@ export default async function BrowsePage({
           <Link
             key={c.id}
             href={buildUrl({ category: c.slug })}
+            aria-current={category === c.slug ? "true" : undefined}
             className={`flex shrink-0 flex-col items-center gap-1.5 rounded-xl border px-4 py-3 text-center transition ${
               category === c.slug
                 ? "border-brand bg-brand-light"
@@ -223,6 +225,7 @@ export default async function BrowsePage({
                 <Link
                   key={c.value}
                   href={buildUrl({ condition: condition === c.value ? undefined : c.value })}
+                  aria-current={condition === c.value ? "true" : undefined}
                   className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
                     condition === c.value
                       ? "border-brand bg-brand-light text-brand-dark"
@@ -242,6 +245,7 @@ export default async function BrowsePage({
                 <Link
                   key={p.value}
                   href={buildUrl({ posted: posted === p.value ? undefined : p.value })}
+                  aria-current={posted === p.value ? "true" : undefined}
                   className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
                     posted === p.value
                       ? "border-brand bg-brand-light text-brand-dark"
@@ -269,6 +273,7 @@ export default async function BrowsePage({
               <li>
                 <Link
                   href={buildUrl({ category: undefined })}
+                  aria-current={!category ? "true" : undefined}
                   className={`block rounded-md px-2 py-1.5 ${
                     !category
                       ? "bg-brand-light font-semibold text-brand-dark"
@@ -282,6 +287,7 @@ export default async function BrowsePage({
                 <li key={c.id}>
                   <Link
                     href={buildUrl({ category: c.slug })}
+                    aria-current={category === c.slug ? "true" : undefined}
                     className={`block rounded-md px-2 py-1.5 ${
                       category === c.slug
                         ? "bg-brand-light font-semibold text-brand-dark"
@@ -365,6 +371,7 @@ function SortSelect({
         <Link
           key={opt.value}
           href={buildUrl({ sort: opt.value })}
+          aria-current={current === opt.value ? "true" : undefined}
           className={`rounded-md px-2.5 py-1.5 text-xs font-medium ${
             current === opt.value
               ? "bg-brand text-white"

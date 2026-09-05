@@ -138,7 +138,7 @@ export default function CommandPalette({ categories }: { categories: Category[] 
 
       {open && (
         <div
-          className="fixed inset-0 z-[100] flex items-start justify-center bg-slate-950/60 px-4 pt-[12vh] backdrop-blur-md"
+          className="fixed -inset-8 z-[100] flex items-start justify-center bg-slate-950/60 px-4 pt-[calc(12vh+2rem)] backdrop-blur-md"
           style={{ animation: "palette-backdrop-in 0.15s ease-out" }}
           onClick={close}
         >

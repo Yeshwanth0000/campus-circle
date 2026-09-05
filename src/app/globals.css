@@ -129,6 +129,16 @@ body {
   }
 }
 
+/* Confident, fluid display type for section headlines — scales smoothly
+   between mobile and desktop instead of jumping at breakpoints. */
+.display-heading {
+  font-size: clamp(2.75rem, 1.6rem + 4.5vw, 4.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
 @keyframes toast-in {
   from { transform: translateY(8px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }

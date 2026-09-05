@@ -31,12 +31,14 @@ export default async function HomePage() {
               <span className="inline-block rounded-full bg-brand-light px-3 py-1 text-xs font-semibold text-brand-dark">
                 Built for your campus, verified by your college email
               </span>
-              <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-5xl">
+              <h1 className="display-heading mt-5 text-slate-900 dark:text-slate-100">
                 Buy and sell,
                 <br />
-                <span className="text-brand">campus to campus.</span>
+                <span className="bg-gradient-to-r from-brand via-brand to-accent bg-clip-text text-transparent">
+                  campus to campus.
+                </span>
               </h1>
-              <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
+              <p className="mt-6 max-w-md text-lg text-slate-600 dark:text-slate-400">
                 CampusCircle connects you with students on your own campus —
                 textbooks, gadgets, cycles, and hostel essentials, traded
                 directly with people you can actually trust. Every community is

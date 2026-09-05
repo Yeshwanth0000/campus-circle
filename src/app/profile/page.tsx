@@ -52,8 +52,13 @@ export default async function ProfilePage() {
         </div>
 
         <div className="px-6 pb-6">
-          <div className="-mt-10 flex items-end gap-4 sm:-mt-12">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-brand-light text-2xl font-bold text-brand-dark shadow-sm dark:border-slate-900 sm:h-24 sm:w-24">
+          {/* Only the avatar carries the negative margin so it overlaps the
+              banner as intended — if the name/email text shared that margin
+              too (as a single offset row), its own height pushed it up far
+              enough to clip into the banner on mobile, where the shorter
+              banner leaves less clearance. */}
+          <div className="flex items-end gap-4">
+            <div className="-mt-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-brand-light text-2xl font-bold text-brand-dark shadow-sm dark:border-slate-900 sm:-mt-12 sm:h-24 sm:w-24">
               {(profile?.full_name ?? "S").charAt(0).toUpperCase()}
             </div>
             <div className="pb-1">

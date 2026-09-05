@@ -6,6 +6,7 @@ import HowItWorksStepper from "@/components/HowItWorksStepper";
 import CategoryExplorer from "@/components/CategoryExplorer";
 import GradientMesh from "@/components/GradientMesh";
 import StatCounter from "@/components/StatCounter";
+import CategoryMarquee from "@/components/CategoryMarquee";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -90,6 +91,12 @@ export default async function HomePage() {
             </Reveal>
           </div>
         </div>
+
+        {categories && categories.length > 0 && (
+          <div className="relative border-t border-slate-200/70 py-6 dark:border-slate-800/70">
+            <CategoryMarquee categories={categories} />
+          </div>
+        )}
       </section>
 
       {categories && categories.length > 0 && (

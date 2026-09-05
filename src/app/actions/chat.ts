@@ -82,4 +82,15 @@ export async function markConversationRead(conversationId: string) {
     .eq("conversation_id", conversationId)
     .neq("sender_id", user.id)
     .is("read_at", null);
+
+  // Opening the conversation a "new message" notification points to should
+  // clear that notification too — otherwise the bell badge stays stuck on
+  // unread even after the message has actually been read here.
+  await supabase
+    .from("notifications")
+    .update({ read_at: new Date().toISOString() })
+    .eq("recipient_id", user.id)
+    .eq("type", "new_message")
+    .eq("payload->>conversation_id", conversationId)
+    .is("read_at", null);
 }

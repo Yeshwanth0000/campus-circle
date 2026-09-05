@@ -239,6 +239,26 @@ body {
   }
 }
 
+/* Page-transition system — the routed content fades and slides up
+   slightly whenever the pathname changes, giving navigation between
+   pages a soft handoff instead of an instant swap. Keyed by pathname
+   (not search params), so filter/sort changes on the same page don't
+   retrigger it. */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-page-in {
+  animation: page-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-in {
+    animation: none;
+  }
+}
+
 /* Command palette (Cmd/Ctrl+K) entrance — backdrop fades in while the panel
    scales up from a slightly lower, smaller resting point. */
 @keyframes palette-backdrop-in {

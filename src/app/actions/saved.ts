@@ -24,5 +24,6 @@ export async function toggleSaved(listingId: string, currentlySaved: boolean) {
 
   revalidatePath("/browse");
   revalidatePath("/saved");
+  revalidatePath("/profile");
   revalidatePath(`/listings/${listingId}`);
 }

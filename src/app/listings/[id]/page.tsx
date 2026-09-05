@@ -47,6 +47,10 @@ export default async function ListingDetailPage({
     .select("id", { count: "exact", head: true })
     .eq("seller_id", listing.seller_id);
 
+  const { data: saveCount } = isOwner
+    ? await supabase.rpc("get_listing_save_count", { p_listing_id: id })
+    : { data: null };
+
   const { data: blockedRow } = await supabase
     .from("blocked_users")
     .select("id")
@@ -139,7 +143,10 @@ export default async function ListingDetailPage({
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               {listing.view_count === 0
                 ? "No views yet"
-                : `${listing.view_count} view${listing.view_count === 1 ? "" : "s"}`}{" "}
+                : `${listing.view_count} view${listing.view_count === 1 ? "" : "s"}`}
+              {saveCount != null && saveCount > 0 && (
+                <> · {saveCount} save{saveCount === 1 ? "" : "s"}</>
+              )}{" "}
               · only you can see this
             </p>
           )}

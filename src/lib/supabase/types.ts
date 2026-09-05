@@ -466,6 +466,10 @@ export type Database = {
     Functions: {
       delete_own_account: { Args: never; Returns: undefined }
       expire_stale_listings: { Args: never; Returns: undefined }
+      get_listing_save_count: {
+        Args: { p_listing_id: string }
+        Returns: number
+      }
       increment_listing_view: {
         Args: { p_listing_id: string }
         Returns: undefined

@@ -63,6 +63,44 @@ export default function NotificationRow({ notification }: { notification: Notifi
     );
   }
 
+  if (notification.type === "listing_status") {
+    const statusLabel = payload.status === "sold" ? "marked as sold" : "expired";
+    return (
+      <li>
+        <Link
+          href={`/listings/${payload.listing_id}`}
+          onClick={() => {
+            if (isUnread) markNotificationRead(notification.id);
+          }}
+          className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
+        >
+          <span
+            className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
+              isUnread ? "bg-rose-500" : "bg-transparent"
+            }`}
+          />
+          <div className="min-w-0 flex-1">
+            <p
+              className={`text-sm ${
+                isUnread
+                  ? "font-semibold text-slate-900 dark:text-slate-100"
+                  : "text-slate-700 dark:text-slate-300"
+              }`}
+            >
+              A listing you saved was {statusLabel}
+            </p>
+            <p className="mt-0.5 truncate text-sm text-slate-500 dark:text-slate-400">
+              {payload.title}
+            </p>
+          </div>
+          <span className="shrink-0 whitespace-nowrap text-xs text-slate-400 dark:text-slate-500">
+            {timeAgo(notification.created_at)}
+          </span>
+        </Link>
+      </li>
+    );
+  }
+
   return (
     <li className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
       New notification

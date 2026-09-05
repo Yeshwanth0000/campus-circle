@@ -5,6 +5,7 @@ import HeaderSearch from "./HeaderSearch";
 import ThemeToggle from "./ThemeToggle";
 import BottomNav from "./BottomNav";
 import NotificationBell from "./NotificationBell";
+import FloatingHeaderShell from "./FloatingHeaderShell";
 
 export default async function Header() {
   const supabase = await createClient();
@@ -45,37 +46,39 @@ export default async function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
-        <Link href="/" className="flex shrink-0 items-baseline gap-2">
-          <span className="text-xl font-bold text-brand">CampusCircle</span>
-          {collegeName && (
-            <span className="hidden text-xs font-medium text-slate-500 dark:text-slate-400 md:inline">
-              {collegeName}
-            </span>
+    <>
+      <FloatingHeaderShell>
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+          <Link href="/" className="flex shrink-0 items-baseline gap-2">
+            <span className="text-xl font-bold text-brand">CampusCircle</span>
+            {collegeName && (
+              <span className="hidden text-xs font-medium text-slate-500 dark:text-slate-400 md:inline">
+                {collegeName}
+              </span>
+            )}
+          </Link>
+
+          {user && (
+            <div className="hidden flex-1 sm:block">
+              <HeaderSearch />
+            </div>
           )}
-        </Link>
+
+          <div className="ml-auto flex items-center gap-1">
+            {user && <NotificationBell unreadCount={unreadNotificationCount} />}
+            <ThemeToggle />
+            <HeaderNav isLoggedIn={!!user} hasUnread={hasUnread} />
+          </div>
+        </div>
 
         {user && (
-          <div className="hidden flex-1 sm:block">
+          <div className="border-t border-slate-100/70 px-4 py-2 dark:border-slate-800/70 sm:hidden">
             <HeaderSearch />
           </div>
         )}
-
-        <div className="ml-auto flex items-center gap-1">
-          {user && <NotificationBell unreadCount={unreadNotificationCount} />}
-          <ThemeToggle />
-          <HeaderNav isLoggedIn={!!user} hasUnread={hasUnread} />
-        </div>
-      </div>
-
-      {user && (
-        <div className="border-t border-slate-100 px-4 py-2 dark:border-slate-800 sm:hidden">
-          <HeaderSearch />
-        </div>
-      )}
+      </FloatingHeaderShell>
 
       {user && <BottomNav hasUnread={hasUnread} />}
-    </header>
+    </>
   );
 }

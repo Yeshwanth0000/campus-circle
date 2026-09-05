@@ -80,7 +80,7 @@ export default function NotificationBell({
           <div
             role="dialog"
             aria-label="Notifications"
-            className="absolute right-0 top-full z-50 mt-2 w-80 origin-top-right animate-notif-panel-in overflow-hidden rounded-2xl border border-slate-200/70 bg-white/90 shadow-xl shadow-slate-900/10 backdrop-blur-xl motion-reduce:animate-none dark:border-slate-800/70 dark:bg-slate-900/90"
+            className="fixed left-4 right-4 top-16 z-50 origin-top animate-notif-panel-in overflow-hidden rounded-2xl border border-slate-200/70 bg-white/90 shadow-xl shadow-slate-900/10 backdrop-blur-xl motion-reduce:animate-none dark:border-slate-800/70 dark:bg-slate-900/90 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 sm:origin-top-right"
           >
             <div className="flex items-center justify-between border-b border-slate-100/70 px-4 py-3 dark:border-slate-800/70">
               <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</span>

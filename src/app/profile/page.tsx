@@ -6,6 +6,7 @@ import ProfileEditForm from "./ProfileEditForm";
 import UnblockButton from "@/components/UnblockButton";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 import ExportDataButton from "@/components/ExportDataButton";
+import StatCounter from "@/components/StatCounter";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -16,7 +17,7 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, hostel_or_branch, colleges(name)")
+    .select("full_name, hostel_or_branch, created_at, colleges(name)")
     .eq("id", user.id)
     .single();
 
@@ -31,21 +32,55 @@ export default async function ProfilePage() {
     .select("blocked_id, profiles!blocked_users_blocked_id_fkey(full_name)")
     .eq("blocker_id", user.id);
 
+  const { count: savedCount } = await supabase
+    .from("saved_listings")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+
+  const totalListings = myListings?.length ?? 0;
+  const activeListings = myListings?.filter((l) => l.status === "available").length ?? 0;
+  const soldListings = myListings?.filter((l) => l.status === "sold").length ?? 0;
+  const memberSince = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString("en-IN", { month: "short", year: "numeric" })
+    : null;
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          {profile?.full_name ?? "Your profile"}
-        </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{user.email}</p>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          {profile?.colleges?.name} community
-          {profile?.hostel_or_branch ? ` · ${profile.hostel_or_branch}` : ""}
-        </p>
-        <ProfileEditForm
-          fullName={profile?.full_name ?? ""}
-          hostelOrBranch={profile?.hostel_or_branch ?? ""}
-        />
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="relative h-28 overflow-hidden bg-gradient-to-br from-brand via-accent to-[var(--mesh-violet)] sm:h-36">
+          <div className="mesh-grain absolute inset-0" />
+        </div>
+
+        <div className="px-6 pb-6">
+          <div className="-mt-10 flex items-end gap-4 sm:-mt-12">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-brand-light text-2xl font-bold text-brand-dark shadow-sm dark:border-slate-900 sm:h-24 sm:w-24">
+              {(profile?.full_name ?? "S").charAt(0).toUpperCase()}
+            </div>
+            <div className="pb-1">
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                {profile?.full_name ?? "Your profile"}
+              </h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{user.email}</p>
+            </div>
+          </div>
+
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+            {profile?.colleges?.name} community
+            {profile?.hostel_or_branch ? ` · ${profile.hostel_or_branch}` : ""}
+            {memberSince ? ` · Member since ${memberSince}` : ""}
+          </p>
+          <ProfileEditForm
+            fullName={profile?.full_name ?? ""}
+            hostelOrBranch={profile?.hostel_or_branch ?? ""}
+          />
+
+          <div className="mt-6 grid grid-cols-2 gap-6 border-t border-slate-200/70 pt-5 dark:border-slate-800/70 sm:grid-cols-4">
+            <StatCounter value={totalListings} label="Listings" />
+            <StatCounter value={activeListings} label="Active" />
+            <StatCounter value={soldListings} label="Sold" />
+            <StatCounter value={savedCount ?? 0} label="Saved" />
+          </div>
+        </div>
       </div>
 
       <div className="mt-8 flex items-center justify-between">

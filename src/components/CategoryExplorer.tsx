@@ -7,9 +7,11 @@ import { categoryIcon } from "@/lib/categoryIcons";
 export default function CategoryExplorer({
   categories,
   href,
+  perCategory = false,
 }: {
   categories: { id: string; name: string; slug: string }[];
   href: string;
+  perCategory?: boolean;
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -18,7 +20,7 @@ export default function CategoryExplorer({
       {categories.map((c) => (
         <Link
           key={c.id}
-          href={href}
+          href={perCategory ? `${href}?category=${c.slug}` : href}
           onMouseEnter={() => setHovered(c.id)}
           onMouseLeave={() => setHovered(null)}
           className="group flex flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white p-5 text-center transition-all duration-200 hover:-translate-y-1 hover:border-brand hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"

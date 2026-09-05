@@ -111,7 +111,7 @@ export default async function HomePage() {
               </p>
             </Reveal>
             <Reveal delay={100} className="mt-8">
-              <CategoryExplorer categories={categories} href={exploreHref} />
+              <CategoryExplorer categories={categories} href={exploreHref} perCategory={!!user} />
             </Reveal>
           </div>
         </section>

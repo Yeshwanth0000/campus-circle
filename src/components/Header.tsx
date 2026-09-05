@@ -4,6 +4,7 @@ import HeaderNav from "./HeaderNav";
 import HeaderSearch from "./HeaderSearch";
 import ThemeToggle from "./ThemeToggle";
 import BottomNav from "./BottomNav";
+import NotificationBell from "./NotificationBell";
 
 export default async function Header() {
   const supabase = await createClient();
@@ -13,6 +14,7 @@ export default async function Header() {
 
   let collegeName: string | null = null;
   let hasUnread = false;
+  let unreadNotificationCount = 0;
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -33,6 +35,13 @@ export default async function Header() {
         foreignTable: "conversations",
       });
     hasUnread = (count ?? 0) > 0;
+
+    const { count: notifCount } = await supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("recipient_id", user.id)
+      .is("read_at", null);
+    unreadNotificationCount = notifCount ?? 0;
   }
 
   return (
@@ -54,6 +63,7 @@ export default async function Header() {
         )}
 
         <div className="ml-auto flex items-center gap-1">
+          {user && <NotificationBell unreadCount={unreadNotificationCount} />}
           <ThemeToggle />
           <HeaderNav isLoggedIn={!!user} hasUnread={hasUnread} />
         </div>

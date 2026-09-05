@@ -2,8 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { categoryIcon } from "@/lib/categoryIcons";
 import { addRecentSearch, clearRecentSearches, getRecentSearches } from "@/lib/recentSearches";
+import { announceOverlayOpen, onOtherOverlayOpen } from "@/lib/overlayBus";
+
+const OVERLAY_ID = "search";
 
 type Category = { id: string; name: string; slug: string };
 
@@ -46,15 +50,23 @@ export default function CommandPalette({ categories }: { categories: Category[] 
 
   useEffect(() => {
     if (!open) return;
+    announceOverlayOpen(OVERLAY_ID);
     setRecent(getRecentSearches());
     const id = requestAnimationFrame(() => inputRef.current?.focus());
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") close();
+    }
+    window.addEventListener("keydown", onKeyDown);
     return () => {
       cancelAnimationFrame(id);
       document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
     };
-  }, [open]);
+  }, [open, close]);
+
+  useEffect(() => onOtherOverlayOpen(OVERLAY_ID, close), [close]);
 
   const trimmed = query.trim();
 
@@ -136,12 +148,13 @@ export default function CommandPalette({ categories }: { categories: Category[] 
         </kbd>
       </button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-[100] flex items-start justify-center bg-slate-950/80 px-4 pt-[12vh]"
-          style={{ animation: "palette-backdrop-in 0.15s ease-out" }}
-          onClick={close}
-        >
+      {open &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[100] flex items-start justify-center bg-slate-950/80 px-4 pt-[12vh]"
+            style={{ animation: "palette-backdrop-in 0.15s ease-out" }}
+            onClick={close}
+          >
           <div
             role="dialog"
             aria-modal="true"
@@ -259,8 +272,9 @@ export default function CommandPalette({ categories }: { categories: Category[] 
               </span>
             </div>
           </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }

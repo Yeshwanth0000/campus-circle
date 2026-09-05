@@ -2,8 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { markNotificationRead, markAllNotificationsRead } from "@/app/actions/notifications";
 import { describeNotification, timeAgo, type NotificationLike } from "@/lib/notificationDisplay";
+import { announceOverlayOpen, onOtherOverlayOpen } from "@/lib/overlayBus";
+
+const OVERLAY_ID = "notifications";
 
 export default function NotificationBell({
   unreadCount,
@@ -19,12 +23,15 @@ export default function NotificationBell({
 
   useEffect(() => {
     if (!open) return;
+    announceOverlayOpen(OVERLAY_ID);
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
+
+  useEffect(() => onOtherOverlayOpen(OVERLAY_ID, () => setOpen(false)), []);
 
   function handleItemClick(n: NotificationLike) {
     if (!n.read_at) {
@@ -66,7 +73,10 @@ export default function NotificationBell({
 
       {open && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
+          {createPortal(
+            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />,
+            document.body
+          )}
           <div
             role="dialog"
             aria-label="Notifications"

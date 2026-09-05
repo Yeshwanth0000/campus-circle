@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { signUp, type AuthResult } from "@/app/actions/auth";
 import SubmitButton from "@/components/SubmitButton";
@@ -16,6 +16,20 @@ const STEPS = [
 
 export default function SignupPage() {
   const [state, formAction] = useActionState(signUp, initialState);
+  // Controlled so a rejected submission (e.g. "Passwords don't match")
+  // doesn't wipe what the user already typed — React resets uncontrolled
+  // fields after every form action runs, success or failure.
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const termsRef = useRef<HTMLInputElement>(null);
+
+  // React's own form-reset-after-action doesn't reliably respect a
+  // checkbox's `checked` prop the way it does `value` on text inputs, so
+  // re-assert it imperatively after every action result comes back.
+  useEffect(() => {
+    if (termsRef.current) termsRef.current.checked = termsAccepted;
+  }, [state, termsAccepted]);
 
   return (
     <AuthLayout steps={STEPS}>
@@ -37,6 +51,8 @@ export default function SignupPage() {
             name="fullName"
             type="text"
             required
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
             className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-all duration-200 hover:border-slate-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-600"
           />
         </div>
@@ -50,6 +66,8 @@ export default function SignupPage() {
             type="email"
             required
             placeholder="you@your-college.ac.in"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-all duration-200 hover:border-slate-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-600"
           />
         </div>
@@ -85,9 +103,12 @@ export default function SignupPage() {
 
         <label className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
           <input
+            ref={termsRef}
             type="checkbox"
             name="termsAccepted"
             required
+            checked={termsAccepted}
+            onChange={(e) => setTermsAccepted(e.target.checked)}
             className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-brand focus:ring-brand dark:border-slate-700"
           />
           <span>

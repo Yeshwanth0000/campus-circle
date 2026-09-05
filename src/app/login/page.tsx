@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { signIn, type AuthResult } from "@/app/actions/auth";
@@ -19,6 +19,9 @@ const STEPS = [
 export default function LoginPage() {
   const [state, formAction] = useActionState(signIn, initialState);
   const searchParams = useSearchParams();
+  // Controlled so a failed login (wrong password) doesn't also wipe the
+  // email the user already typed — see the same fix on the signup form.
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     if (searchParams.get("reason") === "inactivity") {
@@ -43,6 +46,8 @@ export default function LoginPage() {
             name="email"
             type="email"
             required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-all duration-200 hover:border-slate-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-600"
           />
         </div>

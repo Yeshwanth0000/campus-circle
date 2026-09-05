@@ -24,6 +24,16 @@ export default function Reveal({
     const el = ref.current;
     if (!el || reducedMotion) return;
 
+    // Some environments never fire the observer's callback even once the
+    // element is already on screen at mount (e.g. above-the-fold grid
+    // items) — check synchronously first so content can't get stuck
+    // invisible waiting on a crossing event that never happens.
+    const rect = el.getBoundingClientRect();
+    if (rect.height > 0 && rect.top < window.innerHeight && rect.bottom > 0) {
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -34,7 +44,24 @@ export default function Reveal({
       { threshold: 0.15 }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+
+    function onScroll() {
+      const r = el!.getBoundingClientRect();
+      if (r.height > 0 && r.top < window.innerHeight * 0.9 && r.bottom > 0) {
+        setVisible(true);
+        observer.disconnect();
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [reducedMotion]);
 
   if (reducedMotion) {

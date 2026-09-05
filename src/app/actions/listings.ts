@@ -193,7 +193,9 @@ export async function relistListing(listingId: string): Promise<ListingResult> {
 
   const { data: original } = await supabase
     .from("listings")
-    .select("title, description, price, category_id, condition, meetup_spot, images, seller_id, college_id")
+    .select(
+      "title, description, price, category_id, condition, meetup_spot, images, seller_id, college_id, custom_fields"
+    )
     .eq("id", listingId)
     .single();
 
@@ -216,6 +218,7 @@ export async function relistListing(listingId: string): Promise<ListingResult> {
       condition: original.condition,
       meetup_spot: original.meetup_spot,
       images: original.images,
+      custom_fields: original.custom_fields,
     })
     .select("id")
     .single();

@@ -16,7 +16,9 @@ export default async function EditListingPage({
 
   const { data: listing } = await supabase
     .from("listings")
-    .select("id, title, description, price, condition, images, meetup_spot, category_id, seller_id")
+    .select(
+      "id, title, description, price, condition, images, meetup_spot, category_id, seller_id, custom_fields"
+    )
     .eq("id", id)
     .single();
 
@@ -25,7 +27,7 @@ export default async function EditListingPage({
 
   const { data: categories } = await supabase
     .from("categories")
-    .select("id, name")
+    .select("id, name, slug")
     .order("name");
 
   return (

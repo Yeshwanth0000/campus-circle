@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import Image from "next/image";
 import { updateListing, type ListingResult } from "@/app/actions/listings";
 import SubmitButton from "@/components/SubmitButton";
+import { getCategoryFields } from "@/lib/categoryFields";
 
 const initialState: ListingResult = { error: null };
 
@@ -16,6 +17,7 @@ type Listing = {
   images: string[];
   meetup_spot: string | null;
   category_id: string | null;
+  custom_fields: unknown;
 };
 
 export default function EditListingForm({
@@ -23,10 +25,15 @@ export default function EditListingForm({
   categories,
 }: {
   listing: Listing;
-  categories: { id: string; name: string }[];
+  categories: { id: string; name: string; slug: string }[];
 }) {
   const [state, formAction] = useActionState(updateListing, initialState);
   const [keptImages, setKeptImages] = useState<string[]>(listing.images);
+  const [categoryId, setCategoryId] = useState(listing.category_id ?? "");
+
+  const selectedCategory = categories.find((c) => c.id === categoryId);
+  const customFields = useMemo(() => getCategoryFields(selectedCategory?.slug), [selectedCategory]);
+  const existingCustomFields = (listing.custom_fields ?? {}) as Record<string, string>;
 
   function removeImage(url: string) {
     setKeptImages((prev) => prev.filter((img) => img !== url));
@@ -107,7 +114,8 @@ export default function EditListingForm({
           id="categoryId"
           name="categoryId"
           required
-          defaultValue={listing.category_id ?? ""}
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         >
           <option value="">Select a category</option>
@@ -118,6 +126,30 @@ export default function EditListingForm({
           ))}
         </select>
       </div>
+
+      {customFields.length > 0 && (
+        <div className="grid grid-cols-2 gap-4">
+          {customFields.map((field) => (
+            <div key={field.key}>
+              <label
+                htmlFor={`custom_${field.key}`}
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+              >
+                {field.label}
+              </label>
+              <input
+                id={`custom_${field.key}`}
+                name={`custom_${field.key}`}
+                type="text"
+                maxLength={200}
+                defaultValue={existingCustomFields[field.key] ?? ""}
+                placeholder={field.placeholder}
+                className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div>
         <label htmlFor="meetupSpot" className="block text-sm font-medium text-slate-700 dark:text-slate-300">

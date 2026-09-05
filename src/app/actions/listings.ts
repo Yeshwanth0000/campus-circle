@@ -143,6 +143,17 @@ export async function updateListing(
     return { error: "You can have at most 5 photos total." };
   }
 
+  let categorySlug: string | null = null;
+  if (categoryId) {
+    const { data: category } = await supabase
+      .from("categories")
+      .select("slug")
+      .eq("id", categoryId)
+      .maybeSingle();
+    categorySlug = category?.slug ?? null;
+  }
+  const customFields = extractCustomFields(formData, categorySlug);
+
   const imageUrls: string[] = [...keptImages];
   for (const file of newFiles) {
     const path = `${user.id}/${crypto.randomUUID()}-${file.name}`;
@@ -168,6 +179,7 @@ export async function updateListing(
       condition,
       meetup_spot: meetupSpot,
       images: imageUrls,
+      custom_fields: customFields,
     })
     .eq("id", listingId)
     .eq("seller_id", user.id);

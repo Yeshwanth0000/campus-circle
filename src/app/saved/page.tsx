@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
+import EmptyState from "@/components/EmptyState";
 
 export default async function SavedPage() {
   const supabase = await createClient();
@@ -43,12 +43,21 @@ export default async function SavedPage() {
           ))}
         </div>
       ) : (
-        <div className="mt-6 rounded-xl border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
-          Nothing saved yet. Tap the heart on any listing to save it here.{" "}
-          <Link href="/browse" className="font-semibold text-brand">
-            Browse listings
-          </Link>
-        </div>
+        <EmptyState
+          icon={
+            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 21s-6.716-4.35-9.428-8.06C.66 10.42 1.1 6.9 3.9 5.28c2.35-1.36 5.02-.6 6.6 1.32.5.6.9 1.2 1.5 1.2s1-.6 1.5-1.2c1.58-1.92 4.25-2.68 6.6-1.32 2.8 1.62 3.24 5.14 1.33 7.66C18.716 16.65 12 21 12 21z"
+              />
+            </svg>
+          }
+          title="Nothing saved yet"
+          description="Tap the heart on any listing to bookmark it here for later."
+          actionHref="/browse"
+          actionLabel="Browse listings"
+        />
       )}
     </div>
   );

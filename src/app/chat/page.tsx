@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import EmptyState from "@/components/EmptyState";
 
 export default async function ChatListPage() {
   const supabase = await createClient();
@@ -60,9 +61,21 @@ export default async function ChatListPage() {
           })}
         </ul>
       ) : (
-        <div className="mt-6 rounded-xl border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
-          No conversations yet. Message a seller from any listing to start one.
-        </div>
+        <EmptyState
+          icon={
+            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 0 1-3.5-.64L3 21l1.5-4.2A7.9 7.9 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          }
+          title="No conversations yet"
+          description="Message a seller from any listing to start a chat with them."
+          actionHref="/browse"
+          actionLabel="Browse listings"
+        />
       )}
     </div>
   );

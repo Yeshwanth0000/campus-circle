@@ -33,7 +33,7 @@ export default function ListingCard({
   return (
     <Link
       href={`/listings/${id}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:hover:shadow-black/40"
+      className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-xl hover:shadow-slate-300/60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand/30 dark:hover:shadow-black/50"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
         {images[0] ? (
@@ -42,7 +42,7 @@ export default function ListingCard({
             alt={title}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-slate-400 dark:text-slate-600">

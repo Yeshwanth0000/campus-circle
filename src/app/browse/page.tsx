@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
 import RecentlyViewed from "@/components/RecentlyViewed";
+import Reveal from "@/components/Reveal";
 import SaveSearchButton from "@/components/SaveSearchButton";
 import { categoryIcon } from "@/lib/categoryIcons";
 
@@ -328,19 +329,20 @@ export default async function BrowsePage({
 
           {listings && listings.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {listings.map((listing) => (
-                <ListingCard
-                  key={listing.id}
-                  id={listing.id}
-                  title={listing.title}
-                  price={Number(listing.price)}
-                  images={listing.images}
-                  status={listing.status}
-                  categoryName={listing.categories?.name}
-                  condition={listing.condition}
-                  createdAt={listing.created_at}
-                  saved={savedIds.has(listing.id)}
-                />
+              {listings.map((listing, i) => (
+                <Reveal key={listing.id} delay={(i % 4) * 60}>
+                  <ListingCard
+                    id={listing.id}
+                    title={listing.title}
+                    price={Number(listing.price)}
+                    images={listing.images}
+                    status={listing.status}
+                    categoryName={listing.categories?.name}
+                    condition={listing.condition}
+                    createdAt={listing.created_at}
+                    saved={savedIds.has(listing.id)}
+                  />
+                </Reveal>
               ))}
             </div>
           ) : hasAnyFilter ? (

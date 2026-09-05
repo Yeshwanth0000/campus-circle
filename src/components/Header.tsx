@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import HeaderNav from "./HeaderNav";
 import HeaderSearch from "./HeaderSearch";
+import CommandPalette from "./CommandPalette";
 import ThemeToggle from "./ThemeToggle";
 import BottomNav from "./BottomNav";
 import NotificationBell from "./NotificationBell";
@@ -12,6 +13,11 @@ export default async function Header() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+    .order("name");
 
   let collegeName: string | null = null;
   let hasUnread = false;
@@ -59,8 +65,8 @@ export default async function Header() {
           </Link>
 
           {user && (
-            <div className="hidden flex-1 sm:block">
-              <HeaderSearch />
+            <div className="hidden flex-1 sm:flex">
+              <CommandPalette categories={categories ?? []} />
             </div>
           )}
 

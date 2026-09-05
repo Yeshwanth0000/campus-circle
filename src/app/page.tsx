@@ -4,6 +4,7 @@ import Reveal from "@/components/Reveal";
 import HeroSearch from "@/components/HeroSearch";
 import HowItWorksStepper from "@/components/HowItWorksStepper";
 import CategoryExplorer from "@/components/CategoryExplorer";
+import GradientMesh from "@/components/GradientMesh";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -22,14 +23,7 @@ export default async function HomePage() {
   return (
     <div>
       <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="animate-blob pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-brand/20 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="animate-blob-delayed pointer-events-none absolute -right-24 top-1/3 h-96 w-96 rounded-full bg-accent/20 blur-3xl"
-        />
+        <GradientMesh />
 
         <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
           <div className="grid items-center gap-10 sm:grid-cols-2">

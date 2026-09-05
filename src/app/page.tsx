@@ -56,7 +56,7 @@ export default async function HomePage() {
                 {user ? (
                   <Link
                     href="/browse"
-                    className="rounded-md bg-brand px-6 py-3 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md"
+                    className="rounded-md bg-brand px-6 py-3 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md active:scale-[0.97] active:shadow-sm motion-reduce:active:scale-100"
                   >
                     Go to your marketplace
                   </Link>
@@ -64,13 +64,13 @@ export default async function HomePage() {
                   <>
                     <Link
                       href="/signup"
-                      className="rounded-md bg-brand px-6 py-3 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md"
+                      className="rounded-md bg-brand px-6 py-3 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md active:scale-[0.97] active:shadow-sm motion-reduce:active:scale-100"
                     >
                       Join with your college email
                     </Link>
                     <Link
                       href="/login"
-                      className="rounded-md border border-slate-300 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+                      className="rounded-md border border-slate-300 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 active:scale-[0.97] motion-reduce:active:scale-100"
                     >
                       Log in
                     </Link>

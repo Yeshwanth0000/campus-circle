@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
-import RecentlyViewed from "@/components/RecentlyViewed";
 import Reveal from "@/components/Reveal";
 import SaveSearchButton from "@/components/SaveSearchButton";
 import { categoryIcon } from "@/lib/categoryIcons";
@@ -187,8 +186,6 @@ export default async function BrowsePage({
           </Link>
         ))}
       </div>
-
-      {!category && !q && <RecentlyViewed excludeIds={listings?.map((l) => l.id) ?? []} />}
 
       <div className="flex flex-col gap-6 sm:flex-row">
         <aside className="space-y-6 sm:w-52 sm:shrink-0">

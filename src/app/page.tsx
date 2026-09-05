@@ -126,7 +126,7 @@ export default async function HomePage() {
           </Reveal>
           <div className="mt-8 grid gap-6 sm:grid-cols-3">
             <Reveal delay={0}>
-              <div className="h-full rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition hover:-translate-y-1 hover:shadow-md">
+              <div className="h-full rounded-2xl border border-slate-200/70 bg-slate-50/80 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-md dark:border-slate-800/70 dark:bg-slate-800/40 dark:hover:border-brand/25">
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100">
                   Verified college emails only
                 </h3>
@@ -138,7 +138,7 @@ export default async function HomePage() {
               </div>
             </Reveal>
             <Reveal delay={100}>
-              <div className="h-full rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition hover:-translate-y-1 hover:shadow-md">
+              <div className="h-full rounded-2xl border border-slate-200/70 bg-slate-50/80 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-md dark:border-slate-800/70 dark:bg-slate-800/40 dark:hover:border-brand/25">
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100">
                   Chat before you meet
                 </h3>
@@ -149,7 +149,7 @@ export default async function HomePage() {
               </div>
             </Reveal>
             <Reveal delay={200}>
-              <div className="h-full rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition hover:-translate-y-1 hover:shadow-md">
+              <div className="h-full rounded-2xl border border-slate-200/70 bg-slate-50/80 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-md dark:border-slate-800/70 dark:bg-slate-800/40 dark:hover:border-brand/25">
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100">
                   No shipping, no scams
                 </h3>

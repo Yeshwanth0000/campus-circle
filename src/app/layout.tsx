@@ -7,6 +7,7 @@ import ThemeInitScript from "@/components/ThemeInitScript";
 import ToastContainer from "@/components/ToastContainer";
 import InactivityLogout from "@/components/InactivityLogout";
 import PageTransition from "@/components/PageTransition";
+import AmbientBackground from "@/components/AmbientBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeInitScript nonce={nonce} />
+        <AmbientBackground />
         <Header />
         <main className="flex-1 pb-16 sm:pb-0">
           <PageTransition>{children}</PageTransition>

@@ -198,6 +198,58 @@ button:not(:disabled):active {
   }
 }
 
+/* Ambient background — a much fainter, slower-drifting version of the
+   hero's gradient mesh, fixed behind every page so the whole app reads
+   as one continuous surface instead of "colorful homepage, flat white
+   everywhere else". Reuses the hero's own drift keyframes (still
+   transform-only) at a much lower opacity and larger scale so it never
+   competes with dense content like the browse grid or a chat thread. */
+.ambient-mesh {
+  filter: blur(90px) saturate(1.1);
+}
+
+.ambient-blob {
+  position: absolute;
+  border-radius: 9999px;
+  opacity: 0.16;
+  will-change: transform;
+}
+
+:root:not(.dark) .ambient-blob { opacity: 0.11; }
+
+.ambient-blob-1 {
+  width: 42rem;
+  height: 42rem;
+  left: -12%;
+  top: -18%;
+  background: radial-gradient(circle, var(--brand) 0%, transparent 70%);
+  animation: mesh-drift-a 46s ease-in-out infinite;
+}
+
+.ambient-blob-2 {
+  width: 36rem;
+  height: 36rem;
+  right: -10%;
+  top: 30%;
+  background: radial-gradient(circle, var(--mesh-violet) 0%, transparent 70%);
+  animation: mesh-drift-b 54s ease-in-out infinite;
+}
+
+.ambient-blob-3 {
+  width: 34rem;
+  height: 34rem;
+  left: 15%;
+  bottom: -22%;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  animation: mesh-drift-c 60s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-blob {
+    animation: none;
+  }
+}
+
 /* Infinite category marquee — a duplicated track scrolls left forever,
    fading out at both edges, pausing on hover so it's actually readable. */
 .marquee-mask {

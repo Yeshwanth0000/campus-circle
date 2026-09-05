@@ -111,6 +111,33 @@ export default async function ListingDetailPage({
         <div className="space-y-4">
           <ImageGallery images={listing.images} title={listing.title} />
 
+          {/* Mobile-only: the price/action card below stacks to the very
+              bottom of the page on a single-column layout (it's a separate
+              grid column that only sits beside this content on lg+ screens),
+              so a buyer would have to scroll past the description and seller
+              card just to see the price. Surface the essentials — title,
+              price, and the primary action — right after the image instead. */}
+          <div className="lg:hidden">
+            <h1 className="text-balance text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+              {listing.title}
+            </h1>
+            <p className="mt-1 text-2xl font-bold text-brand">
+              {Number(listing.price) > 0
+                ? `₹${Number(listing.price).toLocaleString("en-IN")}`
+                : "Free"}
+            </p>
+            {!isOwner && listing.status === "available" && (
+              <form action={messageSeller} className="mt-3">
+                <button
+                  type="submit"
+                  className="w-full rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-brand-dark"
+                >
+                  Message seller
+                </button>
+              </form>
+            )}
+          </div>
+
           {listing.description && (
             <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">
               {listing.description}

@@ -148,28 +148,42 @@ export default async function BrowsePage({
         <Link
           href={buildUrl({ category: undefined })}
           aria-current={!category ? "true" : undefined}
-          className={`flex shrink-0 flex-col items-center gap-1.5 rounded-xl border px-4 py-3 text-center transition ${
-            !category
-              ? "border-brand bg-brand-light"
-              : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700"
-          }`}
+          className={categoryTileClass(!category)}
         >
-          <span className="text-2xl">🛍️</span>
+          <span
+            aria-hidden
+            className="text-2xl transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-hover:scale-100"
+          >
+            🛍️
+          </span>
           <span className="text-xs font-medium text-slate-700 dark:text-slate-300">All</span>
+          <span
+            aria-hidden
+            className={`absolute inset-x-3 bottom-1 h-0.5 origin-center rounded-full bg-brand transition-transform duration-300 ease-out ${
+              !category ? "scale-x-100" : "scale-x-0"
+            }`}
+          />
         </Link>
         {categories?.map((c) => (
           <Link
             key={c.id}
             href={buildUrl({ category: c.slug })}
             aria-current={category === c.slug ? "true" : undefined}
-            className={`flex shrink-0 flex-col items-center gap-1.5 rounded-xl border px-4 py-3 text-center transition ${
-              category === c.slug
-                ? "border-brand bg-brand-light"
-                : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700"
-            }`}
+            className={categoryTileClass(category === c.slug)}
           >
-            <span className="text-2xl">{categoryIcon(c.slug)}</span>
+            <span
+              aria-hidden
+              className="text-2xl transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-hover:scale-100"
+            >
+              {categoryIcon(c.slug)}
+            </span>
             <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{c.name}</span>
+            <span
+              aria-hidden
+              className={`absolute inset-x-3 bottom-1 h-0.5 origin-center rounded-full bg-brand transition-transform duration-300 ease-out ${
+                category === c.slug ? "scale-x-100" : "scale-x-0"
+              }`}
+            />
           </Link>
         ))}
       </div>
@@ -369,6 +383,14 @@ export default async function BrowsePage({
       </div>
     </div>
   );
+}
+
+function categoryTileClass(active: boolean) {
+  return `group relative flex shrink-0 flex-col items-center gap-1.5 overflow-hidden rounded-2xl border px-4 py-3 text-center backdrop-blur-sm transition-all duration-300 ease-out ${
+    active
+      ? "border-brand/40 bg-brand-light/80 shadow-sm shadow-brand/10 dark:border-brand/30 dark:bg-brand/15"
+      : "border-slate-200/70 bg-white/70 hover:-translate-y-0.5 hover:border-brand/30 hover:bg-white hover:shadow-md hover:shadow-slate-200/60 dark:border-slate-800/70 dark:bg-slate-900/60 dark:hover:border-brand/25 dark:hover:bg-slate-900/90 dark:hover:shadow-black/30"
+  }`;
 }
 
 function SortSelect({

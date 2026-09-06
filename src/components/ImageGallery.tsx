@@ -68,7 +68,7 @@ export default function ImageGallery({ images, title }: { images: string[]; titl
                   : "scale-100 opacity-70 ring-transparent hover:opacity-100 hover:ring-slate-300"
               }`}
             >
-              <Image src={img} alt="" fill className="object-cover" />
+              <Image src={img} alt="" fill sizes="(min-width: 1024px) 120px, 20vw" className="object-cover" />
             </button>
           ))}
         </div>

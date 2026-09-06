@@ -171,7 +171,7 @@ export default function EditListingForm({
           <div className="mt-2 grid grid-cols-5 gap-2">
             {keptImages.map((img) => (
               <div key={img} className="group relative aspect-square overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800">
-                <Image src={img} alt="" fill className="object-cover" />
+                <Image src={img} alt="" fill sizes="(min-width: 1024px) 120px, 20vw" className="object-cover" />
                 <input type="hidden" name="keptImages" value={img} />
                 <button
                   type="button"

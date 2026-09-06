@@ -42,8 +42,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeInitScript nonce={nonce} />
         <AmbientBackground />
+        <a
+          href="#main-content"
+          className="fixed left-4 top-4 z-[200] -translate-y-20 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white shadow-lg transition-transform focus:translate-y-0"
+        >
+          Skip to content
+        </a>
         <Header />
-        <main className="flex-1 pb-16 sm:pb-0">
+        <main id="main-content" className="flex-1 pb-16 sm:pb-0">
           <PageTransition>{children}</PageTransition>
         </main>
         <ToastContainer />

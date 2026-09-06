@@ -12,12 +12,12 @@ export default function BrowseLoading() {
       </div>
 
       <div className="flex flex-col gap-6 sm:flex-row">
-        <aside className="space-y-6 sm:w-52 sm:shrink-0">
+        <aside className="order-2 space-y-6 sm:order-none sm:w-52 sm:shrink-0">
           <Skeleton className="h-32 w-full rounded-lg" />
           <Skeleton className="h-24 w-full rounded-lg" />
         </aside>
 
-        <div className="flex-1">
+        <div className="order-1 flex-1 sm:order-none">
           <Skeleton className="mb-4 h-4 w-32" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (

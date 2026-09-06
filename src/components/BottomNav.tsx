@@ -85,12 +85,17 @@ function NavItem({
   return (
     <Link
       href={href}
-      className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-[11px] font-medium ${
+      className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-[11px] font-medium transition-colors duration-200 ${
         active ? "text-brand" : "text-slate-500 dark:text-slate-400"
       }`}
     >
       {icon}
       {label}
+      <span
+        className={`absolute -bottom-0.5 h-1 w-1 rounded-full bg-brand transition-opacity duration-200 motion-reduce:transition-none ${
+          active ? "opacity-100" : "opacity-0"
+        }`}
+      />
       {showDot && (
         <span className="absolute right-1 top-0.5 h-2 w-2 rounded-full bg-rose-500" />
       )}

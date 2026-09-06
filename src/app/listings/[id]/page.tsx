@@ -12,6 +12,7 @@ import ViewTracker from "@/components/ViewTracker";
 import RelistButton from "@/components/RelistButton";
 import Avatar from "@/components/Avatar";
 import { getCategoryFields } from "@/lib/categoryFields";
+import { conditionBadgeClasses, conditionLabel } from "@/lib/conditionBadge";
 
 export async function generateMetadata({
   params,
@@ -289,8 +290,10 @@ export default async function ListingDetailPage({
                 </span>
               )}
               {listing.condition && (
-                <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400 capitalize">
-                  {listing.condition.replace("-", " ")}
+                <span
+                  className={`rounded-full px-3 py-1 font-medium capitalize ${conditionBadgeClasses(listing.condition)}`}
+                >
+                  {conditionLabel(listing.condition)}
                 </span>
               )}
             </div>

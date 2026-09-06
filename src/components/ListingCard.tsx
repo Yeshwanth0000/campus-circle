@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import SaveButton from "./SaveButton";
+import { conditionBadgeClasses, conditionLabel } from "@/lib/conditionBadge";
 
 type ListingCardProps = {
   id: string;
@@ -89,8 +90,10 @@ export default function ListingCard({
             </span>
           )}
           {condition && (
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium capitalize text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-              {condition.replace("-", " ")}
+            <span
+              className={`rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${conditionBadgeClasses(condition)}`}
+            >
+              {conditionLabel(condition)}
             </span>
           )}
         </div>

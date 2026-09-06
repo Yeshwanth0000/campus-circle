@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { startConversation } from "@/app/actions/chat";
@@ -11,6 +12,35 @@ import ViewTracker from "@/components/ViewTracker";
 import RelistButton from "@/components/RelistButton";
 import Avatar from "@/components/Avatar";
 import { getCategoryFields } from "@/lib/categoryFields";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  // Listings are scoped to the viewer's own college via RLS, so an
+  // unauthenticated request (e.g. a link-preview bot with no session) can
+  // never see real listing data here — that's correct for a college-private
+  // marketplace, not a bug, so this just falls back to the site defaults
+  // rather than trying to work around it. This mainly makes the browser tab
+  // title useful for a signed-in viewer with several listings open.
+  const { data: listing } = await supabase
+    .from("listings")
+    .select("title, description")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!listing) {
+    return { title: "CampusCircle — Your Campus Marketplace" };
+  }
+
+  return {
+    title: `${listing.title} — CampusCircle`,
+    description: listing.description?.slice(0, 160) || undefined,
+  };
+}
 
 export default async function ListingDetailPage({
   params,

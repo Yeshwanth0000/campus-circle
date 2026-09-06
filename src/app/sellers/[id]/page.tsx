@@ -78,22 +78,31 @@ export default async function SellerProfilePage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="flex items-start justify-between rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-        <div className="flex items-center gap-4">
-          <Avatar avatarUrl={seller.avatar_url} name={seller.full_name ?? "S"} size={56} />
-          <div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-              {seller.full_name ?? "Student"}
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {seller.hostel_or_branch ? `${seller.hostel_or_branch} · ` : ""}
-              Member since {memberSince}
-            </p>
-          </div>
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="relative h-20 overflow-hidden bg-gradient-to-br from-brand via-accent to-[var(--mesh-violet)] sm:h-28">
+          <div className="mesh-grain absolute inset-0" />
         </div>
-        {seller.id !== user.id && (
-          <SafetyMenu userId={seller.id} initialBlocked={!!blockedRow} />
-        )}
+        <div className="flex items-start justify-between gap-4 px-6 pb-6">
+          <div className="flex items-end gap-4">
+            <div className="-mt-8 shrink-0 rounded-full ring-4 ring-white dark:ring-slate-900 sm:-mt-10">
+              <Avatar avatarUrl={seller.avatar_url} name={seller.full_name ?? "S"} size={64} />
+            </div>
+            <div className="pb-1">
+              <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                {seller.full_name ?? "Student"}
+              </h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {seller.hostel_or_branch ? `${seller.hostel_or_branch} · ` : ""}
+                Member since {memberSince}
+              </p>
+            </div>
+          </div>
+          {seller.id !== user.id && (
+            <div className="pt-3">
+              <SafetyMenu userId={seller.id} initialBlocked={!!blockedRow} />
+            </div>
+          )}
+        </div>
       </div>
 
       <h2 className="mt-8 mb-4 text-lg font-bold text-slate-900 dark:text-slate-100">

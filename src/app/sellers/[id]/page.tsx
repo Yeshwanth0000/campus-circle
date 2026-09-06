@@ -1,9 +1,30 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
 import SafetyMenu from "@/components/SafetyMenu";
 import Avatar from "@/components/Avatar";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: seller } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("id", id)
+    .maybeSingle();
+
+  return {
+    title: seller?.full_name
+      ? `${seller.full_name} — CampusCircle`
+      : "CampusCircle — Your Campus Marketplace",
+  };
+}
 
 export default async function SellerProfilePage({
   params,

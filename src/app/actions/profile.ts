@@ -40,6 +40,90 @@ export async function updateProfile(
   return { error: null };
 }
 
+const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
+
+export async function updateAvatar(
+  _prevState: ProfileResult | null,
+  formData: FormData
+): Promise<ProfileResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "You must be logged in." };
+  }
+
+  const file = formData.get("avatar");
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: "Please choose a photo." };
+  }
+  if (file.size > AVATAR_MAX_BYTES) {
+    return { error: "Photo must be under 2MB." };
+  }
+
+  // Clear out any previous avatar file(s) first — upsert only overwrites an
+  // exact path match, so switching file extensions between uploads (e.g.
+  // png -> jpg) would otherwise leave the old one orphaned in storage.
+  const { data: existing } = await supabase.storage.from("avatars").list(user.id);
+  if (existing && existing.length > 0) {
+    await supabase.storage.from("avatars").remove(existing.map((f) => `${user.id}/${f.name}`));
+  }
+
+  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const path = `${user.id}/avatar.${ext}`;
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(path, file, { upsert: true });
+  if (uploadError) {
+    return { error: `Upload failed: ${uploadError.message}` };
+  }
+
+  const { data: publicUrl } = supabase.storage.from("avatars").getPublicUrl(path);
+  // Cache-bust with a version query param — the path (and therefore the
+  // browser/CDN cache key) stays identical across re-uploads otherwise.
+  const avatarUrl = `${publicUrl.publicUrl}?v=${Date.now()}`;
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ avatar_url: avatarUrl })
+    .eq("id", user.id);
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/profile");
+  revalidatePath("/browse");
+  return { error: null };
+}
+
+export async function removeAvatar(): Promise<ProfileResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "You must be logged in." };
+  }
+
+  const { data: existing } = await supabase.storage.from("avatars").list(user.id);
+  if (existing && existing.length > 0) {
+    await supabase.storage.from("avatars").remove(existing.map((f) => `${user.id}/${f.name}`));
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ avatar_url: null })
+    .eq("id", user.id);
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/profile");
+  revalidatePath("/browse");
+  return { error: null };
+}
+
 export type ExportedData = {
   exportedAt: string;
   profile: {
@@ -150,6 +234,11 @@ export async function deleteAccount(): Promise<{ error: string | null }> {
   const paths = storagePathsFromUrls((listings ?? []).flatMap((l) => l.images ?? []));
   if (paths.length > 0) {
     await supabase.storage.from("listing-images").remove(paths);
+  }
+
+  const { data: avatarFiles } = await supabase.storage.from("avatars").list(user.id);
+  if (avatarFiles && avatarFiles.length > 0) {
+    await supabase.storage.from("avatars").remove(avatarFiles.map((f) => `${user.id}/${f.name}`));
   }
 
   const { error } = await supabase.rpc("delete_own_account");

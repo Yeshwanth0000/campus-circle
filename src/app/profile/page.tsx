@@ -7,6 +7,7 @@ import UnblockButton from "@/components/UnblockButton";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 import ExportDataButton from "@/components/ExportDataButton";
 import StatCounter from "@/components/StatCounter";
+import AvatarUpload from "@/components/AvatarUpload";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -17,7 +18,7 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, hostel_or_branch, created_at, colleges(name)")
+    .select("full_name, hostel_or_branch, created_at, avatar_url, colleges(name)")
     .eq("id", user.id)
     .single();
 
@@ -58,9 +59,10 @@ export default async function ProfilePage() {
               enough to clip into the banner on mobile, where the shorter
               banner leaves less clearance. */}
           <div className="flex items-end gap-4">
-            <div className="-mt-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-brand-light text-2xl font-bold text-brand-dark shadow-sm dark:border-slate-900 sm:-mt-12 sm:h-24 sm:w-24">
-              {(profile?.full_name ?? "S").charAt(0).toUpperCase()}
-            </div>
+            <AvatarUpload
+              avatarUrl={profile?.avatar_url ?? null}
+              fallbackLetter={(profile?.full_name ?? "S").charAt(0).toUpperCase()}
+            />
             <div className="pb-1">
               <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 {profile?.full_name ?? "Your profile"}

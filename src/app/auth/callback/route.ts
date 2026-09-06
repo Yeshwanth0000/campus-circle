@@ -4,14 +4,17 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  // Password-reset links pass next=/reset-password; email verification
+  // links (the default) don't pass one, so they land straight in the app.
+  const next = searchParams.get("next") ?? "/browse";
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}/browse`);
+      return NextResponse.redirect(`${origin}${next}`);
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=Could not verify email`);
+  return NextResponse.redirect(`${origin}/login?error=Could not verify link`);
 }

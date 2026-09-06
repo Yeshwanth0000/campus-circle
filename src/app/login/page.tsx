@@ -27,6 +27,10 @@ export default function LoginPage() {
     if (searchParams.get("reason") === "inactivity") {
       toast("You were logged out after a period of inactivity.", "info");
     }
+    const error = searchParams.get("error");
+    if (error) {
+      toast(error, "error");
+    }
   }, [searchParams]);
 
   return (
@@ -52,9 +56,14 @@ export default function LoginPage() {
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-            Password
-          </label>
+          <div className="flex items-baseline justify-between">
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Password
+            </label>
+            <Link href="/forgot-password" className="text-xs font-medium text-brand hover:text-brand-dark">
+              Forgot password?
+            </Link>
+          </div>
           <input
             id="password"
             name="password"

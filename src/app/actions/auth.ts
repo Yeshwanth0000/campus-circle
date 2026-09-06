@@ -93,3 +93,58 @@ export async function signOut() {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+export type PasswordResetResult = { error: string | null; success?: boolean };
+
+export async function requestPasswordReset(
+  _prevState: PasswordResetResult | null,
+  formData: FormData
+): Promise<PasswordResetResult> {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!email) {
+    return { error: "Please enter your email address." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/reset-password`,
+  });
+
+  // Supabase itself doesn't error when the email has no account (by design,
+  // so this can't be used to check who's registered) — a real error here
+  // means something like rate limiting, worth surfacing.
+  if (error) {
+    return { error: error.message };
+  }
+  return { error: null, success: true };
+}
+
+export async function updatePassword(
+  _prevState: AuthResult | null,
+  formData: FormData
+): Promise<AuthResult> {
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+  if (password.length < 8) {
+    return { error: "Password must be at least 8 characters." };
+  }
+  if (password !== confirmPassword) {
+    return { error: "Passwords don't match." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Your password reset link has expired. Please request a new one." };
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    return { error: error.message };
+  }
+
+  redirect("/browse");
+}

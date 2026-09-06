@@ -24,25 +24,30 @@ export default async function SellerProfilePage({
 
   if (!seller) notFound();
 
-  const { data: listings } = await supabase
-    .from("listings")
-    .select("id, title, price, images, status, condition, created_at, categories(name)")
-    .eq("seller_id", id)
-    .eq("status", "available")
-    .order("created_at", { ascending: false });
-
-  const { data: savedRows } = await supabase
-    .from("saved_listings")
-    .select("listing_id")
-    .eq("user_id", user.id);
-  const savedIds = new Set(savedRows?.map((r) => r.listing_id));
-
   const { data: blockedRow } = await supabase
     .from("blocked_users")
     .select("id")
     .eq("blocker_id", user.id)
     .eq("blocked_id", id)
     .maybeSingle();
+
+  // Browse already hides a blocked seller's listings from the grid — keep
+  // that consistent here instead of letting a direct link to their profile
+  // show what blocking was supposed to hide.
+  const { data: listings } = blockedRow
+    ? { data: [] }
+    : await supabase
+        .from("listings")
+        .select("id, title, price, images, status, condition, created_at, categories(name)")
+        .eq("seller_id", id)
+        .eq("status", "available")
+        .order("created_at", { ascending: false });
+
+  const { data: savedRows } = await supabase
+    .from("saved_listings")
+    .select("listing_id")
+    .eq("user_id", user.id);
+  const savedIds = new Set(savedRows?.map((r) => r.listing_id));
 
   const memberSince = new Date(seller.created_at).toLocaleDateString("en-IN", {
     month: "long",
@@ -95,7 +100,9 @@ export default async function SellerProfilePage({
         </div>
       ) : (
         <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
-          No active listings right now.
+          {blockedRow
+            ? "You've blocked this user, so their listings are hidden."
+            : "No active listings right now."}
         </div>
       )}
 

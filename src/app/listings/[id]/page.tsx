@@ -52,22 +52,25 @@ export default async function ListingDetailPage({
     ? await supabase.rpc("get_listing_save_count", { p_listing_id: id })
     : { data: null };
 
-  const { data: blockedRow } = await supabase
+  const { data: blockedRows } = await supabase
     .from("blocked_users")
-    .select("id")
-    .eq("blocker_id", user.id)
-    .eq("blocked_id", listing.seller_id)
-    .maybeSingle();
+    .select("blocked_id")
+    .eq("blocker_id", user.id);
+  const blockedIds = new Set(blockedRows?.map((r) => r.blocked_id));
+  const blockedRow = blockedIds.has(listing.seller_id);
 
-  const { data: relatedListings } = listing.category_id
+  const { data: relatedListingsRaw } = listing.category_id
     ? await supabase
         .from("listings")
-        .select("id, title, price, images, status, condition, created_at, categories(name)")
+        .select("id, title, price, images, status, condition, created_at, seller_id, categories(name)")
         .eq("category_id", listing.category_id)
         .eq("status", "available")
         .neq("id", id)
-        .limit(4)
+        .limit(8)
     : { data: null };
+  const relatedListings = relatedListingsRaw
+    ?.filter((r) => !blockedIds.has(r.seller_id))
+    .slice(0, 4);
 
   async function messageSeller() {
     "use server";
@@ -214,7 +217,7 @@ export default async function ListingDetailPage({
                   <SafetyMenu
                     userId={listing.seller_id}
                     listingId={id}
-                    initialBlocked={!!blockedRow}
+                    initialBlocked={blockedRow}
                   />
                 </div>
               )}

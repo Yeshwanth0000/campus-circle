@@ -177,8 +177,10 @@ export default async function BrowsePage({
         )}
       </nav>
 
-      {/* Category tile strip */}
-      <div className="mb-6 flex gap-3 overflow-x-auto pb-2">
+      {/* Category tile strip — the fade masks hint that the row keeps
+          going past either edge, since overflow-x-auto alone gives no
+          visual cue there's more to scroll to on a narrow screen. */}
+      <div className="mb-6 flex gap-3 overflow-x-auto pb-2 [-webkit-mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)]">
         <Link
           href={buildUrl({ category: undefined })}
           aria-current={!category ? "true" : undefined}

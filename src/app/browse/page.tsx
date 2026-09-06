@@ -188,7 +188,12 @@ export default async function BrowsePage({
       </div>
 
       <div className="flex flex-col gap-6 sm:flex-row">
-        <aside className="space-y-6 sm:w-52 sm:shrink-0">
+        {/* Mobile: results come before the filter list — filters are
+            secondary to actually seeing what's for sale, and stacking them
+            first (as plain DOM order would) buries all 98+ listings below
+            a wall of price/condition/posted controls. Desktop's side-by-side
+            layout is unaffected since sm:order-none restores source order. */}
+        <aside className="order-2 space-y-6 sm:order-none sm:w-52 sm:shrink-0">
           <div>
             <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Price range</h2>
             <form className="mt-3 space-y-2">
@@ -315,7 +320,7 @@ export default async function BrowsePage({
           </div>
         </aside>
 
-        <div className="flex-1">
+        <div className="order-1 flex-1 sm:order-none">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Showing {listings?.length ?? 0} result{listings?.length === 1 ? "" : "s"}

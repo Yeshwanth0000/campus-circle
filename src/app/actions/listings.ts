@@ -310,3 +310,36 @@ export async function deleteListing(listingId: string) {
   revalidatePath("/profile");
   revalidatePath("/browse");
 }
+
+export type QuickSearchResult = {
+  id: string;
+  title: string;
+  price: number;
+  image: string | null;
+};
+
+export async function quickSearchListings(query: string): Promise<QuickSearchResult[]> {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data } = await supabase
+    .from("listings")
+    .select("id, title, price, images")
+    .eq("status", "available")
+    .ilike("title", `%${trimmed}%`)
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  return (data ?? []).map((l) => ({
+    id: l.id,
+    title: l.title,
+    price: Number(l.price),
+    image: l.images?.[0] ?? null,
+  }));
+}

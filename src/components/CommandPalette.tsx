@@ -1,11 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { categoryIcon } from "@/lib/categoryIcons";
 import { addRecentSearch, clearRecentSearches, getRecentSearches } from "@/lib/recentSearches";
 import { announceOverlayOpen, onOtherOverlayOpen } from "@/lib/overlayBus";
+import { quickSearchListings, type QuickSearchResult } from "@/app/actions/listings";
 
 const OVERLAY_ID = "search";
 
@@ -14,7 +16,8 @@ type Category = { id: string; name: string; slug: string };
 type ResultItem =
   | { kind: "search"; label: string; query: string }
   | { kind: "recent"; label: string; query: string }
-  | { kind: "category"; label: string; slug: string };
+  | { kind: "category"; label: string; slug: string }
+  | { kind: "listing"; label: string; id: string; price: number; image: string | null };
 
 export default function CommandPalette({ categories }: { categories: Category[] }) {
   const router = useRouter();
@@ -23,6 +26,7 @@ export default function CommandPalette({ categories }: { categories: Category[] 
   const [activeIndex, setActiveIndex] = useState(0);
   const [recent, setRecent] = useState<string[]>([]);
   const [isMac, setIsMac] = useState(false);
+  const [listingMatches, setListingMatches] = useState<QuickSearchResult[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -74,6 +78,23 @@ export default function CommandPalette({ categories }: { categories: Category[] 
 
   const trimmed = query.trim();
 
+  useEffect(() => {
+    if (!trimmed) {
+      setListingMatches([]);
+      return;
+    }
+    let cancelled = false;
+    const id = setTimeout(() => {
+      quickSearchListings(trimmed).then((matches) => {
+        if (!cancelled) setListingMatches(matches);
+      });
+    }, 200);
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+    };
+  }, [trimmed]);
+
   const results: ResultItem[] = useMemo(() => {
     const lower = trimmed.toLowerCase();
     const matchingCategories = categories.filter((c) =>
@@ -88,10 +109,13 @@ export default function CommandPalette({ categories }: { categories: Category[] 
     }
 
     return [
+      ...listingMatches.map(
+        (l): ResultItem => ({ kind: "listing", label: l.title, id: l.id, price: l.price, image: l.image })
+      ),
       { kind: "search", label: trimmed, query: trimmed },
       ...matchingCategories.map((c): ResultItem => ({ kind: "category", label: c.name, slug: c.slug })),
     ];
-  }, [trimmed, recent, categories]);
+  }, [trimmed, recent, categories, listingMatches]);
 
   useEffect(() => {
     setActiveIndex(0);
@@ -106,6 +130,8 @@ export default function CommandPalette({ categories }: { categories: Category[] 
     (item: ResultItem) => {
       if (item.kind === "category") {
         router.push(`/browse?category=${item.slug}`);
+      } else if (item.kind === "listing") {
+        router.push(`/listings/${item.id}`);
       } else {
         addRecentSearch(item.query);
         router.push(`/browse?q=${encodeURIComponent(item.query)}`);
@@ -213,8 +239,14 @@ export default function CommandPalette({ categories }: { categories: Category[] 
 
               {results.map((item, i) => {
                 const isCategoryStart = item.kind === "category" && (i === 0 || results[i - 1].kind !== "category");
+                const isListingStart = item.kind === "listing" && (i === 0 || results[i - 1].kind !== "listing");
                 return (
                   <div key={`${item.kind}-${item.label}-${i}`}>
+                    {isListingStart && (
+                      <div className="px-4 pb-1.5 pt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                        Listings
+                      </div>
+                    )}
                     {isCategoryStart && recentCount + (trimmed ? 1 : 0) > 0 && (
                       <div className="px-4 pb-1.5 pt-3 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                         Categories
@@ -231,6 +263,19 @@ export default function CommandPalette({ categories }: { categories: Category[] 
                           : "text-slate-700 dark:text-slate-300"
                       }`}
                     >
+                      {item.kind === "listing" && (
+                        <>
+                          <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800">
+                            {item.image ? (
+                              <Image src={item.image} alt="" fill sizes="36px" className="object-cover" />
+                            ) : null}
+                          </span>
+                          <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                          <span className="shrink-0 text-xs font-semibold text-brand">
+                            {item.price > 0 ? `₹${item.price.toLocaleString("en-IN")}` : "Free"}
+                          </span>
+                        </>
+                      )}
                       {item.kind === "search" && (
                         <>
                           <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 opacity-60" fill="none" stroke="currentColor" strokeWidth="2">

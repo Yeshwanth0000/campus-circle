@@ -9,6 +9,7 @@ import SaveButton from "@/components/SaveButton";
 import SafetyMenu from "@/components/SafetyMenu";
 import ViewTracker from "@/components/ViewTracker";
 import RelistButton from "@/components/RelistButton";
+import Avatar from "@/components/Avatar";
 import { getCategoryFields } from "@/lib/categoryFields";
 
 export default async function ListingDetailPage({
@@ -26,7 +27,7 @@ export default async function ListingDetailPage({
   const { data: listing } = await supabase
     .from("listings")
     .select(
-      "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, custom_fields, categories(name, slug), profiles(full_name, hostel_or_branch, created_at)"
+      "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, custom_fields, categories(name, slug), profiles(full_name, hostel_or_branch, created_at, avatar_url)"
     )
     .eq("id", id)
     .single();
@@ -190,9 +191,7 @@ export default async function ListingDetailPage({
             href={`/sellers/${listing.seller_id}`}
             className="flex h-fit items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm transition hover:border-brand hover:bg-brand-light/40 dark:border-slate-800"
           >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-light text-sm font-bold text-brand-dark">
-              {(listing.profiles?.full_name ?? "S").charAt(0).toUpperCase()}
-            </div>
+            <Avatar avatarUrl={listing.profiles?.avatar_url} name={listing.profiles?.full_name ?? "S"} size={40} />
             <div>
               <p className="font-semibold text-slate-900 dark:text-slate-100">
                 {listing.profiles?.full_name ?? "Student"}

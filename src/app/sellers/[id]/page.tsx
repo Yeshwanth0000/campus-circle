@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
 import SafetyMenu from "@/components/SafetyMenu";
+import Avatar from "@/components/Avatar";
 
 export default async function SellerProfilePage({
   params,
@@ -18,7 +19,7 @@ export default async function SellerProfilePage({
 
   const { data: seller } = await supabase
     .from("profiles")
-    .select("id, full_name, hostel_or_branch, created_at")
+    .select("id, full_name, hostel_or_branch, created_at, avatar_url")
     .eq("id", id)
     .single();
 
@@ -58,9 +59,7 @@ export default async function SellerProfilePage({
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="flex items-start justify-between rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-light text-xl font-bold text-brand-dark">
-            {(seller.full_name ?? "S").charAt(0).toUpperCase()}
-          </div>
+          <Avatar avatarUrl={seller.avatar_url} name={seller.full_name ?? "S"} size={56} />
           <div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
               {seller.full_name ?? "Student"}

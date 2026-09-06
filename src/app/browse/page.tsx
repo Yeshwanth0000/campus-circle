@@ -14,7 +14,10 @@ type SearchParams = Promise<{
   price_max?: string;
   condition?: string;
   posted?: string;
+  page?: string;
 }>;
+
+const PAGE_SIZE = 24;
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest first" },
@@ -48,24 +51,31 @@ export default async function BrowsePage({
     price_max,
     condition,
     posted,
+    page: pageRaw,
   } = await searchParams;
+  const page = Math.max(1, Math.floor(Number(pageRaw)) || 1);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, name, slug")
-    .order("name");
+  const [{ data: categories }, { data: blockedRows }] = await Promise.all([
+    supabase.from("categories").select("id, name, slug").order("name"),
+    supabase.from("blocked_users").select("blocked_id").eq("blocker_id", user.id),
+  ]);
+  const blockedIds = new Set(blockedRows?.map((r) => r.blocked_id));
 
   let query = supabase
     .from("listings")
     .select(
-      "id, title, price, images, status, condition, created_at, seller_id, categories(name, slug)"
+      "id, title, price, images, status, condition, created_at, seller_id, categories(name, slug)",
+      { count: "exact" }
     )
     .eq("status", "available");
+  if (blockedIds.size > 0) {
+    query = query.not("seller_id", "in", `(${Array.from(blockedIds).join(",")})`);
+  }
 
   const activeCategory = categories?.find((c) => c.slug === category);
   if (activeCategory) {
@@ -97,14 +107,15 @@ export default async function BrowsePage({
     query = query.order("created_at", { ascending: false });
   }
 
-  const [{ data: listingsRaw }, { data: savedRows }, { data: blockedRows }] = await Promise.all([
+  const from = (page - 1) * PAGE_SIZE;
+  query = query.range(from, from + PAGE_SIZE - 1);
+
+  const [{ data: listings, count: totalCount }, { data: savedRows }] = await Promise.all([
     query,
     supabase.from("saved_listings").select("listing_id").eq("user_id", user.id),
-    supabase.from("blocked_users").select("blocked_id").eq("blocker_id", user.id),
   ]);
 
-  const blockedIds = new Set(blockedRows?.map((r) => r.blocked_id));
-  const listings = listingsRaw?.filter((l) => !blockedIds.has(l.seller_id));
+  const totalPages = Math.max(1, Math.ceil((totalCount ?? 0) / PAGE_SIZE));
   const savedIds = new Set(savedRows?.map((r) => r.listing_id));
 
   function buildUrl(overrides: Record<string, string | undefined>) {
@@ -323,7 +334,7 @@ export default async function BrowsePage({
         <div className="order-1 flex-1 sm:order-none">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Showing {listings?.length ?? 0} result{listings?.length === 1 ? "" : "s"}
+              Showing {listings?.length ?? 0} of {totalCount ?? 0} result{totalCount === 1 ? "" : "s"}
             </p>
             <div className="flex items-center gap-3">
               {hasAnyFilter && (
@@ -361,7 +372,39 @@ export default async function BrowsePage({
                 </Reveal>
               ))}
             </div>
-          ) : hasAnyFilter ? (
+          ) : null}
+
+          {listings && listings.length > 0 && totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <Link
+                href={buildUrl({ page: page > 1 ? String(page - 1) : undefined })}
+                aria-disabled={page <= 1}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                  page <= 1
+                    ? "pointer-events-none text-slate-300 dark:text-slate-700"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
+                }`}
+              >
+                ← Previous
+              </Link>
+              <span className="text-sm text-slate-500 dark:text-slate-400">
+                Page {page} of {totalPages}
+              </span>
+              <Link
+                href={buildUrl({ page: page < totalPages ? String(page + 1) : undefined })}
+                aria-disabled={page >= totalPages}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                  page >= totalPages
+                    ? "pointer-events-none text-slate-300 dark:text-slate-700"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
+                }`}
+              >
+                Next →
+              </Link>
+            </div>
+          )}
+
+          {(!listings || listings.length === 0) && (hasAnyFilter ? (
             <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
               No listings match your filters.{" "}
               <Link href="/browse" className="font-semibold text-brand">
@@ -380,7 +423,7 @@ export default async function BrowsePage({
                 Sell something
               </Link>
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>

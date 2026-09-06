@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { storagePathsFromUrls } from "@/lib/storage";
 
 export type ProfileResult = { error: string } | { error: null };
 
@@ -136,6 +137,19 @@ export async function deleteAccount(): Promise<{ error: string | null }> {
   } = await supabase.auth.getUser();
   if (!user) {
     return { error: "You must be logged in." };
+  }
+
+  // Storage objects aren't foreign-keyed to the listings they belong to, so
+  // the cascade delete on auth.users -> profiles -> listings never touches
+  // them — clean them up first, while the account (and its RLS access)
+  // still exists, or they'd be orphaned in the bucket forever.
+  const { data: listings } = await supabase
+    .from("listings")
+    .select("images")
+    .eq("seller_id", user.id);
+  const paths = storagePathsFromUrls((listings ?? []).flatMap((l) => l.images ?? []));
+  if (paths.length > 0) {
+    await supabase.storage.from("listing-images").remove(paths);
   }
 
   const { error } = await supabase.rpc("delete_own_account");

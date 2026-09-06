@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { CATEGORY_CUSTOM_FIELDS } from "@/lib/categoryFields";
+import { storagePathsFromUrls } from "@/lib/storage";
 
 const CUSTOM_FIELD_MAX_LENGTH = 200;
 const TITLE_MAX_LENGTH = 150;
@@ -279,12 +280,6 @@ export async function markAsSold(listingId: string) {
   revalidatePath("/profile");
   revalidatePath(`/listings/${listingId}`);
   revalidatePath("/browse");
-}
-
-function storagePathsFromUrls(urls: string[]): string[] {
-  return urls
-    .map((url) => url.split("/listing-images/")[1])
-    .filter((path): path is string => Boolean(path));
 }
 
 export async function deleteListing(listingId: string) {

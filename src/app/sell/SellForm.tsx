@@ -4,9 +4,11 @@ import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { createListing, type ListingResult } from "@/app/actions/listings";
 import SubmitButton from "@/components/SubmitButton";
 import { getCategoryFields } from "@/lib/categoryFields";
+import { compressImage } from "@/lib/compressImage";
 
 const initialState: ListingResult = { error: null };
 const MAX_PHOTOS = 5;
+const MAX_PHOTO_DIMENSION = 1600;
 
 const CONDITIONS = [
   { value: "new", label: "New" },
@@ -37,6 +39,7 @@ export default function SellForm({
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [trimmedCount, setTrimmedCount] = useState(0);
   const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const selectedCategory = categories.find((c) => c.id === categoryId);
@@ -54,12 +57,25 @@ export default function SellForm({
     if (fileInputRef.current) fileInputRef.current.files = dataTransfer.files;
   }
 
-  function addFiles(files: File[], mode: "replace" | "append") {
+  async function addFiles(files: File[], mode: "replace" | "append") {
     const combined = mode === "append" ? [...selectedFiles, ...files] : files;
     const trimmed = combined.slice(0, MAX_PHOTOS);
     setTrimmedCount(combined.length - trimmed.length);
-    setSelectedFiles(trimmed);
-    syncInputFiles(trimmed);
+
+    // Only the newly-added files need compressing — anything from an
+    // "append" that was already in selectedFiles has already been through
+    // this once.
+    const alreadyCompressed = mode === "append" ? selectedFiles : [];
+    const toCompress = trimmed.slice(alreadyCompressed.length);
+    setIsCompressing(true);
+    const compressed = await Promise.all(
+      toCompress.map((file) => compressImage(file, { maxDimension: MAX_PHOTO_DIMENSION }))
+    );
+    setIsCompressing(false);
+
+    const next = [...trimmed.slice(0, alreadyCompressed.length), ...compressed];
+    setSelectedFiles(next);
+    syncInputFiles(next);
   }
 
   function handleFilesChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -222,10 +238,17 @@ export default function SellForm({
               <label htmlFor="images" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Photos (up to {MAX_PHOTOS})
               </label>
-              {selectedFiles.length > 0 && (
-                <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {selectedFiles.length} of {MAX_PHOTOS} selected
+              {isCompressing ? (
+                <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-slate-400 border-t-transparent motion-reduce:animate-none" />
+                  Optimizing…
                 </span>
+              ) : (
+                selectedFiles.length > 0 && (
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    {selectedFiles.length} of {MAX_PHOTOS} selected
+                  </span>
+                )
               )}
             </div>
             <input

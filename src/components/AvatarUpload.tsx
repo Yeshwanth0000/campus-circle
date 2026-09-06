@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import { updateAvatar, removeAvatar } from "@/app/actions/profile";
+import { compressImage } from "@/lib/compressImage";
 import { toast } from "@/lib/toast";
+
+const MAX_AVATAR_DIMENSION = 640;
 
 export default function AvatarUpload({
   avatarUrl,
@@ -36,9 +39,10 @@ export default function AvatarUpload({
     if (!file) return;
     setPreviewUrl(URL.createObjectURL(file));
 
-    const formData = new FormData();
-    formData.set("avatar", file);
     startTransition(async () => {
+      const compressed = await compressImage(file, { maxDimension: MAX_AVATAR_DIMENSION });
+      const formData = new FormData();
+      formData.set("avatar", compressed);
       const result = await updateAvatar(null, formData);
       if (result.error) {
         toast(result.error, "error");

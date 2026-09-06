@@ -143,6 +143,16 @@ export async function updateListing(
     return { error: "You can have at most 5 photos total." };
   }
 
+  const { data: original } = await supabase
+    .from("listings")
+    .select("images")
+    .eq("id", listingId)
+    .eq("seller_id", user.id)
+    .single();
+  const droppedImages = (original?.images ?? []).filter(
+    (url: string) => !keptImages.includes(url)
+  );
+
   let categorySlug: string | null = null;
   if (categoryId) {
     const { data: category } = await supabase
@@ -186,6 +196,11 @@ export async function updateListing(
 
   if (error) {
     return { error: error.message };
+  }
+
+  const droppedPaths = storagePathsFromUrls(droppedImages);
+  if (droppedPaths.length > 0) {
+    await supabase.storage.from("listing-images").remove(droppedPaths);
   }
 
   revalidatePath(`/listings/${listingId}`);
@@ -266,6 +281,12 @@ export async function markAsSold(listingId: string) {
   revalidatePath("/browse");
 }
 
+function storagePathsFromUrls(urls: string[]): string[] {
+  return urls
+    .map((url) => url.split("/listing-images/")[1])
+    .filter((path): path is string => Boolean(path));
+}
+
 export async function deleteListing(listingId: string) {
   const supabase = await createClient();
   const {
@@ -273,11 +294,23 @@ export async function deleteListing(listingId: string) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
+  const { data: listing } = await supabase
+    .from("listings")
+    .select("images")
+    .eq("id", listingId)
+    .eq("seller_id", user.id)
+    .single();
+
   await supabase
     .from("listings")
     .delete()
     .eq("id", listingId)
     .eq("seller_id", user.id);
+
+  const paths = storagePathsFromUrls(listing?.images ?? []);
+  if (paths.length > 0) {
+    await supabase.storage.from("listing-images").remove(paths);
+  }
 
   revalidatePath("/profile");
   revalidatePath("/browse");

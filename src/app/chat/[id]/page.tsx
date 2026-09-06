@@ -1,10 +1,40 @@
 import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { markConversationRead } from "@/app/actions/chat";
 import ChatThread from "./ChatThread";
 import SafetyMenu from "@/components/SafetyMenu";
 import Avatar from "@/components/Avatar";
+
+const DEFAULT_TITLE = "CampusCircle — Your Campus Marketplace";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { title: DEFAULT_TITLE };
+
+  const { data: conversation } = await supabase
+    .from("conversations")
+    .select(
+      "buyer_id, buyer:profiles!conversations_buyer_id_fkey(full_name), seller:profiles!conversations_seller_id_fkey(full_name)"
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (!conversation) return { title: DEFAULT_TITLE };
+
+  const otherPerson = conversation.buyer_id === user.id ? conversation.seller : conversation.buyer;
+  return {
+    title: otherPerson?.full_name ? `${otherPerson.full_name} — CampusCircle` : DEFAULT_TITLE,
+  };
+}
 
 export default async function ChatDetailPage({
   params,

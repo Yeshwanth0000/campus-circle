@@ -28,12 +28,14 @@ export default function ChatThread({
   const [otherTyping, setOtherTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<ReturnType<ReturnType<typeof createClient>["channel"]> | null>(null);
+  const typingChannelRef = useRef<ReturnType<ReturnType<typeof createClient>["channel"]> | null>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTypingSentRef = useRef(0);
 
   useEffect(() => {
     const supabase = createClient();
     let channel: ReturnType<typeof supabase.channel> | null = null;
+    let typingChannel: ReturnType<typeof supabase.channel> | null = null;
     let cancelled = false;
 
     (async () => {
@@ -80,6 +82,18 @@ export default function ChatThread({
             );
           }
         )
+        .subscribe();
+
+      channelRef.current = channel;
+
+      // Separate private channel for the typing indicator — broadcast
+      // channels aren't gated by table RLS like postgres_changes is, so
+      // this needs its own Realtime Authorization policy (on
+      // realtime.messages, scoped by conversation participation) plus
+      // { private: true } here, or anyone who obtains a conversation id
+      // could join and see/forge typing events for a chat they're not in.
+      typingChannel = supabase
+        .channel(`typing:${conversationId}`, { config: { private: true } })
         .on("broadcast", { event: "typing" }, ({ payload }) => {
           if (payload?.userId === currentUserId) return;
           setOtherTyping(true);
@@ -88,14 +102,16 @@ export default function ChatThread({
         })
         .subscribe();
 
-      channelRef.current = channel;
+      typingChannelRef.current = typingChannel;
     })();
 
     return () => {
       cancelled = true;
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       if (channel) supabase.removeChannel(channel);
+      if (typingChannel) supabase.removeChannel(typingChannel);
       channelRef.current = null;
+      typingChannelRef.current = null;
     };
   }, [conversationId, currentUserId]);
 
@@ -108,7 +124,7 @@ export default function ChatThread({
     const now = Date.now();
     if (value.trim() && now - lastTypingSentRef.current > 2000) {
       lastTypingSentRef.current = now;
-      channelRef.current?.send({
+      typingChannelRef.current?.send({
         type: "broadcast",
         event: "typing",
         payload: { userId: currentUserId },

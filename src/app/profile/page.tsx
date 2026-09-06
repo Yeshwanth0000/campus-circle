@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import ListingCard from "@/components/ListingCard";
+import MyListingsGrid from "./MyListingsGrid";
 import ProfileEditForm from "./ProfileEditForm";
 import UnblockButton from "@/components/UnblockButton";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
@@ -103,22 +103,7 @@ export default async function ProfilePage() {
       </div>
 
       {myListings && myListings.length > 0 ? (
-        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {myListings.map((listing) => (
-            <ListingCard
-              key={listing.id}
-              id={listing.id}
-              title={listing.title}
-              price={Number(listing.price)}
-              images={listing.images}
-              status={listing.status}
-              condition={listing.condition}
-              createdAt={listing.created_at}
-              categoryName={listing.categories?.name}
-              hideSave
-            />
-          ))}
-        </div>
+        <MyListingsGrid listings={myListings} />
       ) : (
         <div className="mt-4 rounded-xl border border-dashed border-slate-300 py-16 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
           You haven&rsquo;t posted anything yet.

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { markConversationRead } from "@/app/actions/chat";
 import ChatThread from "./ChatThread";
 import SafetyMenu from "@/components/SafetyMenu";
+import Avatar from "@/components/Avatar";
 
 export default async function ChatDetailPage({
   params,
@@ -20,7 +21,7 @@ export default async function ChatDetailPage({
   const { data: conversation } = await supabase
     .from("conversations")
     .select(
-      "id, listing:listings(id, title), buyer:profiles!conversations_buyer_id_fkey(id, full_name), seller:profiles!conversations_seller_id_fkey(id, full_name)"
+      "id, listing:listings(id, title), buyer:profiles!conversations_buyer_id_fkey(id, full_name, avatar_url), seller:profiles!conversations_seller_id_fkey(id, full_name, avatar_url)"
     )
     .eq("id", id)
     .single();
@@ -44,21 +45,24 @@ export default async function ChatDetailPage({
   return (
     <div className="mx-auto flex h-[calc(100vh-178px)] max-w-2xl flex-col px-4 py-4 sm:h-[calc(100vh-64px)]">
       <div className="flex items-start justify-between border-b border-slate-200 pb-3 dark:border-slate-800">
-        <div>
-          <Link href="/chat" className="text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
-            ← All chats
-          </Link>
-          <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            {otherPerson?.full_name ?? "Student"}
-          </h1>
-          {conversation.listing?.title && (
-            <Link
-              href={`/listings/${conversation.listing.id}`}
-              className="text-xs text-brand hover:underline"
-            >
-              {conversation.listing.title}
+        <div className="flex items-start gap-3">
+          <Avatar avatarUrl={otherPerson?.avatar_url} name={otherPerson?.full_name ?? "S"} size={40} className="mt-0.5" />
+          <div>
+            <Link href="/chat" className="text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+              ← All chats
             </Link>
-          )}
+            <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              {otherPerson?.full_name ?? "Student"}
+            </h1>
+            {conversation.listing?.title && (
+              <Link
+                href={`/listings/${conversation.listing.id}`}
+                className="text-xs text-brand hover:underline"
+              >
+                {conversation.listing.title}
+              </Link>
+            )}
+          </div>
         </div>
         {otherPerson?.id && <SafetyMenu userId={otherPerson.id} />}
       </div>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import EmptyState from "@/components/EmptyState";
+import Avatar from "@/components/Avatar";
 
 export default async function ChatListPage() {
   const supabase = await createClient();
@@ -13,7 +14,7 @@ export default async function ChatListPage() {
   const { data: conversations } = await supabase
     .from("conversations")
     .select(
-      "id, created_at, listing:listings(id, title, images), buyer:profiles!conversations_buyer_id_fkey(id, full_name), seller:profiles!conversations_seller_id_fkey(id, full_name)"
+      "id, created_at, listing:listings(id, title, images), buyer:profiles!conversations_buyer_id_fkey(id, full_name, avatar_url), seller:profiles!conversations_seller_id_fkey(id, full_name, avatar_url)"
     )
     .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
     .order("created_at", { ascending: false });
@@ -40,6 +41,7 @@ export default async function ChatListPage() {
                   href={`/chat/${c.id}`}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
+                  <Avatar avatarUrl={otherPerson?.avatar_url} name={otherPerson?.full_name ?? "S"} size={40} />
                   <div className="min-w-0 flex-1">
                     <p
                       className={`truncate text-sm ${

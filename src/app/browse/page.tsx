@@ -382,6 +382,44 @@ export default async function BrowsePage({
         </aside>
 
         <div className="order-1 flex-1 sm:order-none">
+          {hasAnyFilter && (
+            <div className="mb-3 flex flex-wrap items-center gap-1.5">
+              {activeCategory && (
+                <FilterChip label={activeCategory.name} href={buildUrl({ category: undefined })} />
+              )}
+              {q && <FilterChip label={`"${q}"`} href={buildUrl({ q: undefined })} />}
+              {(price_min || price_max) && (
+                <FilterChip
+                  label={
+                    price_min && price_max
+                      ? `₹${price_min}–${price_max}`
+                      : price_min
+                        ? `₹${price_min}+`
+                        : `Up to ₹${price_max}`
+                  }
+                  href={buildUrl({ price_min: undefined, price_max: undefined })}
+                />
+              )}
+              {condition && (
+                <FilterChip
+                  label={CONDITIONS.find((c) => c.value === condition)?.label ?? condition}
+                  href={buildUrl({ condition: undefined })}
+                />
+              )}
+              {posted && (
+                <FilterChip
+                  label={POSTED_OPTIONS.find((p) => p.value === posted)?.label ?? posted}
+                  href={buildUrl({ posted: undefined })}
+                />
+              )}
+              <Link
+                href="/browse"
+                className="ml-1 text-xs font-medium text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+              >
+                Clear all
+              </Link>
+            </div>
+          )}
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Showing {listings?.length ?? 0} of {totalCount ?? 0} result{totalCount === 1 ? "" : "s"}
@@ -512,5 +550,19 @@ function SortSelect({
         </Link>
       ))}
     </div>
+  );
+}
+
+function FilterChip({ label, href }: { label: string; href: string }) {
+  return (
+    <Link
+      href={href}
+      className="group flex items-center gap-1 rounded-full bg-brand-light px-2.5 py-1 text-xs font-medium text-brand-dark transition-colors hover:bg-brand/20 dark:bg-brand/15 dark:text-brand"
+    >
+      {label}
+      <svg viewBox="0 0 24 24" className="h-3 w-3 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </Link>
   );
 }

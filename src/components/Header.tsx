@@ -21,16 +21,18 @@ export default async function Header() {
     .order("name");
 
   let collegeName: string | null = null;
+  let isAdmin = false;
   let hasUnread = false;
   let unreadNotificationCount = 0;
   let recentNotifications: NotificationLike[] = [];
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("colleges(name)")
+      .select("is_admin, colleges(name)")
       .eq("id", user.id)
       .single();
     collegeName = profile?.colleges?.name ?? null;
+    isAdmin = profile?.is_admin ?? false;
 
     const { count } = await supabase
       .from("messages")
@@ -88,7 +90,7 @@ export default async function Header() {
               />
             )}
             <ThemeToggle />
-            <HeaderNav isLoggedIn={!!user} hasUnread={hasUnread} />
+            <HeaderNav isLoggedIn={!!user} hasUnread={hasUnread} isAdmin={isAdmin} />
           </div>
         </div>
 

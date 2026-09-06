@@ -296,6 +296,7 @@ export type Database = {
           full_name: string | null
           hostel_or_branch: string | null
           id: string
+          is_admin: boolean
         }
         Insert: {
           avatar_url?: string | null
@@ -304,6 +305,7 @@ export type Database = {
           full_name?: string | null
           hostel_or_branch?: string | null
           id: string
+          is_admin?: boolean
         }
         Update: {
           avatar_url?: string | null
@@ -312,6 +314,7 @@ export type Database = {
           full_name?: string | null
           hostel_or_branch?: string | null
           id?: string
+          is_admin?: boolean
         }
         Relationships: [
           {
@@ -332,6 +335,9 @@ export type Database = {
           reported_listing_id: string | null
           reported_user_id: string | null
           reporter_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
         }
         Insert: {
           created_at?: string
@@ -341,6 +347,9 @@ export type Database = {
           reported_listing_id?: string | null
           reported_user_id?: string | null
           reporter_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
         }
         Update: {
           created_at?: string
@@ -350,6 +359,9 @@ export type Database = {
           reported_listing_id?: string | null
           reported_user_id?: string | null
           reporter_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
         }
         Relationships: [
           {

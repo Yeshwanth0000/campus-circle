@@ -14,9 +14,11 @@ const LOGGED_IN_LINKS = [
 export default function HeaderNav({
   isLoggedIn,
   hasUnread = false,
+  isAdmin = false,
 }: {
   isLoggedIn: boolean;
   hasUnread?: boolean;
+  isAdmin?: boolean;
 }) {
   if (!isLoggedIn) {
     return (
@@ -53,6 +55,14 @@ export default function HeaderNav({
             )}
           </Link>
         ))}
+        {isAdmin && (
+          <Link
+            href="/admin/reports"
+            className="rounded-md px-3 py-2 text-sm font-medium text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/30"
+          >
+            Admin
+          </Link>
+        )}
         <form action={signOut}>
           <button
             type="submit"

@@ -429,6 +429,12 @@ button:not(:disabled):active {
   animation: auth-card-in 0.5s var(--ease-premium);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-auth-card-in {
+    animation: none;
+  }
+}
+
 /* Notification dropdown panel — fades and scales in from the bell icon. */
 @keyframes notif-panel-in {
   from { opacity: 0; transform: translateY(-4px) scale(0.97); }
@@ -437,6 +443,12 @@ button:not(:disabled):active {
 
 .animate-notif-panel-in {
   animation: notif-panel-in 0.18s var(--ease-premium);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-notif-panel-in {
+    animation: none;
+  }
 }
 
 /* Command palette (Cmd/Ctrl+K) entrance — backdrop fades in while the panel

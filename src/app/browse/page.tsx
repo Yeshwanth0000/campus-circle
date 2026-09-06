@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
@@ -37,6 +38,29 @@ const POSTED_OPTIONS = [
   { value: "week", label: "This week", hours: 24 * 7 },
   { value: "month", label: "This month", hours: 24 * 30 },
 ];
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const { category, q } = await searchParams;
+  if (q) {
+    return { title: `“${q}” — Browse — CampusCircle` };
+  }
+  if (category) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("categories")
+      .select("name")
+      .eq("slug", category)
+      .maybeSingle();
+    if (data?.name) {
+      return { title: `${data.name} — Browse — CampusCircle` };
+    }
+  }
+  return { title: "Browse — CampusCircle" };
+}
 
 export default async function BrowsePage({
   searchParams,

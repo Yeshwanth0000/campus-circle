@@ -5,6 +5,8 @@ import { markAllNotificationsRead } from "@/app/actions/notifications";
 import EmptyState from "@/components/EmptyState";
 import NotificationRow from "./NotificationRow";
 
+export const metadata = { title: "Notifications — CampusCircle" };
+
 export default async function NotificationsPage() {
   const supabase = await createClient();
   const {

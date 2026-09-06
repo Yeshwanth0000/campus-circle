@@ -9,6 +9,8 @@ import ExportDataButton from "@/components/ExportDataButton";
 import StatCounter from "@/components/StatCounter";
 import AvatarUpload from "@/components/AvatarUpload";
 
+export const metadata = { title: "Your profile — CampusCircle" };
+
 export default async function ProfilePage() {
   const supabase = await createClient();
   const {

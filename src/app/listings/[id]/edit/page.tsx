@@ -1,6 +1,27 @@
 import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import EditListingForm from "./EditListingForm";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: listing } = await supabase
+    .from("listings")
+    .select("title")
+    .eq("id", id)
+    .maybeSingle();
+
+  return {
+    title: listing?.title
+      ? `Edit “${listing.title}” — CampusCircle`
+      : "Edit listing — CampusCircle",
+  };
+}
 
 export default async function EditListingPage({
   params,

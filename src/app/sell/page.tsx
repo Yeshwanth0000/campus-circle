@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import SellForm from "./SellForm";
 
+export const metadata = { title: "Sell an item — CampusCircle" };
+
 export default async function SellPage() {
   const supabase = await createClient();
   const {

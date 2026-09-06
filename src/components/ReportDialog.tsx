@@ -56,7 +56,8 @@ export default function ReportDialog({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4"
+      style={{ animation: "palette-backdrop-in 0.15s ease-out" }}
       onClick={onClose}
     >
       <div
@@ -66,7 +67,8 @@ export default function ReportDialog({
         aria-labelledby="report-dialog-title"
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl outline-none dark:bg-slate-900"
+        style={{ animation: "palette-panel-in 0.18s var(--ease-premium)" }}
+        className="w-full max-w-sm rounded-xl border border-slate-200/70 bg-white/98 p-5 shadow-2xl shadow-slate-900/25 outline-none backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-900/98"
       >
         {done ? (
           <>

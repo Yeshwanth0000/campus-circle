@@ -36,6 +36,7 @@ export default function SellForm({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [trimmedCount, setTrimmedCount] = useState(0);
+  const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const selectedCategory = categories.find((c) => c.id === categoryId);
@@ -53,12 +54,33 @@ export default function SellForm({
     if (fileInputRef.current) fileInputRef.current.files = dataTransfer.files;
   }
 
-  function handleFilesChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const chosen = Array.from(e.target.files ?? []);
-    const trimmed = chosen.slice(0, MAX_PHOTOS);
-    setTrimmedCount(chosen.length - trimmed.length);
+  function addFiles(files: File[], mode: "replace" | "append") {
+    const combined = mode === "append" ? [...selectedFiles, ...files] : files;
+    const trimmed = combined.slice(0, MAX_PHOTOS);
+    setTrimmedCount(combined.length - trimmed.length);
     setSelectedFiles(trimmed);
     syncInputFiles(trimmed);
+  }
+
+  function handleFilesChange(e: React.ChangeEvent<HTMLInputElement>) {
+    addFiles(Array.from(e.target.files ?? []), "replace");
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDraggingPhoto(true);
+  }
+
+  function handleDragLeave(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDraggingPhoto(false);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDraggingPhoto(false);
+    const dropped = Array.from(e.dataTransfer.files ?? []).filter((f) => f.type.startsWith("image/"));
+    if (dropped.length > 0) addFiles(dropped, "append");
   }
 
   function removePhoto(index: number) {
@@ -223,11 +245,23 @@ export default function SellForm({
               </p>
             )}
             {previewUrls.length > 0 ? (
-              <div className="mt-3 grid grid-cols-5 gap-2">
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`mt-3 grid grid-cols-5 gap-2 rounded-lg p-1 transition-colors ${
+                  isDraggingPhoto ? "bg-brand-light/60 dark:bg-brand/10" : ""
+                }`}
+              >
                 {previewUrls.map((url, i) => (
                   <div key={i} className="group relative aspect-square overflow-hidden rounded-md bg-slate-100 dark:bg-slate-800">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={url} alt={`Selected photo ${i + 1}`} className="h-full w-full object-cover" />
+                    {i === 0 && (
+                      <span className="absolute bottom-1 left-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] font-semibold text-white">
+                        Cover
+                      </span>
+                    )}
                     <button
                       type="button"
                       onClick={() => removePhoto(i)}
@@ -240,9 +274,18 @@ export default function SellForm({
                 ))}
               </div>
             ) : (
-              <p className="mt-3 rounded-md border border-dashed border-slate-300 py-6 text-center text-xs text-slate-400 dark:border-slate-700 dark:text-slate-500">
-                Photos help your listing sell faster — optional, but recommended.
-              </p>
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`mt-3 rounded-md border border-dashed py-6 text-center text-xs transition-colors ${
+                  isDraggingPhoto
+                    ? "border-brand bg-brand-light/60 text-brand-dark dark:bg-brand/10 dark:text-brand"
+                    : "border-slate-300 text-slate-400 dark:border-slate-700 dark:text-slate-500"
+                }`}
+              >
+                {isDraggingPhoto ? "Drop to add" : "Drag photos here, or use the picker above — optional, but recommended."}
+              </div>
             )}
           </div>
 

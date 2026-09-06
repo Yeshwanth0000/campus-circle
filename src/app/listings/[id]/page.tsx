@@ -126,7 +126,7 @@ export default async function ListingDetailPage({
                 ? `₹${Number(listing.price).toLocaleString("en-IN")}`
                 : "Free"}
             </p>
-            {!isOwner && listing.status === "available" && (
+            {!isOwner && listing.status === "available" && !blockedRow && (
               <form action={messageSeller} className="mt-3">
                 <button
                   type="submit"
@@ -284,7 +284,12 @@ export default async function ListingDetailPage({
                   </form>
                 </>
               ) : (
-                listing.status === "available" && (
+                listing.status === "available" &&
+                (blockedRow ? (
+                  <p className="rounded-md border border-slate-200 px-4 py-2.5 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+                    You've blocked this seller — unblock them to send a message.
+                  </p>
+                ) : (
                   <form action={messageSeller}>
                     <button
                       type="submit"
@@ -293,7 +298,7 @@ export default async function ListingDetailPage({
                       Message seller
                     </button>
                   </form>
-                )
+                ))
               )}
               <Link
                 href="/browse"

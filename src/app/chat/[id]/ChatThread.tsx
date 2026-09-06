@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { sendMessage } from "@/app/actions/chat";
 import { toast } from "@/lib/toast";
+import { conditionBadgeClasses, conditionLabel } from "@/lib/conditionBadge";
 
 type Message = {
   id: string;
@@ -13,14 +16,25 @@ type Message = {
   read_at: string | null;
 };
 
+type ListingSummary = {
+  id: string;
+  title: string;
+  price: number;
+  images: string[];
+  condition: string | null;
+  status: string;
+} | null;
+
 export default function ChatThread({
   conversationId,
   currentUserId,
   initialMessages,
+  listing,
 }: {
   conversationId: string;
   currentUserId: string;
   initialMessages: Message[];
+  listing?: ListingSummary;
 }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [draft, setDraft] = useState("");
@@ -149,6 +163,46 @@ export default function ChatThread({
   return (
     <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 p-4 shadow-sm backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-900/60">
       <div className="flex-1 space-y-2 overflow-y-auto">
+        {listing && (
+          <Link
+            href={`/listings/${listing.id}`}
+            className="mb-3 flex items-center gap-3 rounded-xl border border-slate-200/70 bg-slate-50/80 p-2.5 shadow-sm transition hover:border-brand/30 dark:border-slate-800/70 dark:bg-slate-800/40"
+          >
+            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
+              {listing.images?.[0] ? (
+                <Image src={listing.images[0]} alt="" fill sizes="56px" className="object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-[10px] text-slate-400 dark:text-slate-600">
+                  No photo
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+                {listing.title}
+              </p>
+              <div className="mt-0.5 flex items-center gap-1.5">
+                <span className="text-sm font-bold text-brand">
+                  {Number(listing.price) > 0
+                    ? `₹${Number(listing.price).toLocaleString("en-IN")}`
+                    : "Free"}
+                </span>
+                {listing.condition && (
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize ${conditionBadgeClasses(listing.condition)}`}
+                  >
+                    {conditionLabel(listing.condition)}
+                  </span>
+                )}
+                {listing.status !== "available" && (
+                  <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-medium capitalize text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                    {listing.status}
+                  </span>
+                )}
+              </div>
+            </div>
+          </Link>
+        )}
         {messages.map((m, i) => {
           const isMine = m.sender_id === currentUserId;
           const isLastMine = isMine && !messages.slice(i + 1).some((later) => later.sender_id === currentUserId);

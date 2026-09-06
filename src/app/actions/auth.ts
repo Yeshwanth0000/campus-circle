@@ -146,5 +146,12 @@ export async function updatePassword(
     return { error: error.message };
   }
 
+  // A password reset is often prompted by a compromised account — if someone
+  // else has been using the old password on another device, changing it
+  // should actually kick them out, not just block future logins. Only other
+  // sessions are signed out so the user isn't logged out of the device
+  // they're resetting from.
+  await supabase.auth.signOut({ scope: "others" });
+
   redirect("/browse");
 }

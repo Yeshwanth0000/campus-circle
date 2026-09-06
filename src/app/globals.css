@@ -413,7 +413,8 @@ button:not(:disabled):active {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-message-in {
+  .animate-message-in,
+  .typing-dot {
     animation: none;
   }
 }

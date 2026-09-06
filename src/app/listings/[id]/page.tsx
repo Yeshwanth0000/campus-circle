@@ -72,6 +72,19 @@ export default async function ListingDetailPage({
     ?.filter((r) => !blockedIds.has(r.seller_id))
     .slice(0, 4);
 
+  const { data: relatedSavedRows } =
+    relatedListings && relatedListings.length > 0
+      ? await supabase
+          .from("saved_listings")
+          .select("listing_id")
+          .eq("user_id", user.id)
+          .in(
+            "listing_id",
+            relatedListings.map((r) => r.id)
+          )
+      : { data: null };
+  const relatedSavedIds = new Set(relatedSavedRows?.map((r) => r.listing_id));
+
   async function messageSeller() {
     "use server";
     await startConversation(listing!.id, listing!.seller_id);
@@ -329,6 +342,7 @@ export default async function ListingDetailPage({
                 condition={r.condition}
                 createdAt={r.created_at}
                 categoryName={r.categories?.name}
+                saved={relatedSavedIds.has(r.id)}
               />
             ))}
           </div>

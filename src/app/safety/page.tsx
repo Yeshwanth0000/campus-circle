@@ -43,13 +43,15 @@ export default function SafetyPage() {
         <section>
           <h2 className="font-semibold text-slate-900 dark:text-slate-100">Reporting a problem</h2>
           <p className="mt-2">
-            Every listing and profile has a report option (the ⋮ menu). Use it
-            for scams, harassment, or prohibited items — reports are reviewed
-            directly. You can also{" "}
-            <Link href="/browse" className="font-semibold text-brand hover:text-brand-dark">
-              block a user
-            </Link>{" "}
-            from your profile page at any time to stop seeing their listings.
+            Every listing and seller profile has a ⋮ menu with Report and
+            Block options. Report for scams, harassment, or prohibited items —
+            reports are reviewed directly. Block to stop seeing someone&rsquo;s
+            listings and prevent them from messaging you; manage everyone
+            you&rsquo;ve blocked anytime from{" "}
+            <Link href="/profile" className="font-semibold text-brand hover:text-brand-dark">
+              your profile
+            </Link>
+            .
           </p>
         </section>
       </div>

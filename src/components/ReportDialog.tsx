@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 import { fileReport } from "@/app/actions/safety";
+import { toast } from "@/lib/toast";
 
 const REASONS = [
   "Suspicious or scam behavior",
@@ -39,12 +40,16 @@ export default function ReportDialog({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     startTransition(async () => {
-      await fileReport({
+      const result = await fileReport({
         reason,
         details: details.trim() || undefined,
         reportedUserId: userId,
         reportedListingId: listingId,
       });
+      if (result.error) {
+        toast(result.error, "error");
+        return;
+      }
       setDone(true);
     });
   }

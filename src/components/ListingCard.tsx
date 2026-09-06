@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import SaveButton from "./SaveButton";
+import InterestedButton from "./InterestedButton";
 import { conditionBadgeClasses, conditionLabel } from "@/lib/conditionBadge";
 
 type ListingCardProps = {
@@ -14,6 +15,8 @@ type ListingCardProps = {
   createdAt?: string;
   saved?: boolean;
   hideSave?: boolean;
+  sellerId?: string;
+  hideInterested?: boolean;
 };
 
 export default function ListingCard({
@@ -27,7 +30,10 @@ export default function ListingCard({
   createdAt,
   saved = false,
   hideSave = false,
+  sellerId,
+  hideInterested = false,
 }: ListingCardProps) {
+  const showInterested = !hideInterested && sellerId && status === "available";
   const isNew =
     createdAt && Date.now() - new Date(createdAt).getTime() < 1000 * 60 * 60 * 24 * 3;
 
@@ -69,9 +75,10 @@ export default function ListingCard({
           )}
         </div>
 
-        {!hideSave && (
-          <div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100 sm:opacity-100">
-            <SaveButton listingId={id} initialSaved={saved} />
+        {(!hideSave || showInterested) && (
+          <div className="absolute right-2 top-2 flex flex-col items-end gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 sm:opacity-100">
+            {!hideSave && <SaveButton listingId={id} initialSaved={saved} />}
+            {showInterested && <InterestedButton listingId={id} sellerId={sellerId!} />}
           </div>
         )}
       </div>

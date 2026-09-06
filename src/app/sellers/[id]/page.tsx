@@ -124,6 +124,8 @@ export default async function SellerProfilePage({
               categoryName={listing.categories?.name}
               saved={savedIds.has(listing.id)}
               hideSave={seller.id === user.id}
+              sellerId={seller.id}
+              hideInterested={seller.id === user.id}
             />
           ))}
         </div>

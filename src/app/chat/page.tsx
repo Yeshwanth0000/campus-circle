@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import EmptyState from "@/components/EmptyState";
@@ -59,6 +60,11 @@ export default async function ChatListPage() {
                     </p>
                   </div>
                   {isUnread && <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-rose-500" />}
+                  {c.listing?.images?.[0] && (
+                    <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
+                      <Image src={c.listing.images[0]} alt="" fill sizes="44px" className="object-cover" />
+                    </div>
+                  )}
                 </Link>
               </li>
             );

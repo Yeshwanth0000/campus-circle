@@ -36,6 +36,16 @@ export async function startConversation(listingId: string, sellerId: string) {
     redirect(`/listings/${listingId}`);
   }
 
+  // "I'm interested" should actually land as a real signal in the chat, not
+  // just an empty thread — send a starter message on the buyer's behalf,
+  // same pattern as the "Is this available?" auto-message on other
+  // marketplace apps' contact-seller buttons.
+  await supabase.from("messages").insert({
+    conversation_id: created.id,
+    sender_id: user.id,
+    content: "Hi! I'm interested in this listing — is it still available?",
+  });
+
   redirect(`/chat/${created.id}`);
 }
 

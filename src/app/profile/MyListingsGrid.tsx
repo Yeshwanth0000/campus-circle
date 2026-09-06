@@ -64,6 +64,7 @@ export default function MyListingsGrid({ listings }: { listings: Listing[] }) {
               createdAt={listing.created_at}
               categoryName={listing.categories?.name}
               hideSave
+              hideInterested
             />
           ))}
         </div>

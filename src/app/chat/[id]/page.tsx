@@ -1,11 +1,13 @@
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { markConversationRead } from "@/app/actions/chat";
 import ChatThread from "./ChatThread";
 import SafetyMenu from "@/components/SafetyMenu";
 import Avatar from "@/components/Avatar";
+import { conditionBadgeClasses, conditionLabel } from "@/lib/conditionBadge";
 
 const DEFAULT_TITLE = "CampusCircle — Your Campus Marketplace";
 
@@ -51,7 +53,7 @@ export default async function ChatDetailPage({
   const { data: conversation } = await supabase
     .from("conversations")
     .select(
-      "id, listing:listings(id, title), buyer:profiles!conversations_buyer_id_fkey(id, full_name, avatar_url), seller:profiles!conversations_seller_id_fkey(id, full_name, avatar_url)"
+      "id, listing:listings(id, title, price, images, condition, status), buyer:profiles!conversations_buyer_id_fkey(id, full_name, avatar_url), seller:profiles!conversations_seller_id_fkey(id, full_name, avatar_url)"
     )
     .eq("id", id)
     .single();
@@ -84,18 +86,57 @@ export default async function ChatDetailPage({
             <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
               {otherPerson?.full_name ?? "Student"}
             </h1>
-            {conversation.listing?.title && (
-              <Link
-                href={`/listings/${conversation.listing.id}`}
-                className="text-xs text-brand hover:underline"
-              >
-                {conversation.listing.title}
-              </Link>
-            )}
           </div>
         </div>
         {otherPerson?.id && <SafetyMenu userId={otherPerson.id} />}
       </div>
+
+      {conversation.listing && (
+        <Link
+          href={`/listings/${conversation.listing.id}`}
+          className="mt-3 flex shrink-0 items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 p-2.5 shadow-sm backdrop-blur-sm transition hover:border-brand/30 dark:border-slate-800/70 dark:bg-slate-900/60"
+        >
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
+            {conversation.listing.images?.[0] ? (
+              <Image
+                src={conversation.listing.images[0]}
+                alt=""
+                fill
+                sizes="56px"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-[10px] text-slate-400 dark:text-slate-600">
+                No photo
+              </div>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+              {conversation.listing.title}
+            </p>
+            <div className="mt-0.5 flex items-center gap-1.5">
+              <span className="text-sm font-bold text-brand">
+                {Number(conversation.listing.price) > 0
+                  ? `₹${Number(conversation.listing.price).toLocaleString("en-IN")}`
+                  : "Free"}
+              </span>
+              {conversation.listing.condition && (
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize ${conditionBadgeClasses(conversation.listing.condition)}`}
+                >
+                  {conditionLabel(conversation.listing.condition)}
+                </span>
+              )}
+              {conversation.listing.status !== "available" && (
+                <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-medium capitalize text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                  {conversation.listing.status}
+                </span>
+              )}
+            </div>
+          </div>
+        </Link>
+      )}
 
       <ChatThread
         conversationId={id}

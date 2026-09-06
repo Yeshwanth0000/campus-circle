@@ -180,7 +180,7 @@ export default async function ListingDetailPage({
                   type="submit"
                   className="w-full rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-brand-dark"
                 >
-                  Message seller
+                  I&rsquo;m interested
                 </button>
               </form>
             )}
@@ -343,7 +343,7 @@ export default async function ListingDetailPage({
                       type="submit"
                       className="w-full rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md"
                     >
-                      Message seller
+                      I&rsquo;m interested
                     </button>
                   </form>
                 ))
@@ -375,6 +375,8 @@ export default async function ListingDetailPage({
                 createdAt={r.created_at}
                 categoryName={r.categories?.name}
                 saved={relatedSavedIds.has(r.id)}
+                sellerId={r.seller_id}
+                hideInterested={r.seller_id === user.id}
               />
             ))}
           </div>

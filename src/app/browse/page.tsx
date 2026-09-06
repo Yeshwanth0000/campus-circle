@@ -456,6 +456,8 @@ export default async function BrowsePage({
                     condition={listing.condition}
                     createdAt={listing.created_at}
                     saved={savedIds.has(listing.id)}
+                    sellerId={listing.seller_id}
+                    hideInterested={listing.seller_id === user.id}
                   />
                 </Reveal>
               ))}

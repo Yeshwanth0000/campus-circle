@@ -26,6 +26,12 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
 ];
 
+const PRICE_PRESETS: { label: string; min: string; max?: string }[] = [
+  { label: "Under ₹500", min: "0", max: "500" },
+  { label: "₹500–2,000", min: "500", max: "2000" },
+  { label: "₹2,000+", min: "2000" },
+];
+
 const CONDITIONS = [
   { value: "new", label: "New" },
   { value: "like-new", label: "Like new" },
@@ -271,6 +277,24 @@ export default async function BrowsePage({
             >
               Clear price filter
             </Link>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {PRICE_PRESETS.map((preset) => {
+                const active = price_min === preset.min && price_max === (preset.max ?? undefined);
+                return (
+                  <Link
+                    key={preset.label}
+                    href={buildUrl({ price_min: preset.min, price_max: preset.max })}
+                    className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+                      active
+                        ? "border-brand bg-brand-light text-brand-dark dark:border-brand dark:bg-brand/15 dark:text-brand"
+                        : "border-slate-200 text-slate-600 hover:border-brand/40 dark:border-slate-700 dark:text-slate-400"
+                    }`}
+                  >
+                    {preset.label}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           <div>

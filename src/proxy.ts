@@ -1,10 +1,10 @@
-import { NextResponse, type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 const SUPABASE_ORIGIN = "https://clpfcygjtkjeafvscdwb.supabase.co";
 const SUPABASE_WS_ORIGIN = "wss://clpfcygjtkjeafvscdwb.supabase.co";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   // React's dev-mode debugging (stack-trace reconstruction) uses eval(),
   // which it never does in production — relax only for local development

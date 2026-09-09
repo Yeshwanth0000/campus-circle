@@ -65,7 +65,7 @@ export default async function ListingDetailPage({
     supabase
       .from("listings")
       .select(
-        "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, custom_fields, categories(name, slug), profiles(full_name, hostel_or_branch, created_at, avatar_url)"
+        "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, custom_fields, show_phone, categories(name, slug), profiles(full_name, hostel_or_branch, created_at, avatar_url, phone_number)"
       )
       .eq("id", id)
       .single(),
@@ -360,6 +360,14 @@ export default async function ListingDetailPage({
                     </button>
                   </form>
                 ))
+              )}
+              {!isOwner && !blockedRow && listing.show_phone && listing.profiles?.phone_number && (
+                <a
+                  href={`tel:${listing.profiles.phone_number}`}
+                  className="block w-full rounded-md border border-slate-300 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  Call {listing.profiles.phone_number}
+                </a>
               )}
               <Link
                 href="/browse"

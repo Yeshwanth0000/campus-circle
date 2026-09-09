@@ -31,8 +31,9 @@ export default async function EditListingPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  // None of these three depend on each other — categories is global data,
-  // and listing only needs `id` — so they run concurrently.
+  // None of these four depend on each other — categories is global data,
+  // and listing/profile only need `id`/`user.id` once resolved — so getUser
+  // and the listing fetch run concurrently, then profile joins the batch.
   const [
     {
       data: { user },
@@ -44,7 +45,7 @@ export default async function EditListingPage({
     supabase
       .from("listings")
       .select(
-        "id, title, description, price, condition, images, meetup_spot, category_id, seller_id, custom_fields"
+        "id, title, description, price, condition, images, meetup_spot, category_id, seller_id, custom_fields, show_phone"
       )
       .eq("id", id)
       .single(),
@@ -55,10 +56,20 @@ export default async function EditListingPage({
   if (!listing) notFound();
   if (listing.seller_id !== user.id) redirect(`/listings/${id}`);
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("phone_number")
+    .eq("id", user.id)
+    .single();
+
   return (
     <div className="mx-auto max-w-xl px-4 py-8">
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Edit listing</h1>
-      <EditListingForm listing={listing} categories={categories ?? []} />
+      <EditListingForm
+        listing={listing}
+        categories={categories ?? []}
+        savedPhoneNumber={profile?.phone_number ?? ""}
+      />
     </div>
   );
 }

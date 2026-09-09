@@ -21,8 +21,10 @@ const STEPS = ["Details", "Photos", "Category", "Review"] as const;
 
 export default function SellForm({
   categories,
+  savedPhoneNumber = "",
 }: {
   categories: { id: string; name: string; slug: string }[];
+  savedPhoneNumber?: string;
 }) {
   const [state, formAction] = useActionState(createListing, initialState);
   const [step, setStep] = useState(0);
@@ -34,6 +36,8 @@ export default function SellForm({
   const [categoryId, setCategoryId] = useState("");
   const [meetupSpot, setMeetupSpot] = useState("");
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({});
+  const [phoneNumber, setPhoneNumber] = useState(savedPhoneNumber);
+  const [showPhone, setShowPhone] = useState(false);
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -380,6 +384,36 @@ export default function SellForm({
                 className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
               />
             </div>
+
+            <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/50">
+              <label htmlFor="phoneNumber" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Phone number <span className="font-normal text-slate-400">(optional)</span>
+              </label>
+              <input
+                id="phoneNumber"
+                name="phoneNumber"
+                type="tel"
+                maxLength={20}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="e.g. 98765 43210"
+                className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              />
+              <label className="mt-3 flex items-start gap-2.5">
+                <input
+                  type="checkbox"
+                  name="showPhone"
+                  checked={showPhone}
+                  onChange={(e) => setShowPhone(e.target.checked)}
+                  disabled={!phoneNumber.trim()}
+                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand disabled:opacity-50 dark:border-slate-600"
+                />
+                <span className="text-sm text-slate-600 dark:text-slate-400">
+                  Show my phone number on this listing. Off by default — buyers can always reach
+                  you through chat instead.
+                </span>
+              </label>
+            </div>
           </div>
 
           {/* Step 4: Review */}
@@ -417,6 +451,12 @@ export default function SellForm({
                   </span>
                 </div>
               )}
+              <div className="flex items-start justify-between gap-3">
+                <span className="text-slate-500 dark:text-slate-400">Phone number</span>
+                <span className="text-right font-medium text-slate-900 dark:text-slate-100">
+                  {showPhone && phoneNumber.trim() ? "Visible on this listing" : "Hidden"}
+                </span>
+              </div>
               <div className="flex items-start justify-between gap-3">
                 <span className="text-slate-500 dark:text-slate-400">Photos</span>
                 <span className="font-medium text-slate-900 dark:text-slate-100">

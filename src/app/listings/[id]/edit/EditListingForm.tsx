@@ -18,18 +18,23 @@ type Listing = {
   meetup_spot: string | null;
   category_id: string | null;
   custom_fields: unknown;
+  show_phone: boolean;
 };
 
 export default function EditListingForm({
   listing,
   categories,
+  savedPhoneNumber = "",
 }: {
   listing: Listing;
   categories: { id: string; name: string; slug: string }[];
+  savedPhoneNumber?: string;
 }) {
   const [state, formAction] = useActionState(updateListing, initialState);
   const [keptImages, setKeptImages] = useState<string[]>(listing.images);
   const [categoryId, setCategoryId] = useState(listing.category_id ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(savedPhoneNumber);
+  const [showPhone, setShowPhone] = useState(listing.show_phone);
 
   const selectedCategory = categories.find((c) => c.id === categoryId);
   const customFields = useMemo(() => getCategoryFields(selectedCategory?.slug), [selectedCategory]);
@@ -163,6 +168,36 @@ export default function EditListingForm({
           defaultValue={listing.meetup_spot ?? ""}
           className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />
+      </div>
+
+      <div className="rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/50">
+        <label htmlFor="phoneNumber" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+          Phone number <span className="font-normal text-slate-400">(optional)</span>
+        </label>
+        <input
+          id="phoneNumber"
+          name="phoneNumber"
+          type="tel"
+          maxLength={20}
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          placeholder="e.g. 98765 43210"
+          className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+        />
+        <label className="mt-3 flex items-start gap-2.5">
+          <input
+            type="checkbox"
+            name="showPhone"
+            checked={showPhone}
+            onChange={(e) => setShowPhone(e.target.checked)}
+            disabled={!phoneNumber.trim()}
+            className="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand disabled:opacity-50 dark:border-slate-600"
+          />
+          <span className="text-sm text-slate-600 dark:text-slate-400">
+            Show my phone number on this listing. Off by default — buyers can always reach you
+            through chat instead.
+          </span>
+        </label>
       </div>
 
       {keptImages.length > 0 && (

@@ -10,6 +10,10 @@ const CUSTOM_FIELD_MAX_LENGTH = 200;
 const TITLE_MAX_LENGTH = 150;
 const DESCRIPTION_MAX_LENGTH = 3000;
 const MEETUP_SPOT_MAX_LENGTH = 150;
+const PHONE_MAX_LENGTH = 20;
+// Loose on purpose — just enough to reject obvious garbage, not to enforce
+// a specific country format (students may list a non-Indian number).
+const PHONE_PATTERN = /^[0-9+()\- ]{7,20}$/;
 
 function extractCustomFields(formData: FormData, categorySlug: string | null | undefined) {
   const defs = categorySlug ? CATEGORY_CUSTOM_FIELDS[categorySlug] ?? [] : [];
@@ -21,6 +25,12 @@ function extractCustomFields(formData: FormData, categorySlug: string | null | u
     if (value) result[def.key] = value;
   }
   return result;
+}
+
+function extractPhone(formData: FormData): { phoneNumber: string | null; showPhone: boolean } {
+  const phoneNumber = String(formData.get("phoneNumber") ?? "").trim().slice(0, PHONE_MAX_LENGTH);
+  const showPhone = formData.get("showPhone") === "on" && PHONE_PATTERN.test(phoneNumber);
+  return { phoneNumber: phoneNumber || null, showPhone };
 }
 
 export type ListingResult = { error: string } | { error: null };
@@ -45,6 +55,7 @@ export async function createListing(
   const condition = String(formData.get("condition") ?? "") || null;
   const meetupSpot = String(formData.get("meetupSpot") ?? "").trim().slice(0, MEETUP_SPOT_MAX_LENGTH) || null;
   const files = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
+  const { phoneNumber, showPhone } = extractPhone(formData);
 
   if (!title || Number.isNaN(price) || price < 0) {
     return { error: "Please provide a title and a valid price." };
@@ -60,6 +71,10 @@ export async function createListing(
     .single();
   if (!profile) {
     return { error: "Your profile could not be found." };
+  }
+
+  if (phoneNumber) {
+    await supabase.from("profiles").update({ phone_number: phoneNumber }).eq("id", user.id);
   }
 
   let categorySlug: string | null = null;
@@ -101,6 +116,7 @@ export async function createListing(
       meetup_spot: meetupSpot,
       images: imageUrls,
       custom_fields: customFields,
+      show_phone: showPhone,
     })
     .select("id")
     .single();
@@ -136,12 +152,17 @@ export async function updateListing(
   const newFiles = formData
     .getAll("images")
     .filter((f): f is File => f instanceof File && f.size > 0);
+  const { phoneNumber, showPhone } = extractPhone(formData);
 
   if (!listingId || !title || Number.isNaN(price) || price < 0) {
     return { error: "Please provide a title and a valid price." };
   }
   if (keptImages.length + newFiles.length > 5) {
     return { error: "You can have at most 5 photos total." };
+  }
+
+  if (phoneNumber) {
+    await supabase.from("profiles").update({ phone_number: phoneNumber }).eq("id", user.id);
   }
 
   const { data: original } = await supabase
@@ -191,6 +212,7 @@ export async function updateListing(
       meetup_spot: meetupSpot,
       images: imageUrls,
       custom_fields: customFields,
+      show_phone: showPhone,
     })
     .eq("id", listingId)
     .eq("seller_id", user.id);

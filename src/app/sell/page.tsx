@@ -11,10 +11,10 @@ export default async function SellPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, name, slug")
-    .order("name");
+  const [{ data: categories }, { data: profile }] = await Promise.all([
+    supabase.from("categories").select("id, name, slug").order("name"),
+    supabase.from("profiles").select("phone_number").eq("id", user.id).single(),
+  ]);
 
   return (
     <div className="mx-auto max-w-xl px-4 py-8">
@@ -22,7 +22,7 @@ export default async function SellPage() {
       <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
         Your listing will only be visible to students on your own campus.
       </p>
-      <SellForm categories={categories ?? []} />
+      <SellForm categories={categories ?? []} savedPhoneNumber={profile?.phone_number ?? ""} />
     </div>
   );
 }

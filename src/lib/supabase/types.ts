@@ -151,6 +151,7 @@ export type Database = {
           meetup_spot: string | null
           price: number
           seller_id: string
+          show_phone: boolean
           status: string
           title: string
           view_count: number
@@ -167,6 +168,7 @@ export type Database = {
           meetup_spot?: string | null
           price?: number
           seller_id: string
+          show_phone?: boolean
           status?: string
           title: string
           view_count?: number
@@ -183,6 +185,7 @@ export type Database = {
           meetup_spot?: string | null
           price?: number
           seller_id?: string
+          show_phone?: boolean
           status?: string
           title?: string
           view_count?: number
@@ -297,6 +300,7 @@ export type Database = {
           hostel_or_branch: string | null
           id: string
           is_admin: boolean
+          phone_number: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -306,6 +310,7 @@ export type Database = {
           hostel_or_branch?: string | null
           id: string
           is_admin?: boolean
+          phone_number?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -315,6 +320,7 @@ export type Database = {
           hostel_or_branch?: string | null
           id?: string
           is_admin?: boolean
+          phone_number?: string | null
         }
         Relationships: [
           {

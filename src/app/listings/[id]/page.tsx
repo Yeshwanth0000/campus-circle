@@ -134,7 +134,7 @@ export default async function ListingDetailPage({
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6">
+    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-6">
       <ViewTracker listingId={id} />
       <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
         <Link href="/browse" className="hover:text-brand">

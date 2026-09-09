@@ -24,7 +24,7 @@ export default async function SavedPage() {
   const listings = saved?.map((s) => s.listings).filter(Boolean) ?? [];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Saved items</h1>
@@ -39,7 +39,7 @@ export default async function SavedPage() {
       </div>
 
       {listings.length > 0 ? (
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {listings.map((listing) => (
             <ListingCard
               key={listing!.id}

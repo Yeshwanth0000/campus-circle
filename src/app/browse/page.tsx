@@ -164,7 +164,7 @@ export default async function BrowsePage({
   );
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
+    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-6">
       <nav className="mb-4 flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
         <Link href="/browse" className="hover:text-brand">
           Home
@@ -443,7 +443,7 @@ export default async function BrowsePage({
           </div>
 
           {listings && listings.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {listings.map((listing, i) => (
                 <Reveal key={listing.id} delay={(i % 4) * 60}>
                   <ListingCard

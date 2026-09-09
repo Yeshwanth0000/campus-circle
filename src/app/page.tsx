@@ -29,7 +29,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <GradientMesh />
 
-        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
+        <div className="relative mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-16 sm:py-24">
           <div className="grid items-center gap-10 sm:grid-cols-2">
             <div>
               <span className="inline-block rounded-full bg-brand-light px-3 py-1 text-xs font-semibold text-brand-dark">
@@ -100,7 +100,7 @@ export default async function HomePage() {
 
       {categories && categories.length > 0 && (
         <section className="border-t border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
-          <div className="mx-auto max-w-6xl px-4 py-14">
+          <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-14">
             <Reveal>
               <h2 className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100">
                 What people trade on CampusCircle
@@ -117,7 +117,7 @@ export default async function HomePage() {
       )}
 
       <section className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-        <div className="mx-auto max-w-6xl px-4 py-14">
+        <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-14">
           <Reveal>
             <h2 className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100">
               Why students trust CampusCircle
@@ -163,7 +163,7 @@ export default async function HomePage() {
       </section>
 
       <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
-        <div className="mx-auto max-w-6xl px-4 py-12">
+        <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-12">
           <div className="grid gap-8 sm:grid-cols-3">
             <div>
               <span className="text-lg font-bold text-brand">CampusCircle</span>

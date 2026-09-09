@@ -30,7 +30,7 @@ export default async function ChatListPage() {
   const unreadConversationIds = new Set(unreadRows?.map((r) => r.conversation_id));
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto w-full max-w-[min(94vw,72rem)] px-4 py-8">
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Your chats</h1>
 
       {conversations && conversations.length > 0 ? (

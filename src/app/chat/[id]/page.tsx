@@ -73,7 +73,7 @@ export default async function ChatDetailPage({
   await markConversationRead(id);
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-178px)] max-w-4xl flex-col px-4 py-4 sm:h-[calc(100vh-64px)]">
+    <div className="mx-auto flex h-[calc(100vh-178px)] w-full max-w-[min(94vw,72rem)] flex-col px-4 py-4 sm:h-[calc(100vh-64px)]">
       <div className="flex items-start justify-between border-b border-slate-200 pb-3 dark:border-slate-800">
         <div className="flex items-start gap-3">
           <Avatar avatarUrl={otherPerson?.avatar_url} name={otherPerson?.full_name ?? "S"} size={40} className="mt-0.5" />

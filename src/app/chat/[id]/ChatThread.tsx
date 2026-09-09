@@ -213,7 +213,7 @@ export default function ChatThread({
               style={{ animationDelay: `${Math.min(i, 10) * 30}ms` }}
             >
               <div
-                className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
+                className={`max-w-[min(75%,42rem)] rounded-2xl px-4 py-2 text-sm shadow-sm ${
                   isMine
                     ? "bg-gradient-to-br from-brand to-brand-dark text-white"
                     : "bg-white text-slate-900 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:ring-slate-700"

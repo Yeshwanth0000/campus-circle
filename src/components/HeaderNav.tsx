@@ -41,8 +41,12 @@ export default function HeaderNav({
 
   return (
     <nav className="relative">
-      {/* Desktop nav — mobile uses the bottom tab bar instead */}
-      <div className="hidden items-center gap-1 sm:flex">
+      {/* Desktop nav — below lg, the bottom tab bar is used instead. That
+          same lg cutoff matches BottomNav's own breakpoint: the header's
+          full text-link nav needs closer to 950px+ to fit without
+          overflowing, well past the older sm (640px) switchover, which
+          left a band where neither layout actually worked. */}
+      <div className="hidden items-center gap-1 lg:flex">
         {LOGGED_IN_LINKS.map((link) => (
           <Link
             key={link.href}
@@ -73,8 +77,8 @@ export default function HeaderNav({
         </form>
       </div>
 
-      {/* Mobile: just a log out icon — everything else lives in the bottom tab bar */}
-      <form action={signOut} className="sm:hidden">
+      {/* Below lg: just a log out icon — everything else lives in the bottom tab bar */}
+      <form action={signOut} className="lg:hidden">
         <button
           type="submit"
           aria-label="Log out"

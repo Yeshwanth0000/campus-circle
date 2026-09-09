@@ -11,6 +11,12 @@ const LOGGED_IN_LINKS = [
   { href: "/profile", label: "Profile" },
 ];
 
+function confirmLogout(e: React.FormEvent<HTMLFormElement>) {
+  if (!window.confirm("Log out of CampusCircle?")) {
+    e.preventDefault();
+  }
+}
+
 export default function HeaderNav({
   isLoggedIn,
   hasUnread = false,
@@ -67,7 +73,7 @@ export default function HeaderNav({
             Admin
           </Link>
         )}
-        <form action={signOut}>
+        <form action={signOut} onSubmit={confirmLogout}>
           <button
             type="submit"
             className="rounded-md px-3 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
@@ -78,7 +84,7 @@ export default function HeaderNav({
       </div>
 
       {/* Below lg: just a log out icon — everything else lives in the bottom tab bar */}
-      <form action={signOut} className="lg:hidden">
+      <form action={signOut} onSubmit={confirmLogout} className="lg:hidden">
         <button
           type="submit"
           aria-label="Log out"

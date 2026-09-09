@@ -71,85 +71,84 @@ export default function NotificationBell({
         )}
       </button>
 
-      {open && (
-        <>
-          {createPortal(
-            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />,
-            document.body
-          )}
-          <div
-            role="dialog"
-            aria-label="Notifications"
-            className="fixed left-4 right-4 top-16 z-50 origin-top animate-notif-panel-in overflow-hidden rounded-2xl border border-slate-200/70 bg-white/90 shadow-xl shadow-slate-900/10 backdrop-blur-xl motion-reduce:animate-none dark:border-slate-800/70 dark:bg-slate-900/90 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 sm:origin-top-right"
-          >
-            <div className="flex items-center justify-between border-b border-slate-100/70 px-4 py-3 dark:border-slate-800/70">
-              <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</span>
-              {localUnreadCount > 0 && (
-                <button
-                  type="button"
-                  onClick={handleMarkAllRead}
-                  className="text-xs font-medium text-brand hover:text-brand-dark"
-                >
-                  Mark all read
-                </button>
-              )}
-            </div>
-
-            <div className="max-h-96 overflow-y-auto">
-              {notifications.length === 0 ? (
-                <p className="px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
-                  No notifications yet.
-                </p>
-              ) : (
-                notifications.map((n, i) => {
-                  const { href, title, subtitle } = describeNotification(n);
-                  const isUnread = !n.read_at;
-                  return (
-                    <Link
-                      key={n.id}
-                      href={href}
-                      onClick={() => handleItemClick(n)}
-                      className="flex animate-message-in items-start gap-3 px-4 py-3 transition-colors motion-reduce:animate-none hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                      style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
-                    >
-                      <span
-                        className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-                          isUnread ? "bg-rose-500" : "bg-transparent"
-                        }`}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className={`text-sm ${
-                            isUnread
-                              ? "font-semibold text-slate-900 dark:text-slate-100"
-                              : "text-slate-700 dark:text-slate-300"
-                          }`}
-                        >
-                          {title}
-                        </p>
-                        {subtitle && (
-                          <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">{subtitle}</p>
-                        )}
-                      </div>
-                      <span className="shrink-0 whitespace-nowrap text-[11px] text-slate-400 dark:text-slate-500">
-                        {timeAgo(n.created_at)}
-                      </span>
-                    </Link>
-                  );
-                })
-              )}
-            </div>
-
-            <Link
-              href="/notifications"
-              onClick={() => setOpen(false)}
-              className="block border-t border-slate-100/70 px-4 py-2.5 text-center text-sm font-medium text-brand transition-colors hover:bg-slate-50 dark:border-slate-800/70 dark:hover:bg-slate-800/60"
+      {open &&
+        createPortal(
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
+            <div
+              role="dialog"
+              aria-label="Notifications"
+              className="fixed left-4 right-4 top-16 z-50 origin-top animate-notif-panel-in overflow-hidden rounded-2xl border border-slate-200/70 bg-white/90 shadow-xl shadow-slate-900/10 backdrop-blur-xl motion-reduce:animate-none dark:border-slate-800/70 dark:bg-slate-900/90 sm:left-auto sm:right-4 sm:top-16 sm:w-80 sm:origin-top-right"
             >
-              View all
-            </Link>
-          </div>
-        </>
-      )}
+              <div className="flex items-center justify-between border-b border-slate-100/70 px-4 py-3 dark:border-slate-800/70">
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</span>
+                {localUnreadCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleMarkAllRead}
+                    className="text-xs font-medium text-brand hover:text-brand-dark"
+                  >
+                    Mark all read
+                  </button>
+                )}
+              </div>
+
+              <div className="max-h-96 overflow-y-auto">
+                {notifications.length === 0 ? (
+                  <p className="px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
+                    No notifications yet.
+                  </p>
+                ) : (
+                  notifications.map((n, i) => {
+                    const { href, title, subtitle } = describeNotification(n);
+                    const isUnread = !n.read_at;
+                    return (
+                      <Link
+                        key={n.id}
+                        href={href}
+                        onClick={() => handleItemClick(n)}
+                        className="flex animate-message-in items-start gap-3 px-4 py-3 transition-colors motion-reduce:animate-none hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                        style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
+                      >
+                        <span
+                          className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
+                            isUnread ? "bg-rose-500" : "bg-transparent"
+                          }`}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className={`text-sm ${
+                              isUnread
+                                ? "font-semibold text-slate-900 dark:text-slate-100"
+                                : "text-slate-700 dark:text-slate-300"
+                            }`}
+                          >
+                            {title}
+                          </p>
+                          {subtitle && (
+                            <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">{subtitle}</p>
+                          )}
+                        </div>
+                        <span className="shrink-0 whitespace-nowrap text-[11px] text-slate-400 dark:text-slate-500">
+                          {timeAgo(n.created_at)}
+                        </span>
+                      </Link>
+                    );
+                  })
+                )}
+              </div>
+
+              <Link
+                href="/notifications"
+                onClick={() => setOpen(false)}
+                className="block border-t border-slate-100/70 px-4 py-2.5 text-center text-sm font-medium text-brand transition-colors hover:bg-slate-50 dark:border-slate-800/70 dark:hover:bg-slate-800/60"
+              >
+                View all
+              </Link>
+            </div>
+          </>,
+          document.body
+        )}
     </div>
   );
 }

@@ -161,12 +161,12 @@ export default function ChatThread({
   }
 
   return (
-    <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 p-4 shadow-sm backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-900/60">
+    <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-300 bg-white/70 p-4 shadow-sm backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-900/60">
       <div className="flex-1 space-y-2 overflow-y-auto">
         {listing && (
           <Link
             href={`/listings/${listing.id}`}
-            className="mb-3 flex items-center gap-3 rounded-xl border border-slate-200/70 bg-slate-50/80 p-2.5 shadow-sm transition hover:border-brand/30 dark:border-slate-800/70 dark:bg-slate-800/40"
+            className="mb-3 flex items-center gap-3 rounded-xl border border-slate-300 bg-white p-2.5 shadow-[0_1px_4px_rgba(15,23,42,0.08)] transition hover:border-brand/40 hover:shadow-[0_2px_8px_rgba(15,23,42,0.12)] dark:border-slate-800/70 dark:bg-slate-800/40 dark:shadow-sm"
           >
             <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
               {listing.images?.[0] ? (

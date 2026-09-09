@@ -2,6 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Server Actions default to a 1MB request body limit. createListing and
+  // updateListing submit up to 5 client-compressed photos as multipart
+  // form data — comfortably over 1MB even after compression — which was
+  // failing every listing submission with photos as a generic 413 that
+  // surfaced to users as "This page hit a snag."
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "4.5mb",
+    },
+  },
   async headers() {
     return [
       {

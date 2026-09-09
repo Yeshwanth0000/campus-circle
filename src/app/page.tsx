@@ -17,8 +17,7 @@ export default async function HomePage() {
   const { data: categories } = await supabase
     .from("categories")
     .select("id, name, slug")
-    .order("name")
-    .limit(8);
+    .order("name");
 
   const { data: statsRows } = await supabase.rpc("get_homepage_stats");
   const stats = statsRows?.[0];

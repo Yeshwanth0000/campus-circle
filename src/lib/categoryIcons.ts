@@ -6,6 +6,11 @@ export const CATEGORY_ICONS: Record<string, string> = {
   fashion: "👕",
   furniture: "🛋️",
   sports: "⚽",
+  stationery: "📐",
+  "musical-instruments": "🎸",
+  gaming: "🎮",
+  vehicles: "🛵",
+  appliances: "🔌",
   other: "📦",
 };
 

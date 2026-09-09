@@ -5,7 +5,6 @@ import "./globals.css";
 import Header from "@/components/Header";
 import ThemeInitScript from "@/components/ThemeInitScript";
 import ToastContainer from "@/components/ToastContainer";
-import InactivityLogout from "@/components/InactivityLogout";
 import PageTransition from "@/components/PageTransition";
 import AmbientBackground from "@/components/AmbientBackground";
 
@@ -53,7 +52,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <PageTransition>{children}</PageTransition>
         </main>
         <ToastContainer />
-        <InactivityLogout />
       </body>
     </html>
   );

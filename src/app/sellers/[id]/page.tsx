@@ -33,25 +33,36 @@ export default async function SellerProfilePage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+
+  // seller only needs `id` (not `user`), so it starts alongside getUser().
+  const [
+    {
+      data: { user },
+    },
+    { data: seller },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("profiles")
+      .select("id, full_name, hostel_or_branch, created_at, avatar_url")
+      .eq("id", id)
+      .single(),
+  ]);
   if (!user) redirect("/login");
-
-  const { data: seller } = await supabase
-    .from("profiles")
-    .select("id, full_name, hostel_or_branch, created_at, avatar_url")
-    .eq("id", id)
-    .single();
-
   if (!seller) notFound();
 
-  const { data: blockedRow } = await supabase
-    .from("blocked_users")
-    .select("id")
-    .eq("blocker_id", user.id)
-    .eq("blocked_id", id)
-    .maybeSingle();
+  // blockedRow and savedRows are independent of each other — only listings
+  // genuinely has to wait for blockedRow's result.
+  const [{ data: blockedRow }, { data: savedRows }] = await Promise.all([
+    supabase
+      .from("blocked_users")
+      .select("id")
+      .eq("blocker_id", user.id)
+      .eq("blocked_id", id)
+      .maybeSingle(),
+    supabase.from("saved_listings").select("listing_id").eq("user_id", user.id),
+  ]);
+  const savedIds = new Set(savedRows?.map((r) => r.listing_id));
 
   // Browse already hides a blocked seller's listings from the grid — keep
   // that consistent here instead of letting a direct link to their profile
@@ -64,12 +75,6 @@ export default async function SellerProfilePage({
         .eq("seller_id", id)
         .eq("status", "available")
         .order("created_at", { ascending: false });
-
-  const { data: savedRows } = await supabase
-    .from("saved_listings")
-    .select("listing_id")
-    .eq("user_id", user.id);
-  const savedIds = new Set(savedRows?.map((r) => r.listing_id));
 
   const memberSince = new Date(seller.created_at).toLocaleDateString("en-IN", {
     month: "long",

@@ -50,56 +50,69 @@ export default async function ListingDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+
+  // listing only needs `id` (already in hand) and doesn't need `user`, so it
+  // starts alongside getUser() instead of waiting on it. Middleware already
+  // redirects unauthenticated visitors before this component ever runs, so
+  // the listing fetch is never truly wasted in practice.
+  const [
+    {
+      data: { user },
+    },
+    { data: listing },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("listings")
+      .select(
+        "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, custom_fields, categories(name, slug), profiles(full_name, hostel_or_branch, created_at, avatar_url)"
+      )
+      .eq("id", id)
+      .single(),
+  ]);
+
   if (!user) redirect("/login");
-
-  const { data: listing } = await supabase
-    .from("listings")
-    .select(
-      "id, title, description, price, condition, images, meetup_spot, status, created_at, seller_id, category_id, view_count, custom_fields, categories(name, slug), profiles(full_name, hostel_or_branch, created_at, avatar_url)"
-    )
-    .eq("id", id)
-    .single();
-
   if (!listing) notFound();
 
   const isOwner = listing.seller_id === user.id;
 
-  const { data: savedRow } = await supabase
-    .from("saved_listings")
-    .select("id")
-    .eq("user_id", user.id)
-    .eq("listing_id", id)
-    .maybeSingle();
-
-  const { count: sellerListingsCount } = await supabase
-    .from("listings")
-    .select("id", { count: "exact", head: true })
-    .eq("seller_id", listing.seller_id)
-    .eq("status", "available");
-
-  const { data: saveCount } = isOwner
-    ? await supabase.rpc("get_listing_save_count", { p_listing_id: id })
-    : { data: null };
-
-  const { data: blockedRows } = await supabase
-    .from("blocked_users")
-    .select("blocked_id")
-    .eq("blocker_id", user.id);
+  // None of these five depend on each other's results — only on `user` and
+  // `listing`, both already resolved above — so they run concurrently.
+  const [
+    { data: savedRow },
+    { count: sellerListingsCount },
+    { data: saveCount },
+    { data: blockedRows },
+    { data: relatedListingsRaw },
+  ] = await Promise.all([
+    supabase
+      .from("saved_listings")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("listing_id", id)
+      .maybeSingle(),
+    supabase
+      .from("listings")
+      .select("id", { count: "exact", head: true })
+      .eq("seller_id", listing.seller_id)
+      .eq("status", "available"),
+    isOwner
+      ? supabase.rpc("get_listing_save_count", { p_listing_id: id })
+      : Promise.resolve({ data: null }),
+    supabase.from("blocked_users").select("blocked_id").eq("blocker_id", user.id),
+    listing.category_id
+      ? supabase
+          .from("listings")
+          .select("id, title, price, images, status, condition, created_at, seller_id, categories(name)")
+          .eq("category_id", listing.category_id)
+          .eq("status", "available")
+          .neq("id", id)
+          .limit(8)
+      : Promise.resolve({ data: null }),
+  ]);
   const blockedIds = new Set(blockedRows?.map((r) => r.blocked_id));
   const blockedRow = blockedIds.has(listing.seller_id);
 
-  const { data: relatedListingsRaw } = listing.category_id
-    ? await supabase
-        .from("listings")
-        .select("id, title, price, images, status, condition, created_at, seller_id, categories(name)")
-        .eq("category_id", listing.category_id)
-        .eq("status", "available")
-        .neq("id", id)
-        .limit(8)
-    : { data: null };
   const relatedListings = relatedListingsRaw
     ?.filter((r) => !blockedIds.has(r.seller_id))
     .slice(0, 4);

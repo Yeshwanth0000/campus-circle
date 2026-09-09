@@ -48,13 +48,26 @@ export default async function ChatDetailPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: conversation } = await supabase
-    .from("conversations")
-    .select(
-      "id, listing:listings(id, title, price, images, condition, status), buyer:profiles!conversations_buyer_id_fkey(id, full_name, avatar_url), seller:profiles!conversations_seller_id_fkey(id, full_name, avatar_url)"
-    )
-    .eq("id", id)
-    .single();
+  // These three don't depend on each other's results — only on `id`, which
+  // is already known — so they run concurrently instead of one round-trip
+  // at a time. markConversationRead racing the messages select is fine:
+  // ChatThread's realtime subscription picks up the read_at UPDATE moments
+  // later regardless of which one lands first.
+  const [{ data: conversation }, { data: messages }] = await Promise.all([
+    supabase
+      .from("conversations")
+      .select(
+        "id, listing:listings(id, title, price, images, condition, status), buyer:profiles!conversations_buyer_id_fkey(id, full_name, avatar_url), seller:profiles!conversations_seller_id_fkey(id, full_name, avatar_url)"
+      )
+      .eq("id", id)
+      .single(),
+    supabase
+      .from("messages")
+      .select("id, content, sender_id, created_at, read_at")
+      .eq("conversation_id", id)
+      .order("created_at", { ascending: true }),
+    markConversationRead(id),
+  ]);
 
   if (!conversation) notFound();
   if (conversation.buyer?.id !== user.id && conversation.seller?.id !== user.id) {
@@ -63,14 +76,6 @@ export default async function ChatDetailPage({
 
   const otherPerson =
     conversation.buyer?.id === user.id ? conversation.seller : conversation.buyer;
-
-  const { data: messages } = await supabase
-    .from("messages")
-    .select("id, content, sender_id, created_at, read_at")
-    .eq("conversation_id", id)
-    .order("created_at", { ascending: true });
-
-  await markConversationRead(id);
 
   return (
     <div className="mx-auto flex h-[calc(100vh-178px)] w-full max-w-[min(94vw,72rem)] flex-col px-4 py-4 sm:h-[calc(100vh-126px)] lg:h-[calc(100vh-64px)]">

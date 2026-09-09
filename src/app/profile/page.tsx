@@ -18,27 +18,29 @@ export default async function ProfilePage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, hostel_or_branch, created_at, avatar_url, colleges(name)")
-    .eq("id", user.id)
-    .single();
-
-  const { data: myListings } = await supabase
-    .from("listings")
-    .select("id, title, price, images, status, condition, created_at, categories(name)")
-    .eq("seller_id", user.id)
-    .order("created_at", { ascending: false });
-
-  const { data: blocked } = await supabase
-    .from("blocked_users")
-    .select("blocked_id, profiles!blocked_users_blocked_id_fkey(full_name)")
-    .eq("blocker_id", user.id);
-
-  const { count: savedCount } = await supabase
-    .from("saved_listings")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id);
+  // None of these four depend on each other's results — only on user.id —
+  // so they run concurrently instead of one round-trip at a time.
+  const [{ data: profile }, { data: myListings }, { data: blocked }, { count: savedCount }] =
+    await Promise.all([
+      supabase
+        .from("profiles")
+        .select("full_name, hostel_or_branch, created_at, avatar_url, colleges(name)")
+        .eq("id", user.id)
+        .single(),
+      supabase
+        .from("listings")
+        .select("id, title, price, images, status, condition, created_at, categories(name)")
+        .eq("seller_id", user.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("blocked_users")
+        .select("blocked_id, profiles!blocked_users_blocked_id_fkey(full_name)")
+        .eq("blocker_id", user.id),
+      supabase
+        .from("saved_listings")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id),
+    ]);
 
   const totalListings = myListings?.length ?? 0;
   const activeListings = myListings?.filter((l) => l.status === "available").length ?? 0;

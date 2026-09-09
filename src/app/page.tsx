@@ -10,16 +10,17 @@ import CategoryMarquee from "@/components/CategoryMarquee";
 
 export default async function HomePage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, name, slug")
-    .order("name");
-
-  const { data: statsRows } = await supabase.rpc("get_homepage_stats");
+  const [
+    {
+      data: { user },
+    },
+    { data: categories },
+    { data: statsRows },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("categories").select("id, name, slug").order("name"),
+    supabase.rpc("get_homepage_stats"),
+  ]);
   const stats = statsRows?.[0];
 
   const exploreHref = user ? "/browse" : "/signup";

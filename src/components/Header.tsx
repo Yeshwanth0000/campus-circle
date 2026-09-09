@@ -11,14 +11,15 @@ import type { NotificationLike } from "@/lib/notificationDisplay";
 
 export default async function Header() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, name, slug")
-    .order("name");
+  const [
+    {
+      data: { user },
+    },
+    { data: categories },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("categories").select("id, name, slug").order("name"),
+  ]);
 
   let collegeName: string | null = null;
   let isAdmin = false;
@@ -26,40 +27,36 @@ export default async function Header() {
   let unreadNotificationCount = 0;
   let recentNotifications: NotificationLike[] = [];
   if (user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("is_admin, colleges(name)")
-      .eq("id", user.id)
-      .single();
+    const [{ data: profile }, { count }, { count: notifCount }, { data: notifRows }] =
+      await Promise.all([
+        supabase.from("profiles").select("is_admin, colleges(name)").eq("id", user.id).single(),
+        supabase
+          .from("messages")
+          .select("id, conversations!inner(buyer_id, seller_id)", {
+            count: "exact",
+            head: true,
+          })
+          .is("read_at", null)
+          .neq("sender_id", user.id)
+          .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`, {
+            foreignTable: "conversations",
+          }),
+        supabase
+          .from("notifications")
+          .select("id", { count: "exact", head: true })
+          .eq("recipient_id", user.id)
+          .is("read_at", null),
+        supabase
+          .from("notifications")
+          .select("id, type, payload, read_at, created_at")
+          .eq("recipient_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(6),
+      ]);
     collegeName = profile?.colleges?.name ?? null;
     isAdmin = profile?.is_admin ?? false;
-
-    const { count } = await supabase
-      .from("messages")
-      .select("id, conversations!inner(buyer_id, seller_id)", {
-        count: "exact",
-        head: true,
-      })
-      .is("read_at", null)
-      .neq("sender_id", user.id)
-      .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`, {
-        foreignTable: "conversations",
-      });
     hasUnread = (count ?? 0) > 0;
-
-    const { count: notifCount } = await supabase
-      .from("notifications")
-      .select("id", { count: "exact", head: true })
-      .eq("recipient_id", user.id)
-      .is("read_at", null);
     unreadNotificationCount = notifCount ?? 0;
-
-    const { data: notifRows } = await supabase
-      .from("notifications")
-      .select("id, type, payload, read_at, created_at")
-      .eq("recipient_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(6);
     recentNotifications = notifRows ?? [];
   }
 

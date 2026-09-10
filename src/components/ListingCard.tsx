@@ -40,7 +40,7 @@ export default function ListingCard({
   return (
     <Link
       href={`/listings/${id}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-xl hover:shadow-slate-300/60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand/30 dark:hover:shadow-black/50"
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-xl hover:shadow-slate-300/60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand/30 dark:hover:shadow-black/50"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
         {images[0] ? (
@@ -88,7 +88,11 @@ export default function ListingCard({
           second line — at two columns on a 375px screen that wrap alone
           was adding ~30px of dead height to every card. */}
       <div className="flex flex-1 flex-col p-2 sm:p-3">
-        <p className="line-clamp-2 text-[13px] font-medium leading-snug text-slate-900 dark:text-slate-100 sm:min-h-[2.5rem] sm:text-sm sm:leading-normal">
+        {/* 2.625rem is exactly two lines of sm:text-sm (14px) at
+            sm:leading-normal (1.5) — the old 2.5rem floor was 2px short, so a
+            genuinely two-line title outgrew its own reserved box and left
+            cards in a row a few pixels out of step. */}
+        <p className="line-clamp-2 text-[13px] font-medium leading-snug text-slate-900 dark:text-slate-100 sm:min-h-[2.625rem] sm:text-sm sm:leading-normal">
           {title}
         </p>
 

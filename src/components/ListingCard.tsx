@@ -114,16 +114,26 @@ export default function ListingCard({
         </div>
 
         {/* Tablet and up keep the category + condition row at the card foot,
-            pinned to the bottom so cards in a row stay aligned. */}
-        <div className="mt-auto hidden flex-wrap items-center gap-1 pt-2 sm:flex">
+            pinned to the bottom so cards in a row stay aligned. It must stay
+            one line: a long category like "Hostel Essentials" used to wrap
+            and take its whole grid row ~24px taller with it. The category
+            gives up width first; the condition is the load-bearing half.
+
+            Between sm and lg the grid runs three columns beside the sidebar,
+            which leaves cards ~120px wide — too narrow for the category to
+            show anything but an ellipsis, so it waits for lg. */}
+        <div className="mt-auto hidden items-center gap-1 pt-2 sm:flex">
           {categoryName && (
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+            <span
+              title={categoryName}
+              className="hidden min-w-0 truncate rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400 lg:inline-block"
+            >
               {categoryName}
             </span>
           )}
           {condition && (
             <span
-              className={`rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${conditionBadgeClasses(condition)}`}
+              className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${conditionBadgeClasses(condition)}`}
             >
               {conditionLabel(condition)}
             </span>

@@ -2,7 +2,7 @@ import Skeleton from "@/components/Skeleton";
 
 export default function SellerProfileLoading() {
   return (
-    <div className="mx-auto w-full max-w-[min(94vw,96rem)] animate-skeleton-in px-4 py-8">
+    <div className="mx-auto w-full max-w-none animate-skeleton-in px-3 py-4 sm:max-w-[min(94vw,96rem)] sm:px-4 sm:py-8">
       <div className="flex items-center gap-4 rounded-xl border border-slate-200 p-6 dark:border-slate-800">
         <Skeleton className="h-14 w-14 shrink-0 rounded-full" />
         <div className="space-y-2">
@@ -12,7 +12,7 @@ export default function SellerProfileLoading() {
       </div>
 
       <Skeleton className="mt-8 mb-4 h-6 w-40" />
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
             <Skeleton className="aspect-square w-full rounded-none" />

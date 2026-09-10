@@ -2,7 +2,7 @@ import Skeleton from "@/components/Skeleton";
 
 export default function BrowseLoading() {
   return (
-    <div className="mx-auto w-full max-w-[min(94vw,96rem)] animate-skeleton-in px-4 py-6">
+    <div className="mx-auto w-full max-w-none animate-skeleton-in px-3 py-3 sm:max-w-[min(94vw,96rem)] sm:px-4 sm:py-6">
       <Skeleton className="mb-4 h-4 w-24" />
 
       <div className="mb-6 flex gap-3 overflow-x-auto pb-2">
@@ -19,7 +19,7 @@ export default function BrowseLoading() {
 
         <div className="order-1 flex-1 sm:order-none">
           <Skeleton className="mb-4 h-4 w-32" />
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
                 <Skeleton className="aspect-square w-full rounded-none" />

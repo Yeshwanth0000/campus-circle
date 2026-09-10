@@ -50,7 +50,7 @@ export default async function ProfilePage() {
     : null;
 
   return (
-    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-8">
+    <div className="mx-auto w-full max-w-none px-3 py-4 sm:max-w-[min(94vw,96rem)] sm:px-4 sm:py-8">
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <div className="relative h-28 overflow-hidden bg-gradient-to-br from-brand via-accent to-[var(--mesh-violet)] sm:h-36">
           <div className="mesh-grain absolute inset-0" />

@@ -2,7 +2,7 @@ import Skeleton from "@/components/Skeleton";
 
 export default function ListingDetailLoading() {
   return (
-    <div className="mx-auto w-full max-w-[min(94vw,96rem)] animate-skeleton-in px-4 py-6">
+    <div className="mx-auto w-full max-w-none animate-skeleton-in px-3 py-3 sm:max-w-[min(94vw,96rem)] sm:px-4 sm:py-6">
       <Skeleton className="mb-4 h-4 w-48" />
 
       <div className="grid gap-8 sm:grid-cols-2">

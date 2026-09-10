@@ -82,7 +82,7 @@ export default async function SellerProfilePage({
   });
 
   return (
-    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-8">
+    <div className="mx-auto w-full max-w-none px-3 py-4 sm:max-w-[min(94vw,96rem)] sm:px-4 sm:py-8">
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <div className="relative h-20 overflow-hidden bg-gradient-to-br from-brand via-accent to-[var(--mesh-violet)] sm:h-28">
           <div className="mesh-grain absolute inset-0" />
@@ -115,7 +115,7 @@ export default async function SellerProfilePage({
       </h2>
 
       {listings && listings.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {listings.map((listing) => (
             <ListingCard
               key={listing.id}

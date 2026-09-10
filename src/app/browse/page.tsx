@@ -170,8 +170,10 @@ export default async function BrowsePage({
     Boolean(price_min || price_max),
   ].filter(Boolean).length;
 
+  // Full-bleed with tight padding on phones — the 94vw cap plus px-4 was
+  // spending ~54px of a 375px screen on empty gutters.
   return (
-    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-6">
+    <div className="mx-auto w-full max-w-none px-3 py-3 sm:max-w-[min(94vw,96rem)] sm:px-4 sm:py-6">
       {/* Breadcrumb and the category tile strip are desktop-only: on phones
           the action bar's Category sheet covers the same ground, and both
           were spending most of the first screen on navigation. */}
@@ -573,8 +575,8 @@ export default async function BrowsePage({
               </Link>
             </div>
           )}
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-3 sm:mb-4">
+            <p className="text-xs text-slate-500 dark:text-slate-400 sm:text-sm">
               Showing {listings?.length ?? 0} of {totalCount ?? 0} result{totalCount === 1 ? "" : "s"}
             </p>
             <div className="flex items-center gap-3">
@@ -596,7 +598,7 @@ export default async function BrowsePage({
           </div>
 
           {listings && listings.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
               {listings.map((listing, i) => (
                 <Reveal key={listing.id} delay={(i % 4) * 60}>
                   <ListingCard

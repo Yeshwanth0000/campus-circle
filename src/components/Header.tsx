@@ -63,7 +63,7 @@ export default async function Header() {
   return (
     <>
       <FloatingHeaderShell>
-        <div className="flex w-full items-center gap-4 px-4 py-3">
+        <div className="flex w-full items-center gap-3 px-3 py-2.5 sm:gap-4 sm:px-4 sm:py-3">
           <Link href="/" className="flex shrink-0 items-baseline gap-2">
             <span className="text-xl font-bold text-brand">CampusBin</span>
             {collegeName && (

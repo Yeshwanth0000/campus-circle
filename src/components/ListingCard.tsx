@@ -83,22 +83,26 @@ export default function ListingCard({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-3">
-        <p className="line-clamp-2 min-h-[2.5rem] text-sm font-medium text-slate-900 dark:text-slate-100">
+      {/* Phones get a tighter version: no fixed title height, and the
+          category pill is dropped so the badge row can't wrap onto a
+          second line — at two columns on a 375px screen that wrap alone
+          was adding ~30px of dead height to every card. */}
+      <div className="flex flex-1 flex-col p-2 sm:p-3">
+        <p className="line-clamp-2 text-[13px] font-medium leading-snug text-slate-900 dark:text-slate-100 sm:min-h-[2.5rem] sm:text-sm sm:leading-normal">
           {title}
         </p>
-        <p className="mt-1 text-base font-bold text-brand">
+        <p className="mt-0.5 text-[15px] font-bold text-brand sm:mt-1 sm:text-base">
           {price > 0 ? `₹${price.toLocaleString("en-IN")}` : "Free"}
         </p>
-        <div className="mt-auto flex flex-wrap items-center gap-1 pt-2">
+        <div className="mt-1 flex flex-wrap items-center gap-1 sm:mt-auto sm:pt-2">
           {categoryName && (
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+            <span className="hidden rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400 sm:inline-block">
               {categoryName}
             </span>
           )}
           {condition && (
             <span
-              className={`rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${conditionBadgeClasses(condition)}`}
+              className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize sm:text-[11px] ${conditionBadgeClasses(condition)}`}
             >
               {conditionLabel(condition)}
             </span>

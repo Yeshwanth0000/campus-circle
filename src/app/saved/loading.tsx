@@ -5,7 +5,7 @@ export default function SavedLoading() {
     <div className="mx-auto w-full max-w-none animate-skeleton-in px-3 py-4 sm:max-w-[min(94vw,96rem)] sm:px-4 sm:py-8">
       <Skeleton className="h-8 w-36" />
       <Skeleton className="mt-2 h-4 w-64" />
-      <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
             <Skeleton className="aspect-square w-full rounded-none" />

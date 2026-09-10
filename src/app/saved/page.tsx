@@ -39,7 +39,7 @@ export default async function SavedPage() {
       </div>
 
       {listings.length > 0 ? (
-        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
           {listings.map((listing) => (
             <ListingCard
               key={listing!.id}

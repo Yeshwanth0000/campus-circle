@@ -187,10 +187,11 @@ export default async function BrowsePage({
   // spending ~54px of a 375px screen on empty gutters.
   return (
     <div className="mx-auto w-full max-w-none px-3 py-3 sm:max-w-[min(94vw,96rem)] sm:px-4 sm:py-6">
-      {/* Breadcrumb and the category tile strip are desktop-only: on phones
-          the action bar's Category sheet covers the same ground, and both
-          were spending most of the first screen on navigation. */}
-      <nav className="mb-4 hidden items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 sm:flex">
+      {/* Breadcrumb and the category tile strip wait for lg, which is where
+          the sidebar arrives and the action bar's Category sheet steps down.
+          Below that the sheet covers the same ground, and these two were
+          spending most of the first screen on navigation. */}
+      <nav className="mb-4 hidden items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 lg:flex">
         <Link href="/browse" className="hover:text-brand">
           Home
         </Link>
@@ -211,7 +212,7 @@ export default async function BrowsePage({
       {/* Category tile strip — the fade masks hint that the row keeps
           going past either edge, since overflow-x-auto alone gives no
           visual cue there's more to scroll to on a narrow screen. */}
-      <div className="mb-6 hidden gap-3 overflow-x-auto pb-2 sm:flex [-webkit-mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)]">
+      <div className="mb-6 hidden gap-3 overflow-x-auto pb-2 lg:flex [-webkit-mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)]">
         <Link
           href={buildUrl({ category: undefined })}
           aria-current={!category ? "true" : undefined}
@@ -255,12 +256,13 @@ export default async function BrowsePage({
         ))}
       </div>
 
-      <div className="flex flex-col gap-6 sm:flex-row">
-        {/* Mobile gets its own compact dropdown (MobileFilterPanel, rendered
-            in the results header below) instead of this full sidebar, so
-            the listing grid isn't pushed down by a wall of price/condition/
-            posted controls. Desktop keeps the always-visible sidebar. */}
-        <aside className="hidden space-y-6 sm:block sm:w-52 sm:shrink-0">
+      <div className="flex flex-col gap-6 lg:flex-row">
+        {/* The sidebar costs 232px including its gap. At sm that was 37% of
+            a 700px screen, squeezing the three-column grid down to ~120px
+            cards. It now waits for lg — the same line the header nav and
+            bottom nav switch on — and everything narrower uses the action
+            bar's sheets, which cover the identical filters. */}
+        <aside className="hidden space-y-6 lg:block lg:w-52 lg:shrink-0">
           <div>
             <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Price range</h2>
             <form className="mt-3 space-y-2">
@@ -405,7 +407,7 @@ export default async function BrowsePage({
           </div>
         </aside>
 
-        <div className="order-1 flex-1 sm:order-none">
+        <div className="flex-1">
           {/* Sort / Category / Filters — first thing on the page for
               phones, replacing the breadcrumb and category strip that used
               to sit here. Its three sheets are fed from here so the option
@@ -601,7 +603,7 @@ export default async function BrowsePage({
                   posted={posted}
                 />
               )}
-              <div className="hidden items-center gap-2 text-sm sm:flex">
+              <div className="hidden items-center gap-2 text-sm lg:flex">
                 <label htmlFor="sort" className="text-slate-500 dark:text-slate-400">
                   Sort by
                 </label>
@@ -611,7 +613,7 @@ export default async function BrowsePage({
           </div>
 
           {listings && listings.length > 0 ? (
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
               {listings.map((listing, i) => (
                 <Reveal key={listing.id} delay={(i % 4) * 60}>
                   <ListingCard

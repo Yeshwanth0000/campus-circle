@@ -26,7 +26,7 @@ export default function ProfileLoading() {
       </div>
 
       <Skeleton className="mt-8 mb-4 h-6 w-32" />
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
             <Skeleton className="aspect-square w-full rounded-none" />

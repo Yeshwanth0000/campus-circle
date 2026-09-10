@@ -58,7 +58,7 @@ export default function MobileActionBar({
           top-3 rather than top-0 to match the inset the header floats at
           once scrolled — otherwise a sliver of this bar shows above it
           on the way back up. */}
-      <div className="sticky top-3 z-20 mb-2.5 grid grid-cols-3 overflow-hidden rounded-xl border border-white/10 bg-slate-900 text-white shadow-lg shadow-slate-900/20 sm:hidden">
+      <div className="sticky top-3 z-20 mb-2.5 grid grid-cols-3 overflow-hidden rounded-xl border border-white/10 bg-slate-900 text-white shadow-lg shadow-slate-900/20 lg:hidden">
         <button
           type="button"
           onClick={() => setPanel("sort")}

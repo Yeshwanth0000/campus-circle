@@ -51,7 +51,7 @@ export default function MyListingsGrid({ listings }: { listings: Listing[] }) {
       </div>
 
       {filtered.length > 0 ? (
-        <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((listing) => (
             <ListingCard
               key={listing.id}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import HeaderNav from "./HeaderNav";
-import HeaderSearch from "./HeaderSearch";
+import SearchIconButton from "./SearchIconButton";
 import CommandPalette from "./CommandPalette";
 import ThemeToggle from "./ThemeToggle";
 import BottomNav from "./BottomNav";
@@ -80,6 +80,7 @@ export default async function Header() {
           )}
 
           <div className="ml-auto flex items-center gap-1">
+            {user && <SearchIconButton />}
             {user && (
               <NotificationBell
                 unreadCount={unreadNotificationCount}
@@ -90,12 +91,6 @@ export default async function Header() {
             <HeaderNav isLoggedIn={!!user} hasUnread={hasUnread} isAdmin={isAdmin} />
           </div>
         </div>
-
-        {user && (
-          <div className="border-t border-slate-100/70 px-4 py-2 dark:border-slate-800/70 sm:hidden">
-            <HeaderSearch />
-          </div>
-        )}
       </FloatingHeaderShell>
 
       {user && <BottomNav hasUnread={hasUnread} />}

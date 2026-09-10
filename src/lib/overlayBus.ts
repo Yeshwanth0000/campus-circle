@@ -15,3 +15,18 @@ export function onOtherOverlayOpen(id: string, onOpen: () => void) {
   window.addEventListener(OVERLAY_OPEN_EVENT, handler);
   return () => window.removeEventListener(OVERLAY_OPEN_EVENT, handler);
 }
+
+// The search palette owns its own open state, but its trigger sits in a
+// different part of the header on mobile (an icon in the right-hand
+// cluster) than on desktop (a pill in the middle). Rather than split the
+// trigger out of the component, the icon just asks the palette to open.
+export const SEARCH_OPEN_EVENT = "campusbin:search-open";
+
+export function requestSearchOpen() {
+  window.dispatchEvent(new Event(SEARCH_OPEN_EVENT));
+}
+
+export function onSearchOpenRequest(onOpen: () => void) {
+  window.addEventListener(SEARCH_OPEN_EVENT, onOpen);
+  return () => window.removeEventListener(SEARCH_OPEN_EVENT, onOpen);
+}

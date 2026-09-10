@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { categoryIcon } from "@/lib/categoryIcons";
 import { addRecentSearch, clearRecentSearches, getRecentSearches } from "@/lib/recentSearches";
-import { announceOverlayOpen, onOtherOverlayOpen } from "@/lib/overlayBus";
+import { announceOverlayOpen, onOtherOverlayOpen, onSearchOpenRequest } from "@/lib/overlayBus";
 import { quickSearchListings, type QuickSearchResult } from "@/app/actions/listings";
 
 const OVERLAY_ID = "search";
@@ -75,6 +75,8 @@ export default function CommandPalette({ categories }: { categories: Category[] 
   }, [open, close]);
 
   useEffect(() => onOtherOverlayOpen(OVERLAY_ID, close), [close]);
+
+  useEffect(() => onSearchOpenRequest(() => setOpen(true)), []);
 
   const trimmed = query.trim();
 

@@ -91,18 +91,35 @@ export default function ListingCard({
         <p className="line-clamp-2 text-[13px] font-medium leading-snug text-slate-900 dark:text-slate-100 sm:min-h-[2.5rem] sm:text-sm sm:leading-normal">
           {title}
         </p>
-        <p className="mt-0.5 text-[15px] font-bold text-brand sm:mt-1 sm:text-base">
-          {price > 0 ? `₹${price.toLocaleString("en-IN")}` : "Free"}
-        </p>
-        <div className="mt-1 flex flex-wrap items-center gap-1 sm:mt-auto sm:pt-2">
+
+        {/* On phones the condition rides alongside the price. With the
+            category pill hidden there, it was the only thing on the row
+            below — a whole line spent on one small badge. It still wraps
+            to its own line if a long price leaves it no room. */}
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 sm:mt-1 sm:block">
+          <p className="text-[15px] font-bold text-brand sm:text-base">
+            {price > 0 ? `₹${price.toLocaleString("en-IN")}` : "Free"}
+          </p>
+          {condition && (
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize sm:hidden ${conditionBadgeClasses(condition)}`}
+            >
+              {conditionLabel(condition)}
+            </span>
+          )}
+        </div>
+
+        {/* Tablet and up keep the category + condition row at the card foot,
+            pinned to the bottom so cards in a row stay aligned. */}
+        <div className="mt-auto hidden flex-wrap items-center gap-1 pt-2 sm:flex">
           {categoryName && (
-            <span className="hidden rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400 sm:inline-block">
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400">
               {categoryName}
             </span>
           )}
           {condition && (
             <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize sm:text-[11px] ${conditionBadgeClasses(condition)}`}
+              className={`rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${conditionBadgeClasses(condition)}`}
             >
               {conditionLabel(condition)}
             </span>

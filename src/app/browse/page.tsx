@@ -6,8 +6,7 @@ import ListingCard from "@/components/ListingCard";
 import Reveal from "@/components/Reveal";
 import SaveSearchButton from "@/components/SaveSearchButton";
 import { categoryIcon } from "@/lib/categoryIcons";
-import MobileFilterPanel from "./MobileFilterPanel";
-import SortDropdown from "./SortDropdown";
+import MobileActionBar from "./MobileActionBar";
 
 type SearchParams = Promise<{
   category?: string;
@@ -171,8 +170,10 @@ export default async function BrowsePage({
     Boolean(price_min || price_max),
   ].filter(Boolean).length;
 
+  // pb-20 on phones keeps the last row of cards clear of the fixed
+  // sort/category/filters bar sitting above the tab bar.
   return (
-    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-6">
+    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-6 pb-20 sm:pb-6">
       <nav className="mb-4 flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
         <Link href="/browse" className="hover:text-brand">
           Home
@@ -449,11 +450,51 @@ export default async function BrowsePage({
             </div>
           </div>
 
-          {/* Mobile control pair — the sidebar's filters live behind the
-              first one as a bottom sheet, so the grid starts right here
-              instead of below a column of always-open controls. */}
-          <div className="mb-4 flex gap-2 sm:hidden">
-            <MobileFilterPanel activeCount={mobileFilterCount}>
+          {/* Sort / Category / Filters live in a fixed bar pinned to the
+              bottom of the screen on phones, so nothing above the grid is
+              spent on controls. Its three sheets are fed from here so the
+              option lists stay server-rendered. */}
+          <MobileActionBar
+            currentSort={sort}
+            activeFilterCount={mobileFilterCount}
+            activeCategoryName={activeCategory?.name}
+            categoryContent={
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+                <li>
+                  <Link
+                    href={buildUrl({ category: undefined })}
+                    className={`flex items-center gap-3 py-3.5 text-sm ${
+                      !category
+                        ? "font-semibold text-brand"
+                        : "text-slate-700 dark:text-slate-300"
+                    }`}
+                  >
+                    <span aria-hidden className="text-xl">
+                      🛍️
+                    </span>
+                    All categories
+                  </Link>
+                </li>
+                {categories?.map((c) => (
+                  <li key={c.id}>
+                    <Link
+                      href={buildUrl({ category: c.slug })}
+                      className={`flex items-center gap-3 py-3.5 text-sm ${
+                        category === c.slug
+                          ? "font-semibold text-brand"
+                          : "text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      <span aria-hidden className="text-xl">
+                        {categoryIcon(c.slug)}
+                      </span>
+                      {c.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            }
+            filtersContent={
               <form action="/browse" method="get">
                 {q && <input type="hidden" name="q" value={q} />}
                 {sort && sort !== "newest" && <input type="hidden" name="sort" value={sort} />}
@@ -522,21 +563,10 @@ export default async function BrowsePage({
                   </div>
                 </FilterGroup>
 
-                <FilterGroup label="Category">
-                  <select
-                    name="category"
-                    aria-label="Category"
-                    defaultValue={category ?? ""}
-                    className="select-chevron w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100"
-                  >
-                    <option value="">All categories</option>
-                    {categories?.map((c) => (
-                      <option key={c.id} value={c.slug}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </FilterGroup>
+                {/* Category has its own sheet on the action bar, so it's
+                    carried through as a hidden field rather than repeated
+                    as a second control here. */}
+                {category && <input type="hidden" name="category" value={category} />}
 
                 <div className="sticky bottom-0 -mx-5 mt-6 flex gap-3 border-t border-slate-100 bg-white/95 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
                   {mobileFilterCount > 0 && (
@@ -561,9 +591,8 @@ export default async function BrowsePage({
                   </button>
                 </div>
               </form>
-            </MobileFilterPanel>
-            <SortDropdown current={sort} />
-          </div>
+            }
+          />
 
           {listings && listings.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

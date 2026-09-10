@@ -45,10 +45,9 @@ export default function MobileActionBar({
 
   return (
     <>
-      {/* Sits directly above the bottom tab bar (~64px tall). Hidden from
-          sm up, which is exactly where the desktop filter sidebar takes
-          over — no point showing both. */}
-      <div className="fixed inset-x-0 bottom-16 z-30 grid grid-cols-3 border-t border-white/10 bg-slate-900 text-white shadow-[0_-4px_16px_rgba(15,23,42,0.18)] sm:hidden">
+      {/* Hidden from sm up, which is exactly where the desktop filter
+          sidebar takes over — no point showing both. */}
+      <div className="mb-4 grid grid-cols-3 overflow-hidden rounded-xl border border-white/10 bg-slate-900 text-white shadow-sm sm:hidden">
         <button
           type="button"
           onClick={() => setPanel("sort")}

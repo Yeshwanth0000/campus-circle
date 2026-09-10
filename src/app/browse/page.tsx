@@ -170,11 +170,12 @@ export default async function BrowsePage({
     Boolean(price_min || price_max),
   ].filter(Boolean).length;
 
-  // pb-20 on phones keeps the last row of cards clear of the fixed
-  // sort/category/filters bar sitting above the tab bar.
   return (
-    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-6 pb-20 sm:pb-6">
-      <nav className="mb-4 flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
+    <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-6">
+      {/* Breadcrumb and the category tile strip are desktop-only: on phones
+          the action bar's Category sheet covers the same ground, and both
+          were spending most of the first screen on navigation. */}
+      <nav className="mb-4 hidden items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 sm:flex">
         <Link href="/browse" className="hover:text-brand">
           Home
         </Link>
@@ -195,7 +196,7 @@ export default async function BrowsePage({
       {/* Category tile strip — the fade masks hint that the row keeps
           going past either edge, since overflow-x-auto alone gives no
           visual cue there's more to scroll to on a narrow screen. */}
-      <div className="mb-6 flex gap-3 overflow-x-auto pb-2 [-webkit-mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)]">
+      <div className="mb-6 hidden gap-3 overflow-x-auto pb-2 sm:flex [-webkit-mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)]">
         <Link
           href={buildUrl({ category: undefined })}
           aria-current={!category ? "true" : undefined}
@@ -390,70 +391,10 @@ export default async function BrowsePage({
         </aside>
 
         <div className="order-1 flex-1 sm:order-none">
-          {hasAnyFilter && (
-            <div className="mb-3 flex flex-wrap items-center gap-1.5">
-              {activeCategory && (
-                <FilterChip label={activeCategory.name} href={buildUrl({ category: undefined })} />
-              )}
-              {q && <FilterChip label={`"${q}"`} href={buildUrl({ q: undefined })} />}
-              {(price_min || price_max) && (
-                <FilterChip
-                  label={
-                    price_min && price_max
-                      ? `₹${price_min}–${price_max}`
-                      : price_min
-                        ? `₹${price_min}+`
-                        : `Up to ₹${price_max}`
-                  }
-                  href={buildUrl({ price_min: undefined, price_max: undefined })}
-                />
-              )}
-              {condition && (
-                <FilterChip
-                  label={CONDITIONS.find((c) => c.value === condition)?.label ?? condition}
-                  href={buildUrl({ condition: undefined })}
-                />
-              )}
-              {posted && (
-                <FilterChip
-                  label={POSTED_OPTIONS.find((p) => p.value === posted)?.label ?? posted}
-                  href={buildUrl({ posted: undefined })}
-                />
-              )}
-              <Link
-                href="/browse"
-                className="ml-1 text-xs font-medium text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-              >
-                Clear all
-              </Link>
-            </div>
-          )}
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Showing {listings?.length ?? 0} of {totalCount ?? 0} result{totalCount === 1 ? "" : "s"}
-            </p>
-            <div className="flex items-center gap-3">
-              {hasAnyFilter && (
-                <SaveSearchButton
-                  query={q}
-                  categoryId={activeCategory?.id}
-                  condition={condition}
-                  posted={posted}
-                />
-              )}
-              <div className="hidden items-center gap-2 text-sm sm:flex">
-                <label htmlFor="sort" className="text-slate-500 dark:text-slate-400">
-                  Sort by
-                </label>
-                <SortSelect current={sort} buildUrl={buildUrl} />
-              </div>
-            </div>
-          </div>
-
-          {/* Sort / Category / Filters live in a fixed bar pinned to the
-              bottom of the screen on phones, so nothing above the grid is
-              spent on controls. Its three sheets are fed from here so the
-              option lists stay server-rendered. */}
+          {/* Sort / Category / Filters — first thing on the page for
+              phones, replacing the breadcrumb and category strip that used
+              to sit here. Its three sheets are fed from here so the option
+              lists stay server-rendered. */}
           <MobileActionBar
             currentSort={sort}
             activeFilterCount={mobileFilterCount}
@@ -593,6 +534,66 @@ export default async function BrowsePage({
               </form>
             }
           />
+
+          {hasAnyFilter && (
+            <div className="mb-3 flex flex-wrap items-center gap-1.5">
+              {activeCategory && (
+                <FilterChip label={activeCategory.name} href={buildUrl({ category: undefined })} />
+              )}
+              {q && <FilterChip label={`"${q}"`} href={buildUrl({ q: undefined })} />}
+              {(price_min || price_max) && (
+                <FilterChip
+                  label={
+                    price_min && price_max
+                      ? `₹${price_min}–${price_max}`
+                      : price_min
+                        ? `₹${price_min}+`
+                        : `Up to ₹${price_max}`
+                  }
+                  href={buildUrl({ price_min: undefined, price_max: undefined })}
+                />
+              )}
+              {condition && (
+                <FilterChip
+                  label={CONDITIONS.find((c) => c.value === condition)?.label ?? condition}
+                  href={buildUrl({ condition: undefined })}
+                />
+              )}
+              {posted && (
+                <FilterChip
+                  label={POSTED_OPTIONS.find((p) => p.value === posted)?.label ?? posted}
+                  href={buildUrl({ posted: undefined })}
+                />
+              )}
+              <Link
+                href="/browse"
+                className="ml-1 text-xs font-medium text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+              >
+                Clear all
+              </Link>
+            </div>
+          )}
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Showing {listings?.length ?? 0} of {totalCount ?? 0} result{totalCount === 1 ? "" : "s"}
+            </p>
+            <div className="flex items-center gap-3">
+              {hasAnyFilter && (
+                <SaveSearchButton
+                  query={q}
+                  categoryId={activeCategory?.id}
+                  condition={condition}
+                  posted={posted}
+                />
+              )}
+              <div className="hidden items-center gap-2 text-sm sm:flex">
+                <label htmlFor="sort" className="text-slate-500 dark:text-slate-400">
+                  Sort by
+                </label>
+                <SortSelect current={sort} buildUrl={buildUrl} />
+              </div>
+            </div>
+          </div>
 
           {listings && listings.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

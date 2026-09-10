@@ -470,3 +470,43 @@ button:not(:disabled):active {
     animation: none !important;
   }
 }
+
+/* Mobile filter bottom sheet — the backdrop fades while the sheet itself
+   rides up from the bottom edge. Slower than the dropdown panels above
+   because it travels the full height of the sheet, not a few pixels. */
+@keyframes sheet-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheet-panel-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.animate-sheet-backdrop-in {
+  animation: sheet-backdrop-in var(--duration-base) var(--ease-premium);
+}
+
+.animate-sheet-panel-in {
+  animation: sheet-panel-in var(--duration-slow) var(--ease-premium);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sheet-backdrop-in,
+  .animate-sheet-panel-in {
+    animation: none;
+  }
+}
+
+/* Native selects render their own arrow in a platform style that clashes
+   with the rest of the controls — strip it so a matching chevron can be
+   layered behind the field instead. */
+.select-chevron {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.25rem;
+}

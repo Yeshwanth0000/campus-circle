@@ -431,7 +431,7 @@ export default async function BrowsePage({
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Showing {listings?.length ?? 0} of {totalCount ?? 0} result{totalCount === 1 ? "" : "s"}
             </p>
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-3">
               {hasAnyFilter && (
                 <SaveSearchButton
                   query={q}
@@ -440,135 +440,129 @@ export default async function BrowsePage({
                   posted={posted}
                 />
               )}
-              <MobileFilterPanel activeCount={mobileFilterCount}>
-                <form action="/browse" method="get" className="space-y-5">
-                  {q && <input type="hidden" name="q" value={q} />}
-                  {sort && sort !== "newest" && <input type="hidden" name="sort" value={sort} />}
-                  <div>
-                    <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                      Price range
-                    </h2>
-                    <div className="mt-2 flex items-center gap-2">
-                      <input
-                        type="number"
-                        name="price_min"
-                        min="0"
-                        defaultValue={price_min}
-                        placeholder="Min"
-                        className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                      />
-                      <span className="text-slate-400 dark:text-slate-500">–</span>
-                      <input
-                        type="number"
-                        name="price_max"
-                        min="0"
-                        defaultValue={price_max}
-                        placeholder="Max"
-                        className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="mobile-condition"
-                      className="block text-sm font-semibold text-slate-900 dark:text-slate-100"
-                    >
-                      Condition
-                    </label>
-                    <select
-                      id="mobile-condition"
-                      name="condition"
-                      defaultValue={condition ?? ""}
-                      className="mt-2 w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                    >
-                      <option value="">Any condition</option>
-                      {CONDITIONS.map((c) => (
-                        <option key={c.value} value={c.value}>
-                          {c.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="mobile-posted"
-                      className="block text-sm font-semibold text-slate-900 dark:text-slate-100"
-                    >
-                      Posted
-                    </label>
-                    <select
-                      id="mobile-posted"
-                      name="posted"
-                      defaultValue={posted ?? ""}
-                      className="mt-2 w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                    >
-                      <option value="">Any time</option>
-                      {POSTED_OPTIONS.map((p) => (
-                        <option key={p.value} value={p.value}>
-                          {p.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="mobile-category"
-                      className="block text-sm font-semibold text-slate-900 dark:text-slate-100"
-                    >
-                      Category
-                    </label>
-                    <select
-                      id="mobile-category"
-                      name="category"
-                      defaultValue={category ?? ""}
-                      className="mt-2 w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                    >
-                      <option value="">All Categories</option>
-                      {categories?.map((c) => (
-                        <option key={c.id} value={c.slug}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      type="submit"
-                      className="flex-1 rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600"
-                    >
-                      Apply filters
-                    </button>
-                    {mobileFilterCount > 0 && (
-                      <Link
-                        href={buildUrl({
-                          category: undefined,
-                          price_min: undefined,
-                          price_max: undefined,
-                          condition: undefined,
-                          posted: undefined,
-                        })}
-                        className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
-                      >
-                        Clear
-                      </Link>
-                    )}
-                  </div>
-                </form>
-              </MobileFilterPanel>
               <div className="hidden items-center gap-2 text-sm sm:flex">
                 <label htmlFor="sort" className="text-slate-500 dark:text-slate-400">
                   Sort by
                 </label>
                 <SortSelect current={sort} buildUrl={buildUrl} />
               </div>
-              <div className="sm:hidden">
-                <SortDropdown current={sort} />
-              </div>
             </div>
+          </div>
+
+          {/* Mobile control pair — the sidebar's filters live behind the
+              first one as a bottom sheet, so the grid starts right here
+              instead of below a column of always-open controls. */}
+          <div className="mb-4 flex gap-2 sm:hidden">
+            <MobileFilterPanel activeCount={mobileFilterCount}>
+              <form action="/browse" method="get">
+                {q && <input type="hidden" name="q" value={q} />}
+                {sort && sort !== "newest" && <input type="hidden" name="sort" value={sort} />}
+
+                <FilterGroup label="Price range">
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                        ₹
+                      </span>
+                      <input
+                        type="number"
+                        name="price_min"
+                        min="0"
+                        inputMode="numeric"
+                        defaultValue={price_min}
+                        placeholder="Min"
+                        className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-7 pr-3 text-sm text-slate-900 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100"
+                      />
+                    </div>
+                    <span className="text-slate-300 dark:text-slate-600">–</span>
+                    <div className="relative flex-1">
+                      <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                        ₹
+                      </span>
+                      <input
+                        type="number"
+                        name="price_max"
+                        min="0"
+                        inputMode="numeric"
+                        defaultValue={price_max}
+                        placeholder="Max"
+                        className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-7 pr-3 text-sm text-slate-900 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100"
+                      />
+                    </div>
+                  </div>
+                </FilterGroup>
+
+                <FilterGroup label="Condition">
+                  <div className="grid grid-cols-3 gap-2">
+                    <ChoiceChip name="condition" value="" label="Any" checked={!condition} />
+                    {CONDITIONS.map((c) => (
+                      <ChoiceChip
+                        key={c.value}
+                        name="condition"
+                        value={c.value}
+                        label={c.label}
+                        checked={condition === c.value}
+                      />
+                    ))}
+                  </div>
+                </FilterGroup>
+
+                <FilterGroup label="Posted">
+                  <div className="grid grid-cols-2 gap-2">
+                    <ChoiceChip name="posted" value="" label="Any time" checked={!posted} />
+                    {POSTED_OPTIONS.map((p) => (
+                      <ChoiceChip
+                        key={p.value}
+                        name="posted"
+                        value={p.value}
+                        label={p.label}
+                        checked={posted === p.value}
+                      />
+                    ))}
+                  </div>
+                </FilterGroup>
+
+                <FilterGroup label="Category">
+                  <select
+                    name="category"
+                    aria-label="Category"
+                    defaultValue={category ?? ""}
+                    className="select-chevron w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100"
+                  >
+                    <option value="">All categories</option>
+                    {categories?.map((c) => (
+                      <option key={c.id} value={c.slug}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </FilterGroup>
+
+                <div className="sticky bottom-0 -mx-5 mt-6 flex gap-3 border-t border-slate-100 bg-white/95 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+                  {mobileFilterCount > 0 && (
+                    <Link
+                      href={buildUrl({
+                        category: undefined,
+                        price_min: undefined,
+                        price_max: undefined,
+                        condition: undefined,
+                        posted: undefined,
+                      })}
+                      className="flex items-center justify-center rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                    >
+                      Clear all
+                    </Link>
+                  )}
+                  <button
+                    type="submit"
+                    className="flex-1 rounded-xl bg-brand px-5 py-3 text-sm font-bold text-white shadow-lg shadow-brand/25 transition-colors hover:bg-brand-dark"
+                  >
+                    Show results
+                  </button>
+                </div>
+              </form>
+            </MobileFilterPanel>
+            <SortDropdown current={sort} />
           </div>
 
           {listings && listings.length > 0 ? (
@@ -646,6 +640,41 @@ export default async function BrowsePage({
         </div>
       </div>
     </div>
+  );
+}
+
+function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="border-b border-slate-100 py-5 first:pt-1 dark:border-slate-800">
+      <h3 className="mb-3 text-[13px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+        {label}
+      </h3>
+      {children}
+    </div>
+  );
+}
+
+// A radio styled as a tappable chip — keeps the whole sheet a plain GET
+// form (no client state to sync) while still reading as a modern control
+// rather than a stack of native radio buttons.
+function ChoiceChip({
+  name,
+  value,
+  label,
+  checked,
+}: {
+  name: string;
+  value: string;
+  label: string;
+  checked: boolean;
+}) {
+  return (
+    <label className="cursor-pointer">
+      <input type="radio" name={name} value={value} defaultChecked={checked} className="peer sr-only" />
+      <span className="block rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-center text-sm font-medium text-slate-600 transition-colors peer-checked:border-brand peer-checked:bg-brand-light peer-checked:font-semibold peer-checked:text-brand-dark peer-focus-visible:ring-2 peer-focus-visible:ring-brand/30 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400 dark:peer-checked:border-brand dark:peer-checked:bg-brand/15 dark:peer-checked:text-brand">
+        {label}
+      </span>
+    </label>
   );
 }
 

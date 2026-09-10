@@ -16,6 +16,9 @@ export default function SortDropdown({ current }: { current: string }) {
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("sort", e.target.value);
+    // Re-sorting from page 3 of the old order lands on an arbitrary slice
+    // of the new one — start over at the top instead.
+    params.delete("page");
     router.push(`${pathname}?${params.toString()}`);
   }
 
@@ -23,8 +26,8 @@ export default function SortDropdown({ current }: { current: string }) {
     <select
       value={current}
       onChange={handleChange}
-      aria-label="Sort by"
-      className="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-700 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+      aria-label="Sort listings"
+      className="select-chevron flex-1 truncate rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
     >
       {SORT_OPTIONS.map((opt) => (
         <option key={opt.value} value={opt.value}>

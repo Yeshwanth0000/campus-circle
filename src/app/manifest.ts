@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "CampusCircle — Your Campus Marketplace",
-    short_name: "CampusCircle",
+    name: "CampusBin — Your Campus Marketplace",
+    short_name: "CampusBin",
     description: "Buy and sell with verified students on your own campus.",
     start_url: "/browse",
     display: "standalone",

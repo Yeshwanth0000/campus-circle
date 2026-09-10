@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ReportActions from "./ReportActions";
 
-export const metadata = { title: "Reports — Admin — CampusCircle" };
+export const metadata = { title: "Reports — Admin — CampusBin" };
 
 const STATUS_STYLES: Record<string, string> = {
   open: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",

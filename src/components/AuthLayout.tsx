@@ -18,7 +18,7 @@ export default function AuthLayout({
           <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-2xl backdrop-blur-sm">
             🎓
           </div>
-          <h2 className="relative mt-5 text-xl font-bold text-white">CampusCircle</h2>
+          <h2 className="relative mt-5 text-xl font-bold text-white">CampusBin</h2>
           <p className="relative mt-2 text-sm text-slate-300">
             The private marketplace for your own campus — buy, sell, and trade
             with people you can actually trust.

@@ -12,7 +12,7 @@ const LOGGED_IN_LINKS = [
 ];
 
 function confirmLogout(e: React.FormEvent<HTMLFormElement>) {
-  if (!window.confirm("Log out of CampusCircle?")) {
+  if (!window.confirm("Log out of CampusBin?")) {
     e.preventDefault();
   }
 }

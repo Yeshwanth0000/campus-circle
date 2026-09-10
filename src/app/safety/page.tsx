@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const metadata = { title: "Safety & Community Guidelines — CampusCircle" };
+export const metadata = { title: "Safety & Community Guidelines — CampusBin" };
 
 const SECTIONS = [
   {
@@ -26,8 +26,8 @@ const SECTIONS = [
       <ul className="mt-2 list-disc space-y-1.5 pl-5">
         <li>Cash or UPI in person is safest. Never send money before seeing the item.</li>
         <li>
-          CampusCircle never asks for payment through the app — anyone
-          claiming to be &ldquo;CampusCircle support&rdquo; asking for money
+          CampusBin never asks for payment through the app — anyone
+          claiming to be &ldquo;CampusBin support&rdquo; asking for money
           is a scam.
         </li>
         <li>Never share OTPs, bank passwords, or card details with a buyer or seller.</li>
@@ -71,7 +71,7 @@ export default function SafetyPage() {
         Safety Tips &amp; Community Guidelines
       </h1>
       <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-        CampusCircle keeps trades within your own verified college community,
+        CampusBin keeps trades within your own verified college community,
         but no platform can guarantee safety on its own. A few ground rules:
       </p>
 

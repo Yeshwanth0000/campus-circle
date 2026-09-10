@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import ListingCard from "@/components/ListingCard";
 import EmptyState from "@/components/EmptyState";
 
-export const metadata = { title: "Saved items — CampusCircle" };
+export const metadata = { title: "Saved items — CampusBin" };
 
 export default async function SavedPage() {
   const supabase = await createClient();

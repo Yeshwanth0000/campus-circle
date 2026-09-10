@@ -34,11 +34,11 @@ export async function generateMetadata({
     .maybeSingle();
 
   if (!listing) {
-    return { title: "CampusCircle — Your Campus Marketplace" };
+    return { title: "CampusBin — Your Campus Marketplace" };
   }
 
   return {
-    title: `${listing.title} — CampusCircle`,
+    title: `${listing.title} — CampusBin`,
     description: listing.description?.slice(0, 160) || undefined,
   };
 }

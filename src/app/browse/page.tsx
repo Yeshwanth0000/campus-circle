@@ -52,7 +52,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category, q } = await searchParams;
   if (q) {
-    return { title: `“${q}” — Browse — CampusCircle` };
+    return { title: `“${q}” — Browse — CampusBin` };
   }
   if (category) {
     const supabase = await createClient();
@@ -62,10 +62,10 @@ export async function generateMetadata({
       .eq("slug", category)
       .maybeSingle();
     if (data?.name) {
-      return { title: `${data.name} — Browse — CampusCircle` };
+      return { title: `${data.name} — Browse — CampusBin` };
     }
   }
-  return { title: "Browse — CampusCircle" };
+  return { title: "Browse — CampusBin" };
 }
 
 export default async function BrowsePage({

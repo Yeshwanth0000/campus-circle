@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import EmptyState from "@/components/EmptyState";
 import SavedSearchRow from "./SavedSearchRow";
 
-export const metadata = { title: "Saved searches — CampusCircle" };
+export const metadata = { title: "Saved searches — CampusBin" };
 
 export default async function SavedSearchesPage() {
   const supabase = await createClient();

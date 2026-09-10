@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CampusCircle — Your Campus Marketplace",
+  title: "CampusBin — Your Campus Marketplace",
   description: "Buy and sell with verified students on your own campus.",
 };
 

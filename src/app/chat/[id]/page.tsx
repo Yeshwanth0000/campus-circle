@@ -7,7 +7,7 @@ import ChatThread from "./ChatThread";
 import SafetyMenu from "@/components/SafetyMenu";
 import Avatar from "@/components/Avatar";
 
-const DEFAULT_TITLE = "CampusCircle — Your Campus Marketplace";
+const DEFAULT_TITLE = "CampusBin — Your Campus Marketplace";
 
 export async function generateMetadata({
   params,
@@ -32,7 +32,7 @@ export async function generateMetadata({
 
   const otherPerson = conversation.buyer_id === user.id ? conversation.seller : conversation.buyer;
   return {
-    title: otherPerson?.full_name ? `${otherPerson.full_name} — CampusCircle` : DEFAULT_TITLE,
+    title: otherPerson?.full_name ? `${otherPerson.full_name} — CampusBin` : DEFAULT_TITLE,
   };
 }
 

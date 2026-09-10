@@ -36,7 +36,7 @@ export default function HowItWorksStepper() {
       onMouseLeave={() => setPaused(false)}
     >
       <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-        How a CampusCircle community starts
+        How a CampusBin community starts
       </p>
 
       <div className="mt-4 flex h-40 items-center justify-center rounded-xl bg-brand-light">

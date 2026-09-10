@@ -21,8 +21,8 @@ export async function generateMetadata({
 
   return {
     title: seller?.full_name
-      ? `${seller.full_name} — CampusCircle`
-      : "CampusCircle — Your Campus Marketplace",
+      ? `${seller.full_name} — CampusBin`
+      : "CampusBin — Your Campus Marketplace",
   };
 }
 

@@ -22,7 +22,7 @@ export default function GlobalError({
       <body className="flex min-h-screen items-center justify-center bg-white px-4 antialiased">
         <div className="flex max-w-md flex-col items-center text-center">
           <p className="text-sm font-semibold text-indigo-600">Something went wrong</p>
-          <h1 className="mt-2 text-2xl font-bold text-slate-900">CampusCircle hit a snag</h1>
+          <h1 className="mt-2 text-2xl font-bold text-slate-900">CampusBin hit a snag</h1>
           <p className="mt-2 text-sm text-slate-600">
             It&rsquo;s not you — something broke loading the app. Give it another try.
           </p>

@@ -18,8 +18,8 @@ export async function generateMetadata({
 
   return {
     title: listing?.title
-      ? `Edit “${listing.title}” — CampusCircle`
-      : "Edit listing — CampusCircle",
+      ? `Edit “${listing.title}” — CampusBin`
+      : "Edit listing — CampusBin",
   };
 }
 

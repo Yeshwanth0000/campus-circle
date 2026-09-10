@@ -1,13 +1,13 @@
-export const metadata = { title: "Terms & Conditions — CampusCircle" };
+export const metadata = { title: "Terms & Conditions — CampusBin" };
 
 const SECTIONS = [
   {
-    title: "What CampusCircle is",
-    body: "CampusCircle is a peer-to-peer classifieds platform that connects students on the same campus to buy and sell items directly with each other. We are an independent student project — not affiliated with, endorsed by, or operated on behalf of any college or university.",
+    title: "What CampusBin is",
+    body: "CampusBin is a peer-to-peer classifieds platform that connects students on the same campus to buy and sell items directly with each other. We are an independent student project — not affiliated with, endorsed by, or operated on behalf of any college or university.",
   },
   {
     title: "Cash, in-person transactions only",
-    body: "All trades happen directly between students, in person, for cash or any arrangement they agree on. CampusCircle never processes payments, holds funds, or takes a cut of any sale — we're simply the listing and messaging layer.",
+    body: "All trades happen directly between students, in person, for cash or any arrangement they agree on. CampusBin never processes payments, holds funds, or takes a cut of any sale — we're simply the listing and messaging layer.",
   },
   {
     title: "Your account",
@@ -30,7 +30,7 @@ const SECTIONS = [
   },
   {
     title: "No warranty",
-    body: "Items are sold as-is between students. CampusCircle doesn't inspect, verify, or guarantee the condition, authenticity, or legality of anything listed. Use your judgment, meet in safe public places, and inspect items before paying.",
+    body: "Items are sold as-is between students. CampusBin doesn't inspect, verify, or guarantee the condition, authenticity, or legality of anything listed. Use your judgment, meet in safe public places, and inspect items before paying.",
   },
   {
     title: "Changes",

@@ -44,7 +44,7 @@ export default async function HomePage() {
                 </span>
               </h1>
               <p className="mt-6 max-w-md text-lg text-slate-600 dark:text-slate-400">
-                CampusCircle connects you with students on your own campus —
+                CampusBin connects you with students on your own campus —
                 textbooks, gadgets, cycles, and hostel essentials, traded
                 directly with people you can actually trust. Every community is
                 its own private circle, unlocked by your college email.
@@ -104,7 +104,7 @@ export default async function HomePage() {
           <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-14">
             <Reveal>
               <h2 className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100">
-                What people trade on CampusCircle
+                What people trade on CampusBin
               </h2>
               <p className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
                 Hover a category — every listing inside it comes from your own campus.
@@ -121,7 +121,7 @@ export default async function HomePage() {
         <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-14">
           <Reveal>
             <h2 className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100">
-              Why students trust CampusCircle
+              Why students trust CampusBin
             </h2>
           </Reveal>
           <div className="mt-8 grid gap-6 sm:grid-cols-3">
@@ -167,7 +167,7 @@ export default async function HomePage() {
         <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-12">
           <div className="grid gap-8 sm:grid-cols-3">
             <div>
-              <span className="text-lg font-bold text-brand">CampusCircle</span>
+              <span className="text-lg font-bold text-brand">CampusBin</span>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 Empowering students to buy, sell, and trade within their own
                 verified campus community.
@@ -206,12 +206,12 @@ export default async function HomePage() {
 
           <div className="mt-10 border-t border-slate-200 pt-6 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
             <p>
-              CampusCircle is an independent student project and is not
+              CampusBin is an independent student project and is not
               affiliated with, endorsed by, or operated on behalf of any
               college or university. Trade safely: meet in public campus
               locations and never share financial information.
             </p>
-            <p className="mt-2">© {new Date().getFullYear()} CampusCircle.</p>
+            <p className="mt-2">© {new Date().getFullYear()} CampusBin.</p>
           </div>
         </div>
       </footer>

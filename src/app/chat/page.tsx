@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import EmptyState from "@/components/EmptyState";
 import Avatar from "@/components/Avatar";
 
-export const metadata = { title: "Your chats — CampusCircle" };
+export const metadata = { title: "Your chats — CampusBin" };
 
 export default async function ChatListPage() {
   const supabase = await createClient();

@@ -7,6 +7,7 @@ import Reveal from "@/components/Reveal";
 import SaveSearchButton from "@/components/SaveSearchButton";
 import { categoryIcon } from "@/lib/categoryIcons";
 import MobileActionBar from "./MobileActionBar";
+import LoadMore from "./LoadMore";
 
 type SearchParams = Promise<{
   category?: string;
@@ -19,7 +20,16 @@ type SearchParams = Promise<{
   page?: string;
 }>;
 
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 48;
+
+// "Load more" is cumulative: ?page=3 renders the first three pages' worth in
+// one render, so the URL on its own restores everything the user had scrolled
+// through — back from a listing lands them exactly where they left off.
+const MAX_PAGES = 40;
+
+// Auto-load the first couple of batches so it feels like infinite scroll,
+// then hand control back so the end of the list is always reachable.
+const AUTO_LOAD_UNTIL_PAGE = 3;
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest first" },
@@ -84,7 +94,8 @@ export default async function BrowsePage({
     posted,
     page: pageRaw,
   } = await searchParams;
-  const page = Math.max(1, Math.floor(Number(pageRaw)) || 1);
+  // Capped so a hand-edited ?page=99999 can't ask Supabase for a million rows.
+  const page = Math.min(MAX_PAGES, Math.max(1, Math.floor(Number(pageRaw)) || 1));
   const supabase = await createClient();
   const {
     data: { user },
@@ -138,16 +149,18 @@ export default async function BrowsePage({
     query = query.order("created_at", { ascending: false });
   }
 
-  const from = (page - 1) * PAGE_SIZE;
-  query = query.range(from, from + PAGE_SIZE - 1);
+  query = query.range(0, page * PAGE_SIZE - 1);
 
   const [{ data: listings, count: totalCount }, { data: savedRows }] = await Promise.all([
     query,
     supabase.from("saved_listings").select("listing_id").eq("user_id", user.id),
   ]);
 
-  const totalPages = Math.max(1, Math.ceil((totalCount ?? 0) / PAGE_SIZE));
   const savedIds = new Set(savedRows?.map((r) => r.listing_id));
+
+  const shown = listings?.length ?? 0;
+  const total = totalCount ?? 0;
+  const hasMore = shown < total && page < MAX_PAGES;
 
   function buildUrl(overrides: Record<string, string | undefined>) {
     const params = new URLSearchParams();
@@ -577,7 +590,7 @@ export default async function BrowsePage({
           )}
           <div className="mb-2 flex flex-wrap items-center justify-between gap-3 sm:mb-4">
             <p className="text-xs text-slate-500 dark:text-slate-400 sm:text-sm">
-              Showing {listings?.length ?? 0} of {totalCount ?? 0} result{totalCount === 1 ? "" : "s"}
+              Showing {shown} of {total} result{total === 1 ? "" : "s"}
             </p>
             <div className="flex items-center gap-3">
               {hasAnyFilter && (
@@ -619,34 +632,23 @@ export default async function BrowsePage({
             </div>
           ) : null}
 
-          {listings && listings.length > 0 && totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-center gap-3">
-              <Link
-                href={buildUrl({ page: page > 1 ? String(page - 1) : undefined })}
-                aria-disabled={page <= 1}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-                  page <= 1
-                    ? "pointer-events-none text-slate-300 dark:text-slate-700"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
-                }`}
-              >
-                ← Previous
-              </Link>
-              <span className="text-sm text-slate-500 dark:text-slate-400">
-                Page {page} of {totalPages}
-              </span>
-              <Link
-                href={buildUrl({ page: page < totalPages ? String(page + 1) : undefined })}
-                aria-disabled={page >= totalPages}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-                  page >= totalPages
-                    ? "pointer-events-none text-slate-300 dark:text-slate-700"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
-                }`}
-              >
-                Next →
-              </Link>
-            </div>
+          {hasMore && (
+            <LoadMore
+              href={buildUrl({ page: String(page + 1) })}
+              shown={shown}
+              total={total}
+              nextCount={Math.min(PAGE_SIZE, total - shown)}
+              autoLoad={page < AUTO_LOAD_UNTIL_PAGE}
+            />
+          )}
+
+          {/* Knowing you've reached the end is the thing infinite scroll can
+              never tell you — worth saying out loud, but only once the list
+              was long enough for the question to come up. */}
+          {!hasMore && shown > PAGE_SIZE && (
+            <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500">
+              You&rsquo;ve seen all {total} listing{total === 1 ? "" : "s"}.
+            </p>
           )}
 
           {(!listings || listings.length === 0) && (hasAnyFilter ? (

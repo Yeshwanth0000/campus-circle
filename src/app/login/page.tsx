@@ -10,12 +10,6 @@ import { toast } from "@/lib/toast";
 
 const initialState: AuthResult = { error: null };
 
-const STEPS = [
-  { title: "Sign up with your college email", description: "We verify you belong to your campus." },
-  { title: "Land in your college's own marketplace", description: "Isolated from every other campus." },
-  { title: "Buy, sell, chat", description: "All in person, all on campus." },
-];
-
 export default function LoginPage() {
   const [state, formAction] = useActionState(signIn, initialState);
   const searchParams = useSearchParams();
@@ -34,7 +28,7 @@ export default function LoginPage() {
   }, [searchParams]);
 
   return (
-    <AuthLayout steps={STEPS}>
+    <AuthLayout>
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Welcome back</h1>
       <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
         Log in with your college email to reach your campus marketplace.

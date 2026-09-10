@@ -8,12 +8,6 @@ import AuthLayout from "@/components/AuthLayout";
 
 const initialState: AuthResult = { error: null };
 
-const STEPS = [
-  { title: "Sign up with your college email", description: "We verify you belong to your campus." },
-  { title: "Land in your college's own marketplace", description: "Isolated from every other campus." },
-  { title: "Buy, sell, chat", description: "All in person, all on campus." },
-];
-
 export default function SignupPage() {
   const [state, formAction] = useActionState(signUp, initialState);
   // Controlled so a rejected submission (e.g. "Passwords don't match")
@@ -32,7 +26,7 @@ export default function SignupPage() {
   }, [state, termsAccepted]);
 
   return (
-    <AuthLayout steps={STEPS}>
+    <AuthLayout>
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
         Join your campus marketplace
       </h1>

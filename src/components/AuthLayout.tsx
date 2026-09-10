@@ -1,12 +1,16 @@
 import GradientMesh from "./GradientMesh";
 
-export default function AuthLayout({
-  children,
-  steps,
-}: {
-  children: React.ReactNode;
-  steps: { title: string; description: string }[];
-}) {
+// The panel is the same brand furniture on every auth page, so the steps live
+// here rather than being passed in. All four pages used to declare their own
+// identical copy, which is how the old "circle" wording survived a rename in
+// four places at once.
+const STEPS = [
+  { title: "Sign up with your college email", description: "We verify you belong to your campus." },
+  { title: "Land in your college's own marketplace", description: "Isolated from every other campus." },
+  { title: "Buy, sell, chat", description: "All in person, all on campus." },
+];
+
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl items-center px-4 py-10">
       <div className="grid w-full animate-auth-card-in overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5 motion-reduce:animate-none dark:border-slate-800 dark:bg-slate-900 sm:grid-cols-2">
@@ -24,7 +28,7 @@ export default function AuthLayout({
             with people you can actually trust.
           </p>
           <ul className="relative mt-8 space-y-4">
-            {steps.map((step, i) => (
+            {STEPS.map((step, i) => (
               <li key={step.title} className="flex gap-3">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-bold text-white backdrop-blur-sm">
                   {i + 1}

@@ -7,17 +7,11 @@ import AuthLayout from "@/components/AuthLayout";
 
 const initialState: AuthResult = { error: null };
 
-const STEPS = [
-  { title: "Sign up with your college email", description: "We verify you belong to your campus." },
-  { title: "Land in your college's own marketplace", description: "Isolated from every other campus." },
-  { title: "Buy, sell, chat", description: "All in person, all on campus." },
-];
-
 export default function ResetPasswordPage() {
   const [state, formAction] = useActionState(updatePassword, initialState);
 
   return (
-    <AuthLayout steps={STEPS}>
+    <AuthLayout>
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Choose a new password</h1>
       <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
         Pick something you haven&rsquo;t used here before.

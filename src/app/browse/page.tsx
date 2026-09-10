@@ -6,6 +6,8 @@ import ListingCard from "@/components/ListingCard";
 import Reveal from "@/components/Reveal";
 import SaveSearchButton from "@/components/SaveSearchButton";
 import { categoryIcon } from "@/lib/categoryIcons";
+import MobileFilterPanel from "./MobileFilterPanel";
+import SortDropdown from "./SortDropdown";
 
 type SearchParams = Promise<{
   category?: string;
@@ -162,6 +164,12 @@ export default async function BrowsePage({
   const hasAnyFilter = Boolean(
     activeCategory || q || price_min || price_max || condition || posted
   );
+  const mobileFilterCount = [
+    Boolean(activeCategory),
+    Boolean(condition),
+    Boolean(posted),
+    Boolean(price_min || price_max),
+  ].filter(Boolean).length;
 
   return (
     <div className="mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-6">
@@ -231,12 +239,11 @@ export default async function BrowsePage({
       </div>
 
       <div className="flex flex-col gap-6 sm:flex-row">
-        {/* Mobile: results come before the filter list — filters are
-            secondary to actually seeing what's for sale, and stacking them
-            first (as plain DOM order would) buries all 98+ listings below
-            a wall of price/condition/posted controls. Desktop's side-by-side
-            layout is unaffected since sm:order-none restores source order. */}
-        <aside className="order-2 space-y-6 sm:order-none sm:w-52 sm:shrink-0">
+        {/* Mobile gets its own compact dropdown (MobileFilterPanel, rendered
+            in the results header below) instead of this full sidebar, so
+            the listing grid isn't pushed down by a wall of price/condition/
+            posted controls. Desktop keeps the always-visible sidebar. */}
+        <aside className="hidden space-y-6 sm:block sm:w-52 sm:shrink-0">
           <div>
             <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Price range</h2>
             <form className="mt-3 space-y-2">
@@ -424,7 +431,7 @@ export default async function BrowsePage({
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Showing {listings?.length ?? 0} of {totalCount ?? 0} result{totalCount === 1 ? "" : "s"}
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {hasAnyFilter && (
                 <SaveSearchButton
                   query={q}
@@ -433,11 +440,133 @@ export default async function BrowsePage({
                   posted={posted}
                 />
               )}
-              <div className="flex items-center gap-2 text-sm">
+              <MobileFilterPanel activeCount={mobileFilterCount}>
+                <form action="/browse" method="get" className="space-y-5">
+                  {q && <input type="hidden" name="q" value={q} />}
+                  {sort && sort !== "newest" && <input type="hidden" name="sort" value={sort} />}
+                  <div>
+                    <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      Price range
+                    </h2>
+                    <div className="mt-2 flex items-center gap-2">
+                      <input
+                        type="number"
+                        name="price_min"
+                        min="0"
+                        defaultValue={price_min}
+                        placeholder="Min"
+                        className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                      />
+                      <span className="text-slate-400 dark:text-slate-500">–</span>
+                      <input
+                        type="number"
+                        name="price_max"
+                        min="0"
+                        defaultValue={price_max}
+                        placeholder="Max"
+                        className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="mobile-condition"
+                      className="block text-sm font-semibold text-slate-900 dark:text-slate-100"
+                    >
+                      Condition
+                    </label>
+                    <select
+                      id="mobile-condition"
+                      name="condition"
+                      defaultValue={condition ?? ""}
+                      className="mt-2 w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                    >
+                      <option value="">Any condition</option>
+                      {CONDITIONS.map((c) => (
+                        <option key={c.value} value={c.value}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="mobile-posted"
+                      className="block text-sm font-semibold text-slate-900 dark:text-slate-100"
+                    >
+                      Posted
+                    </label>
+                    <select
+                      id="mobile-posted"
+                      name="posted"
+                      defaultValue={posted ?? ""}
+                      className="mt-2 w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                    >
+                      <option value="">Any time</option>
+                      {POSTED_OPTIONS.map((p) => (
+                        <option key={p.value} value={p.value}>
+                          {p.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="mobile-category"
+                      className="block text-sm font-semibold text-slate-900 dark:text-slate-100"
+                    >
+                      Category
+                    </label>
+                    <select
+                      id="mobile-category"
+                      name="category"
+                      defaultValue={category ?? ""}
+                      className="mt-2 w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                    >
+                      <option value="">All Categories</option>
+                      {categories?.map((c) => (
+                        <option key={c.id} value={c.slug}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600"
+                    >
+                      Apply filters
+                    </button>
+                    {mobileFilterCount > 0 && (
+                      <Link
+                        href={buildUrl({
+                          category: undefined,
+                          price_min: undefined,
+                          price_max: undefined,
+                          condition: undefined,
+                          posted: undefined,
+                        })}
+                        className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                      >
+                        Clear
+                      </Link>
+                    )}
+                  </div>
+                </form>
+              </MobileFilterPanel>
+              <div className="hidden items-center gap-2 text-sm sm:flex">
                 <label htmlFor="sort" className="text-slate-500 dark:text-slate-400">
                   Sort by
                 </label>
                 <SortSelect current={sort} buildUrl={buildUrl} />
+              </div>
+              <div className="sm:hidden">
+                <SortDropdown current={sort} />
               </div>
             </div>
           </div>

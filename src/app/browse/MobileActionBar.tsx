@@ -46,8 +46,19 @@ export default function MobileActionBar({
   return (
     <>
       {/* Hidden from sm up, which is exactly where the desktop filter
-          sidebar takes over — no point showing both. */}
-      <div className="mb-4 grid grid-cols-3 overflow-hidden rounded-xl border border-white/10 bg-slate-900 text-white shadow-sm sm:hidden">
+          sidebar takes over — no point showing both.
+
+          Sticks to the top so filters stay reachable deep in the list,
+          but deliberately sits *under* the site header (z-20 vs its
+          z-30): the header auto-hides as you scroll down, which is
+          exactly when the bar needs to be visible, and tucking behind it
+          on the way back up beats the alternative of the bar slicing
+          across the logo.
+
+          top-3 rather than top-0 to match the inset the header floats at
+          once scrolled — otherwise a sliver of this bar shows above it
+          on the way back up. */}
+      <div className="sticky top-3 z-20 mb-4 grid grid-cols-3 overflow-hidden rounded-xl border border-white/10 bg-slate-900 text-white shadow-lg shadow-slate-900/20 sm:hidden">
         <button
           type="button"
           onClick={() => setPanel("sort")}

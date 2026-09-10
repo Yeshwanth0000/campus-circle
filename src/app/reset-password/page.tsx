@@ -9,7 +9,7 @@ const initialState: AuthResult = { error: null };
 
 const STEPS = [
   { title: "Sign up with your college email", description: "We verify you belong to your campus." },
-  { title: "Land in your college's own circle", description: "Isolated from every other campus." },
+  { title: "Land in your college's own marketplace", description: "Isolated from every other campus." },
   { title: "Buy, sell, chat", description: "All in person, all on campus." },
 ];
 

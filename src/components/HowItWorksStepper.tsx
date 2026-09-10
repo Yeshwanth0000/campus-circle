@@ -8,7 +8,7 @@ const STEPS = [
     description: "We check the domain and verify you belong to your campus.",
   },
   {
-    title: "Browse or post in your circle",
+    title: "Browse or post in your marketplace",
     description: "Only students from your own college ever see your listings.",
   },
   {

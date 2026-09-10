@@ -46,8 +46,8 @@ export default async function HomePage() {
               <p className="mt-6 max-w-md text-lg text-slate-600 dark:text-slate-400">
                 CampusBin connects you with students on your own campus —
                 textbooks, gadgets, cycles, and hostel essentials, traded
-                directly with people you can actually trust. Every community is
-                its own private circle, unlocked by your college email.
+                directly with people you can actually trust. Every campus gets
+                its own private marketplace, unlocked by your college email.
               </p>
 
               {!user && <HeroSearch />}

@@ -70,7 +70,7 @@ export default function SafetyPage() {
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
         Safety Tips &amp; Community Guidelines
       </h1>
-      <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+      <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
         CampusBin keeps trades within your own verified college community,
         but no platform can guarantee safety on its own. A few ground rules:
       </p>

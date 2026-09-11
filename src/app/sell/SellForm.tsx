@@ -352,18 +352,41 @@ export default function SellForm({
                     >
                       {field.label}
                     </label>
-                    <input
-                      id={`custom_${field.key}`}
-                      name={`custom_${field.key}`}
-                      type="text"
-                      maxLength={200}
-                      placeholder={field.placeholder}
-                      value={customFieldValues[field.key] ?? ""}
-                      onChange={(e) =>
-                        setCustomFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))
-                      }
-                      className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
-                    />
+                    {field.optionGroups ? (
+                      <select
+                        id={`custom_${field.key}`}
+                        name={`custom_${field.key}`}
+                        value={customFieldValues[field.key] ?? ""}
+                        onChange={(e) =>
+                          setCustomFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))
+                        }
+                        className="select-chevron mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                      >
+                        <option value="">Not specified</option>
+                        {field.optionGroups.map((group) => (
+                          <optgroup key={group.label} label={group.label}>
+                            {group.options.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        id={`custom_${field.key}`}
+                        name={`custom_${field.key}`}
+                        type="text"
+                        maxLength={200}
+                        placeholder={field.placeholder}
+                        value={customFieldValues[field.key] ?? ""}
+                        onChange={(e) =>
+                          setCustomFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))
+                        }
+                        className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                      />
+                    )}
                   </div>
                 ))}
               </div>

@@ -1,11 +1,52 @@
+export type CategoryFieldOptionGroup = { label: string; options: string[] };
+
 export type CategoryFieldDef = {
   key: string;
   label: string;
   placeholder?: string;
+  /** When present the field renders as a grouped <select> instead of a text
+   *  input. Free text would fragment the same department across "CSE", "cse",
+   *  "Computer Sc." and make filtering useless. */
+  optionGroups?: CategoryFieldOptionGroup[];
 };
+
+// Branch names are deliberately generic rather than one college's official
+// department titles — colleges are added by email domain, so this list has to
+// read correctly at the next campus too.
+export const BOOK_DEPARTMENT_GROUPS: CategoryFieldOptionGroup[] = [
+  {
+    label: "Engineering",
+    options: [
+      "Computer Science",
+      "Electronics & Communication",
+      "Electrical",
+      "Mechanical",
+      "Civil",
+      "Chemical",
+      "Metallurgy & Materials",
+      "Mining",
+      "Biotechnology",
+      "Ceramic",
+      "Industrial Design",
+      "Architecture",
+    ],
+  },
+  {
+    label: "Other",
+    options: [
+      "First year / Common",
+      "Mathematics & Sciences",
+      "Humanities & Management",
+      "Competitive exams",
+      "Fiction & general reading",
+      "Other",
+    ],
+  },
+];
 
 export const CATEGORY_CUSTOM_FIELDS: Record<string, CategoryFieldDef[]> = {
   books: [
+    { key: "department", label: "Department", optionGroups: BOOK_DEPARTMENT_GROUPS },
     { key: "isbn", label: "ISBN", placeholder: "e.g. 978-0134685991" },
     { key: "author", label: "Author", placeholder: "e.g. Joshua Bloch" },
   ],
@@ -38,4 +79,8 @@ export const CATEGORY_CUSTOM_FIELDS: Record<string, CategoryFieldDef[]> = {
 export function getCategoryFields(slug: string | undefined | null): CategoryFieldDef[] {
   if (!slug) return [];
   return CATEGORY_CUSTOM_FIELDS[slug] ?? [];
+}
+
+export function flattenOptions(groups: CategoryFieldOptionGroup[]): string[] {
+  return groups.flatMap((g) => g.options);
 }

@@ -8,6 +8,7 @@ import SaveSearchButton from "@/components/SaveSearchButton";
 import { categoryIcon } from "@/lib/categoryIcons";
 import MobileActionBar from "./MobileActionBar";
 import LoadMore from "./LoadMore";
+import { BOOK_DEPARTMENT_GROUPS } from "@/lib/categoryFields";
 
 type SearchParams = Promise<{
   category?: string;
@@ -17,6 +18,7 @@ type SearchParams = Promise<{
   price_max?: string;
   condition?: string;
   posted?: string;
+  department?: string;
   page?: string;
 }>;
 
@@ -92,6 +94,7 @@ export default async function BrowsePage({
     price_max,
     condition,
     posted,
+    department,
     page: pageRaw,
   } = await searchParams;
   // Capped so a hand-edited ?page=99999 can't ask Supabase for a million rows.
@@ -135,6 +138,13 @@ export default async function BrowsePage({
   if (condition) {
     query = query.eq("condition", condition);
   }
+  // Department lives in the listing's custom_fields JSON rather than its own
+  // column, so it's queried with PostgREST's ->> operator. Only meaningful
+  // inside Books, which is the one category that defines the field.
+  const departmentFilterActive = Boolean(department) && activeCategory?.slug === "books";
+  if (departmentFilterActive) {
+    query = query.eq("custom_fields->>department", department!);
+  }
   const postedOption = POSTED_OPTIONS.find((p) => p.value === posted);
   if (postedOption) {
     const since = new Date(Date.now() - postedOption.hours * 60 * 60 * 1000);
@@ -164,7 +174,17 @@ export default async function BrowsePage({
 
   function buildUrl(overrides: Record<string, string | undefined>) {
     const params = new URLSearchParams();
-    const merged = { category, q, sort, price_min, price_max, condition, posted, ...overrides };
+    const merged = {
+      category,
+      q,
+      sort,
+      price_min,
+      price_max,
+      condition,
+      posted,
+      department,
+      ...overrides,
+    };
     for (const [key, value] of Object.entries(merged)) {
       if (value) params.set(key, value);
     }
@@ -172,14 +192,15 @@ export default async function BrowsePage({
     return `/browse${qs ? `?${qs}` : ""}`;
   }
 
-  const hasExtraFilters = condition || posted;
+  const hasExtraFilters = condition || posted || departmentFilterActive;
   const hasAnyFilter = Boolean(
-    activeCategory || q || price_min || price_max || condition || posted
+    activeCategory || q || price_min || price_max || condition || posted || departmentFilterActive
   );
   const mobileFilterCount = [
     Boolean(activeCategory),
     Boolean(condition),
     Boolean(posted),
+    departmentFilterActive,
     Boolean(price_min || price_max),
   ].filter(Boolean).length;
 
@@ -322,6 +343,51 @@ export default async function BrowsePage({
               })}
             </div>
           </div>
+
+          {/* Books is the only category with departments, so the filter only
+              exists while you're in it — otherwise it's dead UI on every
+              other category. */}
+          {activeCategory?.slug === "books" && (
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Department
+              </h2>
+              <div className="mt-3 space-y-1">
+                <Link
+                  href={buildUrl({ department: undefined })}
+                  aria-current={!department ? "true" : undefined}
+                  className={`block rounded-md px-2 py-1 text-xs ${
+                    !department
+                      ? "bg-brand-light font-semibold text-brand-dark dark:bg-brand/15 dark:text-brand"
+                      : "text-slate-600 hover:text-brand dark:text-slate-400"
+                  }`}
+                >
+                  All departments
+                </Link>
+                {BOOK_DEPARTMENT_GROUPS.map((group) => (
+                  <div key={group.label} className="pt-1">
+                    <p className="px-2 pb-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                      {group.label}
+                    </p>
+                    {group.options.map((opt) => (
+                      <Link
+                        key={opt}
+                        href={buildUrl({ department: department === opt ? undefined : opt })}
+                        aria-current={department === opt ? "true" : undefined}
+                        className={`block rounded-md px-2 py-1 text-xs ${
+                          department === opt
+                            ? "bg-brand-light font-semibold text-brand-dark dark:bg-brand/15 dark:text-brand"
+                            : "text-slate-600 hover:text-brand dark:text-slate-400"
+                        }`}
+                      >
+                        {opt}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div>
             <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Condition</h2>
@@ -491,6 +557,27 @@ export default async function BrowsePage({
                   </div>
                 </FilterGroup>
 
+                {activeCategory?.slug === "books" && (
+                  <FilterGroup label="Department">
+                    <select
+                      name="department"
+                      defaultValue={department ?? ""}
+                      className="select-chevron w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-3.5 pr-9 text-sm text-slate-900 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100"
+                    >
+                      <option value="">All departments</option>
+                      {BOOK_DEPARTMENT_GROUPS.map((group) => (
+                        <optgroup key={group.label} label={group.label}>
+                          {group.options.map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+                  </FilterGroup>
+                )}
+
                 <FilterGroup label="Condition">
                   <div className="grid grid-cols-3 gap-2">
                     <ChoiceChip name="condition" value="" label="Any" checked={!condition} />
@@ -581,6 +668,9 @@ export default async function BrowsePage({
                   label={POSTED_OPTIONS.find((p) => p.value === posted)?.label ?? posted}
                   href={buildUrl({ posted: undefined })}
                 />
+              )}
+              {departmentFilterActive && (
+                <FilterChip label={department!} href={buildUrl({ department: undefined })} />
               )}
               <Link
                 href="/browse"

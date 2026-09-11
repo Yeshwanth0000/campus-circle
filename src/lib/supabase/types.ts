@@ -152,6 +152,7 @@ export type Database = {
           price: number
           seller_id: string
           show_phone: boolean
+          sold_at: string | null
           status: string
           title: string
           view_count: number
@@ -169,6 +170,7 @@ export type Database = {
           price?: number
           seller_id: string
           show_phone?: boolean
+          sold_at?: string | null
           status?: string
           title: string
           view_count?: number
@@ -186,6 +188,7 @@ export type Database = {
           price?: number
           seller_id?: string
           show_phone?: boolean
+          sold_at?: string | null
           status?: string
           title?: string
           view_count?: number

@@ -17,6 +17,10 @@ type ListingCardProps = {
   hideSave?: boolean;
   sellerId?: string;
   hideInterested?: boolean;
+  /** Set on the handful of cards above the fold. Next was reporting one of
+   *  these as the LCP element and asking for eager loading in the dev logs;
+   *  without it the largest visible image waits for lazy-load intersection. */
+  priority?: boolean;
 };
 
 export default function ListingCard({
@@ -32,6 +36,7 @@ export default function ListingCard({
   hideSave = false,
   sellerId,
   hideInterested = false,
+  priority = false,
 }: ListingCardProps) {
   const showInterested = !hideInterested && sellerId && status === "available";
   const isNew =
@@ -48,6 +53,7 @@ export default function ListingCard({
             src={images[0]}
             alt={title}
             fill
+            priority={priority}
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />

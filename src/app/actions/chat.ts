@@ -51,10 +51,18 @@ export async function startConversation(listingId: string, sellerId: string) {
 
 const MESSAGE_MAX_LENGTH = 2000;
 
+export type SentMessage = {
+  id: string;
+  content: string;
+  sender_id: string;
+  created_at: string;
+  read_at: string | null;
+};
+
 export async function sendMessage(
   conversationId: string,
   content: string
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; message?: SentMessage }> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -63,11 +71,18 @@ export async function sendMessage(
   const trimmed = content.trim().slice(0, MESSAGE_MAX_LENGTH);
   if (!trimmed) return { error: null };
 
-  const { error } = await supabase.from("messages").insert({
-    conversation_id: conversationId,
-    sender_id: user.id,
-    content: trimmed,
-  });
+  // Returning the row lets the sender's optimistic bubble be swapped for the
+  // real one instead of waiting on the realtime echo, which can lag on a
+  // weak connection.
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      conversation_id: conversationId,
+      sender_id: user.id,
+      content: trimmed,
+    })
+    .select("id, content, sender_id, created_at, read_at")
+    .single();
 
   if (error) {
     return {
@@ -76,7 +91,7 @@ export async function sendMessage(
         : "Message couldn't be sent. Please try again.",
     };
   }
-  return { error: null };
+  return { error: null, message: data ?? undefined };
 }
 
 export async function markConversationRead(conversationId: string) {

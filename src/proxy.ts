@@ -39,6 +39,11 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Static metadata files must bypass the auth guard. The manifest was
+    // being 307'd to /login, so the browser fetched HTML where it expected
+    // JSON and the install prompt never became available — the icons it
+    // references were fine, since .png already sat behind this same
+    // exclusion. robots/sitemap are listed for the same reason.
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|opengraph-image|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

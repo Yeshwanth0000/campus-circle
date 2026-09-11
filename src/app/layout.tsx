@@ -18,9 +18,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://my-marketplace-red.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "CampusBin — Your Campus Marketplace",
   description: "Buy and sell with verified students on your own campus.",
+  // Sharing an invite link is how a college-private marketplace grows, and
+  // until now those links previewed as a bare URL with no title or image.
+  // opengraph-image.tsx supplies the card.
+  openGraph: {
+    type: "website",
+    siteName: "CampusBin",
+    title: "CampusBin — Your Campus Marketplace",
+    description: "Buy and sell with verified students on your own campus.",
+    url: SITE_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CampusBin — Your Campus Marketplace",
+    description: "Buy and sell with verified students on your own campus.",
+  },
 };
 
 export const viewport: Viewport = {

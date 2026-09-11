@@ -628,6 +628,10 @@ export default async function BrowsePage({
                     saved={savedIds.has(listing.id)}
                     sellerId={listing.seller_id}
                     hideInterested={listing.seller_id === user.id}
+                    // Two columns on a phone, up to five on a wide desktop —
+                    // six covers the first visible row everywhere without
+                    // eagerly pulling images nobody has scrolled to.
+                    priority={i < 6}
                   />
                 </Reveal>
               ))}

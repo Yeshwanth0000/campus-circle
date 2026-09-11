@@ -29,7 +29,7 @@ export default async function NotificationsPage() {
   const earlierNotifications = notifications?.filter((n) => new Date(n.created_at) < startOfToday) ?? [];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
+    <div className="mx-auto max-w-2xl px-3 py-4 sm:px-4 sm:py-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Notifications</h1>
         {hasUnread && <MarkAllReadButton />}

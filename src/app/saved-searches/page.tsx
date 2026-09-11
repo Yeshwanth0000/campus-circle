@@ -36,7 +36,7 @@ export default async function SavedSearchesPage() {
   );
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
+    <div className="mx-auto max-w-2xl px-3 py-4 sm:px-4 sm:py-8">
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Saved searches</h1>
       <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
         Revisit a search and see how many new listings match since you last checked.

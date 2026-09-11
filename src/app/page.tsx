@@ -30,7 +30,11 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <GradientMesh />
 
-        <div className="relative mx-auto w-full max-w-[min(94vw,96rem)] px-4 py-16 sm:py-24">
+        {/* The 94vw cap plus px-4 spent 54px of a 375px screen on gutters
+            before the headline even started, and py-16 pushed it 166px down.
+            Phones drop the cap and trim the top so the value proposition is
+            visible on landing; sm+ keeps the original roomier hero. */}
+        <div className="relative mx-auto w-full max-w-none px-4 py-10 sm:max-w-[min(94vw,96rem)] sm:py-24">
           <div className="grid items-center gap-10 sm:grid-cols-2">
             <div>
               <span className="inline-block rounded-full bg-brand-light px-3 py-1 text-xs font-semibold text-brand-dark">

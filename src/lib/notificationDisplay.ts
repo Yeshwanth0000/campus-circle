@@ -13,11 +13,15 @@ export function describeNotification(n: NotificationLike): {
 } {
   const payload = (n.payload ?? {}) as Record<string, string>;
 
+  // Titles stay short enough to hold one line in the notification row, which
+  // is only ~260px wide on a phone once the unread dot and timestamp take
+  // their share. "<name> sent you a message" wrapped onto a second line for
+  // most names and repeated what the preview underneath already shows.
   if (n.type === "new_message") {
     return {
       href: `/chat/${payload.conversation_id}`,
-      title: `${payload.sender_name ?? "A student"} sent you a message`,
-      subtitle: payload.preview ?? "",
+      title: payload.sender_name ?? "A student",
+      subtitle: payload.preview || "Sent you a message",
     };
   }
 
@@ -25,7 +29,7 @@ export function describeNotification(n: NotificationLike): {
     const statusLabel = payload.status === "sold" ? "marked as sold" : "expired";
     return {
       href: `/listings/${payload.listing_id}`,
-      title: `A listing you saved was ${statusLabel}`,
+      title: `Saved listing ${statusLabel}`,
       subtitle: payload.title ?? "",
     };
   }

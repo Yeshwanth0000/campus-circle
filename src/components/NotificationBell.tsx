@@ -117,7 +117,7 @@ export default function NotificationBell({
                         />
                         <div className="min-w-0 flex-1">
                           <p
-                            className={`text-sm ${
+                            className={`truncate text-sm ${
                               isUnread
                                 ? "font-semibold text-slate-900 dark:text-slate-100"
                                 : "text-slate-700 dark:text-slate-300"

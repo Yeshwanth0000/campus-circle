@@ -78,12 +78,11 @@ export default async function ChatDetailPage({
     conversation.buyer?.id === user.id ? conversation.seller : conversation.buyer;
 
   return (
-    // Height was reserving 178px of chrome on phones for a header+bottom-nav
-    // combo that has measured 120px since the mobile density pass shrank
-    // both — a 58px dead strip between the thread and the nav bar on every
-    // conversation. sm/lg already matched their real chrome within a couple
-    // of px and are untouched.
-    <div className="mx-auto flex h-[calc(100vh-120px)] w-full max-w-none flex-col px-3 py-3 sm:h-[calc(100vh-126px)] sm:max-w-[min(94vw,72rem)] sm:px-4 sm:py-4 lg:h-[calc(100vh-64px)]">
+    // These constants are the real chrome this page sits between, measured
+    // rather than guessed. Phones: the site header hides itself on an open
+    // conversation (FloatingHeaderShell), so only the 63px bottom nav is
+    // left. sm: 62px header + 63px nav. lg: 62px header, no bottom nav.
+    <div className="mx-auto flex h-[calc(100vh-63px)] w-full max-w-none flex-col px-3 py-3 sm:h-[calc(100vh-126px)] sm:max-w-[min(94vw,72rem)] sm:px-4 sm:py-4 lg:h-[calc(100vh-64px)]">
       <div className="flex items-center gap-3 border-b border-slate-200 pb-3 dark:border-slate-800 sm:items-start">
         {/* Icon back-button replaces the "All chats" text line on phones —
             WhatsApp-style single-row header instead of two stacked lines,

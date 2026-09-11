@@ -20,6 +20,37 @@ const BLOCKED_EMAIL_DOMAINS = [
   "live.com",
 ];
 
+// Supabase Auth errors surface verbatim otherwise, and "email rate limit
+// exceeded" means nothing to a student halfway through signing up — it reads
+// as though they did something wrong, when the project simply ran out of
+// confirmation emails for the hour.
+function friendlyAuthError(message: string): string {
+  // Supabase reports these both as prose ("email rate limit exceeded") and as
+  // codes ("over_email_send_rate_limit"), so flatten separators before
+  // matching rather than listing every spelling.
+  const m = message.toLowerCase().replace(/[_-]+/g, " ");
+
+  if (m.includes("rate limit") || m.includes("too many")) {
+    return "Too many signups at once — we can only send a few confirmation emails at a time. Wait a couple of minutes and try again; your details are fine.";
+  }
+  if (m.includes("already registered") || m.includes("already been registered")) {
+    return "That email already has an account. Try logging in instead.";
+  }
+  if (m.includes("invalid login credentials")) {
+    return "Email or password doesn't match. Check both, or reset your password.";
+  }
+  if (m.includes("email not confirmed")) {
+    return "Check your inbox and click the confirmation link before logging in.";
+  }
+  if (m.includes("invalid") && m.includes("email")) {
+    return "That doesn't look like a valid email address — check for typos in the part after the @.";
+  }
+  if (m.includes("password")) {
+    return "That password isn't accepted. Use at least 8 characters.";
+  }
+  return message;
+}
+
 export async function signUp(
   _prevState: AuthResult | null,
   formData: FormData
@@ -61,7 +92,7 @@ export async function signUp(
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: friendlyAuthError(error.message) };
   }
 
   redirect("/verify-email");
@@ -82,7 +113,7 @@ export async function signIn(
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: error.message };
+    return { error: friendlyAuthError(error.message) };
   }
 
   redirect("/browse");
@@ -114,7 +145,7 @@ export async function requestPasswordReset(
   // so this can't be used to check who's registered) — a real error here
   // means something like rate limiting, worth surfacing.
   if (error) {
-    return { error: error.message };
+    return { error: friendlyAuthError(error.message) };
   }
   return { error: null, success: true };
 }
@@ -143,7 +174,7 @@ export async function updatePassword(
 
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {
-    return { error: error.message };
+    return { error: friendlyAuthError(error.message) };
   }
 
   // A password reset is often prompted by a compromised account — if someone

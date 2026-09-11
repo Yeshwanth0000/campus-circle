@@ -482,6 +482,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_dashboard_stats: { Args: never; Returns: Json }
       delete_own_account: { Args: never; Returns: undefined }
       expire_stale_listings: { Args: never; Returns: undefined }
       get_homepage_stats: {

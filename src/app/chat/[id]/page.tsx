@@ -78,20 +78,44 @@ export default async function ChatDetailPage({
     conversation.buyer?.id === user.id ? conversation.seller : conversation.buyer;
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-178px)] w-full max-w-[min(94vw,72rem)] flex-col px-4 py-4 sm:h-[calc(100vh-126px)] lg:h-[calc(100vh-64px)]">
-      <div className="flex items-start justify-between border-b border-slate-200 pb-3 dark:border-slate-800">
-        <div className="flex items-start gap-3">
-          <Avatar avatarUrl={otherPerson?.avatar_url} name={otherPerson?.full_name ?? "S"} size={40} className="mt-0.5" />
-          <div>
-            <Link href="/chat" className="text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
-              ← All chats
-            </Link>
-            <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-              {otherPerson?.full_name ?? "Student"}
-            </h1>
-          </div>
+    // Height was reserving 178px of chrome on phones for a header+bottom-nav
+    // combo that has measured 120px since the mobile density pass shrank
+    // both — a 58px dead strip between the thread and the nav bar on every
+    // conversation. sm/lg already matched their real chrome within a couple
+    // of px and are untouched.
+    <div className="mx-auto flex h-[calc(100vh-120px)] w-full max-w-none flex-col px-3 py-3 sm:h-[calc(100vh-126px)] sm:max-w-[min(94vw,72rem)] sm:px-4 sm:py-4 lg:h-[calc(100vh-64px)]">
+      <div className="flex items-center gap-3 border-b border-slate-200 pb-3 dark:border-slate-800 sm:items-start">
+        {/* Icon back-button replaces the "All chats" text line on phones —
+            WhatsApp-style single-row header instead of two stacked lines,
+            which was costing about 12px of height for no information the
+            icon doesn't already carry. sm+ keeps the original text link,
+            since there's room to spare and it reads better with a mouse. */}
+        <Link
+          href="/chat"
+          aria-label="All chats"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 sm:hidden"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </Link>
+        <Avatar avatarUrl={otherPerson?.avatar_url} name={otherPerson?.full_name ?? "S"} size={40} className="shrink-0 sm:mt-0.5" />
+        <div className="min-w-0 flex-1">
+          <Link
+            href="/chat"
+            className="hidden text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 sm:block"
+          >
+            ← All chats
+          </Link>
+          <h1 className="truncate text-base font-bold text-slate-900 dark:text-slate-100 sm:text-lg">
+            {otherPerson?.full_name ?? "Student"}
+          </h1>
         </div>
-        {otherPerson?.id && <SafetyMenu userId={otherPerson.id} />}
+        {otherPerson?.id && (
+          <div className="sm:pt-3">
+            <SafetyMenu userId={otherPerson.id} />
+          </div>
+        )}
       </div>
 
       <ChatThread

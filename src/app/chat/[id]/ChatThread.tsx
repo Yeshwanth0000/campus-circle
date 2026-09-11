@@ -161,8 +161,13 @@ export default function ChatThread({
   }
 
   return (
-    <div className="mt-4 flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-300 bg-white/70 p-4 shadow-sm backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-900/60">
-      <div className="flex-1 space-y-2 overflow-y-auto">
+    // The bordered "card" wrapping the whole thread cost 32px of horizontal
+    // chrome (page padding plus the card's own p-4) on top of the page's own
+    // inset, and 32px of dead vertical padding above the first bubble and
+    // below the input. Phones now go edge-to-edge like a real chat app — the
+    // page's own px-3 is the only inset — with the card look kept from sm up.
+    <div className="mt-3 flex flex-1 flex-col overflow-hidden sm:mt-4 sm:rounded-2xl sm:border sm:border-slate-300 sm:bg-white/70 sm:p-4 sm:shadow-sm sm:backdrop-blur-sm dark:sm:border-slate-800/70 dark:sm:bg-slate-900/60">
+      <div className="flex-1 space-y-2 overflow-y-auto pb-2">
         {listing && (
           <Link
             href={`/listings/${listing.id}`}
@@ -250,12 +255,19 @@ export default function ChatThread({
           placeholder="Type a message…"
           className="flex-1 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 transition-colors focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />
+        {/* Icon-only on phones — a text "Send" button was permanently
+            claiming ~50px of width from the typing area on the narrowest
+            screens. sm+ keeps the labelled pill, matching every other page. */}
         <button
           type="submit"
           disabled={sending || !draft.trim()}
-          className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md disabled:pointer-events-none disabled:opacity-50"
+          aria-label="Send message"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow transition hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-md disabled:pointer-events-none disabled:opacity-50 sm:h-auto sm:w-auto sm:px-5 sm:py-2"
         >
-          Send
+          <svg viewBox="0 0 24 24" className="h-4 w-4 sm:hidden" fill="currentColor">
+            <path d="M3 20l18-8L3 4v6l12 2-12 2z" />
+          </svg>
+          <span className="hidden text-sm font-semibold sm:inline">Send</span>
         </button>
       </form>
     </div>

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://my-marketplace-red.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://campusbin.in";
 
 // Only the genuinely public pages. Listings are RLS-scoped to a college, so
 // they can't be crawled and must not be advertised here.

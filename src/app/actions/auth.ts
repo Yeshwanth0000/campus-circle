@@ -33,6 +33,19 @@ function friendlyAuthError(message: string): string {
   if (m.includes("rate limit") || m.includes("too many")) {
     return "Too many signups at once — we can only send a few confirmation emails at a time. Wait a couple of minutes and try again; your details are fine.";
   }
+  // Anything that stops the confirmation email leaving: the daily sending
+  // quota being spent, or the mail provider being unreachable. Checked before
+  // the generic "email" branch below, which would otherwise swallow it and
+  // wrongly tell the student their address is malformed.
+  if (m.includes("error sending") || m.includes("sending confirmation") || m.includes("smtp")) {
+    return "We couldn't send your confirmation email just now — that's our problem, not your details. Your account is saved, so try signing up again in a few minutes and it should come through.";
+  }
+  // The per-user cooldown between emails (60s by default). Supabase phrases
+  // this as "For security purposes, you can only request this after N
+  // seconds", which sounds like an accusation rather than a wait.
+  if (m.includes("for security purposes") || m.includes("only request this after")) {
+    return "Just a moment — you can request another email in about a minute.";
+  }
   if (m.includes("already registered") || m.includes("already been registered")) {
     return "That email already has an account. Try logging in instead.";
   }

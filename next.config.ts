@@ -12,6 +12,25 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "4.5mb",
     },
   },
+  // www and the pre-migration vercel.app alias still resolve with identical
+  // content to the apex domain — that's duplicate content to search engines
+  // and stale links for anyone who bookmarked the old address.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.campusbin.in" }],
+        destination: "https://campusbin.in/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "my-marketplace-red.vercel.app" }],
+        destination: "https://campusbin.in/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

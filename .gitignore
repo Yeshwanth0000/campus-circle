@@ -39,6 +39,10 @@ yarn-error.log*
 # session-internal state, not app code
 .claude/scheduled_tasks.lock
 
+# local scratch exports — can contain real user data, never commit
+campuscircle-data-*.json
+dev-log-report.html
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
